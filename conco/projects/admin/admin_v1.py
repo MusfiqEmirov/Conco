@@ -1,21 +1,22 @@
 from django.contrib import admin
+from django.db.models import Q
+from django.db import models
 from django.utils.html import format_html
 from django.urls import reverse
+
 from projects.models import *
 
 
-# Media 
+# Media
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'media_preview',
-        'media_type',
-        'related_item_link',
         'background_flags',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('media_preview',)
     list_filter = (
         'is_home_page_background_image',
         'is_about_page_background_image',
@@ -25,14 +26,10 @@ class MediaAdmin(admin.ModelAdmin):
         'created_at',
     )
     readonly_fields = ('created_at', 'media_preview_detailed')
-    search_fields = ('about__main_title_az', 'project__name_az', 'partner__name_az', 'vacancy__title_az')
-    
+
     fieldsets = (
-        ('Media Məlumatları', {
-            'fields': ('about', 'project', 'partner', 'vacancy')
-        }),
-        ('Media Faylları', {
-            'fields': ('image', 'video', 'media_preview_detailed')
+        ('Media Faylı', {
+            'fields': ('image', 'media_preview_detailed')
         }),
         ('Arxa Plan Təyinatları', {
             'fields': (
@@ -43,74 +40,54 @@ class MediaAdmin(admin.ModelAdmin):
                 'is_vacany_page_background_image',
             ),
         }),
-        ('Tarix', {
-            'fields': ('created_at',)
-        }),
     )
-    
+
     ordering = ('-created_at',)
     list_per_page = 25
-    
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(
+            models.Q(is_home_page_background_image=True) |
+            models.Q(is_about_page_background_image=True) |
+            models.Q(is_partner_background_image=True) |
+            models.Q(is_project_page_background_image=True) |
+            models.Q(is_vacany_page_background_image=True)
+        )
+
     def media_preview(self, obj):
-        url = reverse('admin:projects_media_change', args=[obj.pk])
         if obj.image:
             return format_html(
-                '<a href="{}"><img src="{}" style="max-width: 80px; max-height: 80px; border-radius: 4px; cursor: pointer; border: 2px solid #417690;" /></a>',
-                url, obj.image.url
+                '<img src="{}" style="max-width: 80px; max-height: 80px; border-radius: 4px;" />',
+                obj.image.url
             )
-        return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600;">🔗 Media #{}</a>', url, obj.id)
+        return "-"
     media_preview.short_description = "Şəkil"
-    
+
     def media_preview_detailed(self, obj):
         if obj.image:
             return format_html(
-                '<img src="{}" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />',
+                '<img src="{}" style="max-width: 300px; max-height: 300px; border-radius: 8px;" />',
                 obj.image.url
             )
         return "-"
     media_preview_detailed.short_description = "Şəkil Önizləmə"
-    
-    def media_type(self, obj):
-        types = []
-        if obj.image:
-            types.append("Şəkil")
-        if obj.video:
-            types.append("Video")
-        return " / ".join(types) if types else "-"
-    media_type.short_description = "Tip"
-    
-    def related_item_link(self, obj):
-        links = []
-        if obj.about:
-            url = reverse('admin:projects_about_change', args=[obj.about.pk])
-            links.append(format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 500;">ℹ️ {}</a>', url, obj.about.main_title_az or 'Haqqımızda'))
-        if obj.project:
-            url = reverse('admin:projects_project_change', args=[obj.project.pk])
-            links.append(format_html('<a href="{}" style="color: #28a745; text-decoration: none; font-weight: 500;">📁 {}</a>', url, obj.project.name_az))
-        if obj.partner:
-            url = reverse('admin:projects_partner_change', args=[obj.partner.pk])
-            links.append(format_html('<a href="{}" style="color: #ffc107; text-decoration: none; font-weight: 500;">🤝 {}</a>', url, obj.partner.name_az or 'Əməkdaş'))
-        if obj.vacancy:
-            url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
-            links.append(format_html('<a href="{}" style="color: #17a2b8; text-decoration: none; font-weight: 500;">💼 {}</a>', url, obj.vacancy.title_az))
-        
-        return format_html('<br>'.join(links)) if links else "-"
-    related_item_link.short_description = "Əlaqəli Element"
-    
+
     def background_flags(self, obj):
         flags = []
         if obj.is_home_page_background_image:
-            flags.append("🏠 Ana")
+            flags.append("🏠 Ana səhifə")
         if obj.is_about_page_background_image:
-            flags.append("ℹ️ Haqqımızda")
+            flags.append("ℹ️ Haqqımızda səhifəsi")
         if obj.is_partner_background_image:
-            flags.append("🤝 Əməkdaş")
+            flags.append("🤝 Əməkdaşlar səhifəi")
         if obj.is_project_page_background_image:
-            flags.append("📁 Layihə")
+            flags.append("📁 Layihələr səhifəsi")
         if obj.is_vacany_page_background_image:
-            flags.append("💼 Vakansiya")
+            flags.append("💼 Vakansiyalar səhifəsi")
         return " | ".join(flags) if flags else "-"
     background_flags.short_description = "Arxa Plan"
+
 
 
 class MediaInlineBase(admin.TabularInline):
@@ -518,12 +495,14 @@ class VacancyAdmin(admin.ModelAdmin):
 class AppealAdmin(admin.ModelAdmin):
     list_display = (
         'id',
+        'is_read',
         'vacancy_title',
         'cv_file_link',
         'read_status',
         'created_at_formatted',
     )
     list_display_links = None
+    list_editable = ('is_read',)
     list_filter = ('is_read', 'created_at', 'vacancy')
     readonly_fields = ('created_at', 'cv_preview')
     search_fields = ('vacancy__title_az', 'vacancy__title_en', 'vacancy__title_ru')
