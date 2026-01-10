@@ -46,6 +46,10 @@ class MediaInlinePartner(MediaInlineBase):
 class MediaInlineAbout(MediaInlineBase):
     pass
 
+
+class MediaInlineVacancy(MediaInlineBase):
+    max_num = 1  
+
 # Project Category 
 @admin.register(ProjectCategory)
 class ProjectCategoryAdmin(admin.ModelAdmin):
@@ -110,6 +114,7 @@ class ContactAdmin(admin.ModelAdmin):
 # Vacancy 
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
+    inlines = [MediaInlineVacancy]
     list_display = (
         'title_az',
         'is_active',
@@ -117,6 +122,7 @@ class VacancyAdmin(admin.ModelAdmin):
     )
     list_filter = ('is_active', 'created_at')
     search_fields = ('title_az', 'title_en', 'title_ru', 'description_az', 'description_en', 'description_ru')
+    exclude = ('slug',)
 
 # Appeal (CV) 
 @admin.register(Appeal)
