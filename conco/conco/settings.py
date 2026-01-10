@@ -25,7 +25,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     # Third Packages
+    'django_cleanup.apps.CleanupConfig',
     
     # Apps
     'projects'
