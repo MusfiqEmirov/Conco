@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
@@ -31,3 +32,5 @@ class Appeal(models.Model):
 
     def __str__(self):
         return self.vacancy.title_az
+    
+    
