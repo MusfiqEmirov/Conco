@@ -1,11 +1,116 @@
 from django.views import View
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.shortcuts import render
 from django.http import JsonResponse
-from django.utils import translation
-from django.utils.translation import gettext_lazy as _
-from django.db.models import Prefetch
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
+from projects.models import Appeal
+from projects.utils.queries import *
+
+
+class HomePageView(View):
+    template_name = ''
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        context = get_home_page_data(request, lang)
+        context['language'] = lang
+        return render(request, self.template_name, context)
+
+
+class ProjectPageView(View):
+    template_name = ''
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        context = get_project_list_data(request, lang)
+        context['language'] = lang
+        return render(request, self.template_name, context)
+
+
+class ProjectDetailPageView(View):
+    template_name = ''
+    
+    def get(self, request, slug):
+        lang = get_language_from_request(request)
+        project = get_project_by_slug(slug, lang)
+        context = {
+            'project': serialize_project(project, lang),
+            'language': lang,
+            'background_image': get_background_image('project'),
+        }
+
+        return render(request, self.template_name, context)
+
+
+class AboutPageView(View):
+    template_name = ''
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        about = get_about(lang)
+        context = {
+            'about': serialize_about(about, lang),
+            'language': lang,
+            'background_image': get_background_image('about'),
+        }
+
+        return render(request, self.template_name, context)
+
+
+class PartnerPageView(View):
+    template_name = 'projects/partner_list.html'
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        is_active = request.GET.get('is_active', 'true').lower() == 'true'
+        partners = get_partners(lang=lang, is_active=is_active)
+        context = {
+            'partners': [serialize_partner(p, lang) for p in partners],
+            'language': lang,
+            'background_image': get_background_image('partner'),
+        }
+
+        return render(request, self.template_name, context)
+
+
+class ContactPageView(View):
+    template_name = 'projects/contact.html'
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        contact = get_contact(lang)
+        context = {
+            'contact': serialize_contact(contact, lang),
+            'language': lang,
+        }
+
+        return render(request, self.template_name, context)
+
+
+class VacancyPageView(View):
+    template_name = 'projects/vacancy_list.html'
+    
+    def get(self, request):
+        lang = get_language_from_request(request)
+        context = get_vacancy_list_data(request, lang)
+        context['language'] = lang
+        return render(request, self.template_name, context)
+
+
+class VacancyDetailPageView(View):
+    template_name = 'projects/vacancy_detail.html'
+    
+    def get(self, request, slug):
+        lang = get_language_from_request(request)
+        vacancy = get_vacancy_by_slug(slug, lang)
+        context = {
+            'vacancy': serialize_vacancy(vacancy, lang),
+            'language': lang,
+            'background_image': get_background_image('vacancy'),
+        }
+        return render(request, self.template_name, context)
+
+
+
+

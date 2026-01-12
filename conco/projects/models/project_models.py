@@ -80,7 +80,7 @@ class Project(SluggedModel):
         default=True,
         null=True,
         blank=True,
-        verbose_name='Lahiyən davam edir yoxsa, tamamlanıb'
+        verbose_name='Lahiyən tamamlanıb'
     )
     is_active = models.BooleanField(
         default=True,
