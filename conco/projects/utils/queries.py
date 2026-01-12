@@ -1,0 +1,398 @@
+from django.db.models import Q, Prefetch
+from django.utils import translation
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from projects.models import *
+
+
+def get_language_from_request(request):
+    lang = request.GET.get('lang', '').lower()
+    if lang in ['az', 'en', 'ru']:
+        request.session['language'] = lang
+        return lang
+    
+    lang = request.session.get('language', '').lower()
+    if lang in ['az', 'en', 'ru']:
+        return lang
+    
+    lang = getattr(request, 'LANGUAGE_CODE', 'az')
+    if lang in ['az', 'en', 'ru']:
+        request.session['language'] = lang
+        return lang
+    
+    request.session['language'] = 'az'
+    return 'az'
+
+
+def get_localized_field_name(field_base, lang):
+    if lang == 'en':
+        return f'{field_base}_en'
+    elif lang == 'ru':
+        return f'{field_base}_ru'
+    else:
+        return f'{field_base}_az'
+
+
+def get_project_categories(lang='az'):
+    name_field = get_localized_field_name('name', lang)
+    return ProjectCategory.objects.all().order_by('id')
+
+
+def get_projects(lang='az', category_id=None, is_active=True, is_completed=None):
+    queryset = Project.objects.select_related('category').prefetch_related(
+        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+    )
+    
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    
+    if is_completed is not None:
+        queryset = queryset.filter(is_completed=is_completed)
+    
+    if category_id:
+        queryset = queryset.filter(category_id=category_id)
+    
+    return queryset.order_by('-created_at')
+
+
+def get_project_by_slug(slug, lang='az'):
+    try:
+        return Project.objects.select_related('category').prefetch_related(
+            Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+        ).get(slug=slug, is_active=True)
+    except Project.DoesNotExist:
+        return None
+
+
+def get_about(lang='az'):
+    return About.objects.prefetch_related(
+        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+    ).first()
+
+
+def get_partners(lang='az', is_active=True):
+    queryset = Partner.objects.prefetch_related(
+        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+    )
+    
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    
+    return queryset.order_by('-created_at')
+
+
+def get_contact(lang='az'):
+    return Contact.objects.first()
+
+
+def get_vacancies(lang='az', is_active=True):
+    queryset = Vacancy.objects.prefetch_related(
+        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+    )
+    
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    
+    return queryset.order_by('-created_at')
+
+
+def get_vacancy_by_slug(slug, lang='az'):
+    try:
+        return Vacancy.objects.prefetch_related(
+            Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+        ).get(slug=slug, is_active=True)
+    except Vacancy.DoesNotExist:
+        return None
+
+
+def get_background_image(page_type):
+    image_map = {
+        'home': 'is_home_page_background_image',
+        'about': 'is_about_page_background_image',
+        'partner': 'is_partner_background_image',
+        'project': 'is_project_page_background_image',
+        'vacancy': 'is_vacany_page_background_image',
+    }
+    
+    if page_type not in image_map:
+        return None
+    
+    media = Media.objects.filter(**{image_map[page_type]: True}).first()
+    if media and media.image:
+        return media.image.url
+    return None
+
+
+def serialize_project(project, lang='az'):
+    name_field = get_localized_field_name('name', lang)
+    desc_field = get_localized_field_name('description', lang)
+    cat_name_field = get_localized_field_name('name', lang)
+    
+    return {
+        'id': project.id,
+        'slug': project.slug,
+        'name': getattr(project, name_field, project.name_az),
+        'description': getattr(project, desc_field, project.description_az),
+        'url': project.url,
+        'is_completed': project.is_completed,
+        'is_active': project.is_active,
+        'created_at': project.created_at,
+        'category': {
+            'id': project.category.id,
+            'name': getattr(project.category, cat_name_field, project.category.name_az),
+        },
+        'medias': [
+            {
+                'id': media.id,
+                'image': media.image.url if media.image else None,
+                'video': media.video.url if media.video else None,
+            }
+            for media in project.medias.all()
+        ]
+    }
+
+
+def serialize_project_category(category, lang='az'):
+    name_field = get_localized_field_name('name', lang)
+    
+    return {
+        'id': category.id,
+        'name': getattr(category, name_field, category.name_az),
+    }
+
+
+def serialize_about(about, lang='az'):
+    main_title_field = get_localized_field_name('main_title', lang)
+    second_title_field = get_localized_field_name('second_title', lang)
+    desc_field = get_localized_field_name('description', lang)
+    
+    return {
+        'id': about.id,
+        'main_title': getattr(about, main_title_field, about.main_title_az),
+        'second_title': getattr(about, second_title_field, about.second_title_az),
+        'description': getattr(about, desc_field, about.description_az),
+        'medias': [
+            {
+                'id': media.id,
+                'image': media.image.url if media.image else None,
+                'video': media.video.url if media.video else None,
+            }
+            for media in about.medias.all()
+        ]
+    }
+
+
+def serialize_partner(partner, lang='az'):
+    name_field = get_localized_field_name('name', lang)
+    
+    media = partner.medias.first()
+    
+    return {
+        'id': partner.id,
+        'name': getattr(partner, name_field, partner.name_az),
+        'url': partner.url,
+        'is_active': partner.is_active,
+        'created_at': partner.created_at,
+        'logo': media.image.url if media and media.image else None,
+    }
+
+
+def serialize_contact(contact, lang='az'):
+    address_field = get_localized_field_name('address', lang)
+    
+    return {
+        'id': contact.id,
+        'address': getattr(contact, address_field, contact.address_az),
+        'phone': contact.phone,
+        'whatsapp_number': contact.whatsapp_number,
+        'whatsapp_number_2': contact.whatsapp_number_2,
+        'phone_three': contact.phone_three,
+        'email': contact.email,
+        'instagram': contact.instagram,
+        'facebook': contact.facebook,
+        'youtube': contact.youtube,
+        'linkedn': contact.linkedn,
+        'tiktok': contact.tiktok,
+    }
+
+
+def serialize_vacancy(vacancy, lang='az'):
+    title_field = get_localized_field_name('title', lang)
+    desc_field = get_localized_field_name('description', lang)
+    
+    media = vacancy.medias.first()
+    
+    return {
+        'id': vacancy.id,
+        'slug': vacancy.slug,
+        'title': getattr(vacancy, title_field, vacancy.title_az),
+        'description': getattr(vacancy, desc_field, vacancy.description_az),
+        'is_active': vacancy.is_active,
+        'created_at': vacancy.created_at,
+        'image': media.image.url if media and media.image else None,
+    }
+
+
+def paginate_queryset(queryset, page, per_page):
+    paginator = Paginator(queryset, per_page)
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    
+    return page_obj, paginator
+
+
+def get_pagination_data(page_obj, paginator):
+    return {
+        'current_page': page_obj.number,
+        'total_pages': paginator.num_pages,
+        'total_count': paginator.count,
+        'per_page': paginator.per_page,
+        'has_next': page_obj.has_next(),
+        'has_previous': page_obj.has_previous(),
+    }
+
+
+def get_home_page_data(request, lang):
+    category_id = request.GET.get('category_id')
+    is_completed = request.GET.get('is_completed')
+    is_active = request.GET.get('is_active', 'true').lower() == 'true'
+    
+    if is_completed is not None:
+        is_completed = is_completed.lower() == 'true'
+    else:
+        is_completed = None
+    
+    projects_page = request.GET.get('page', 1)
+    projects_per_page = int(request.GET.get('per_page', 6))
+    
+    projects = get_projects(
+        lang=lang,
+        category_id=category_id,
+        is_active=is_active,
+        is_completed=is_completed
+    )
+    
+    projects_page_obj, projects_paginator = paginate_queryset(projects, projects_page, projects_per_page)
+    serialized_projects = [
+        serialize_project(project, lang)
+        for project in projects_page_obj
+    ]
+    
+    categories = get_project_categories(lang)
+    serialized_categories = [
+        serialize_project_category(category, lang)
+        for category in categories
+    ]
+    
+    partners_page = request.GET.get('partners_page', 1)
+    partners_per_page = int(request.GET.get('partners_per_page', 10))
+    
+    all_partners = get_partners(lang=lang, is_active=True)
+    partners_page_obj, partners_paginator = paginate_queryset(all_partners, partners_page, partners_per_page)
+    serialized_partners = [
+        serialize_partner(partner, lang)
+        for partner in partners_page_obj
+    ]
+    
+    vacancies_page = request.GET.get('vacancies_page', 1)
+    vacancies_per_page = int(request.GET.get('vacancies_per_page', 10))
+    
+    all_vacancies = get_vacancies(lang=lang, is_active=True)
+    vacancies_page_obj, vacancies_paginator = paginate_queryset(all_vacancies, vacancies_page, vacancies_per_page)
+    serialized_vacancies = [
+        serialize_vacancy(vacancy, lang)
+        for vacancy in vacancies_page_obj
+    ]
+    
+    about = get_about(lang)
+    serialized_about = serialize_about(about, lang) if about else None
+    
+    contact = get_contact(lang)
+    serialized_contact = serialize_contact(contact, lang) if contact else None
+    
+    return {
+        'projects': serialized_projects,
+        'categories': serialized_categories,
+        'partners': serialized_partners,
+        'vacancies': serialized_vacancies,
+        'about': serialized_about,
+        'contact': serialized_contact,
+        'projects_pagination': get_pagination_data(projects_page_obj, projects_paginator),
+        'partners_pagination': get_pagination_data(partners_page_obj, partners_paginator),
+        'vacancies_pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
+        'filters': {
+            'category_id': category_id,
+            'is_completed': is_completed,
+            'is_active': is_active,
+        },
+        'background_image': get_background_image('home'),
+    }
+
+
+def get_project_list_data(request, lang):
+    category_id = request.GET.get('category_id')
+    is_completed = request.GET.get('is_completed')
+    is_active = request.GET.get('is_active', 'true').lower() == 'true'
+    
+    if is_completed is not None:
+        is_completed = is_completed.lower() == 'true'
+    else:
+        is_completed = None
+    
+    page = request.GET.get('page', 1)
+    per_page = int(request.GET.get('per_page', 10))
+    
+    projects = get_projects(
+        lang=lang,
+        category_id=category_id,
+        is_active=is_active,
+        is_completed=is_completed
+    )
+    
+    projects_page_obj, projects_paginator = paginate_queryset(projects, page, per_page)
+    serialized_projects = [
+        serialize_project(project, lang)
+        for project in projects_page_obj
+    ]
+    
+    categories = get_project_categories(lang)
+    serialized_categories = [
+        serialize_project_category(category, lang)
+        for category in categories
+    ]
+    
+    return {
+        'projects': serialized_projects,
+        'categories': serialized_categories,
+        'pagination': get_pagination_data(projects_page_obj, projects_paginator),
+        'filters': {
+            'category_id': category_id,
+            'is_completed': is_completed,
+            'is_active': is_active,
+        },
+        'background_image': get_background_image('project'),
+    }
+
+
+def get_vacancy_list_data(request, lang):
+    is_active = request.GET.get('is_active', 'true').lower() == 'true'
+    page = request.GET.get('page', 1)
+    per_page = int(request.GET.get('per_page', 10))
+    
+    vacancies = get_vacancies(lang=lang, is_active=is_active)
+    vacancies_page_obj, vacancies_paginator = paginate_queryset(vacancies, page, per_page)
+    
+    serialized_vacancies = [
+        serialize_vacancy(vacancy, lang)
+        for vacancy in vacancies_page_obj
+    ]
+    
+    return {
+        'vacancies': serialized_vacancies,
+        'pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
+        'background_image': get_background_image('vacancy'),
+    }
