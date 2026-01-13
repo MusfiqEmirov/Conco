@@ -52,6 +52,7 @@ class Vacancy(SluggedModel):
     class Meta:
         verbose_name = 'Vakansiya'
         verbose_name_plural = 'Vakansiyalar'
+        ordering  = ['-created_at']
     
     def get_slug_source(self) -> str:
         return self.title_az
