@@ -99,6 +99,7 @@ class Project(SluggedModel):
     class Meta:
         verbose_name = 'Lahiyə'
         verbose_name_plural = 'Lahiyələr'
+        ordering  = ['-created_at']
 
     def __str__(self):
         return self.name_az

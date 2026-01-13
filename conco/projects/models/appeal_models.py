@@ -37,6 +37,7 @@ class Appeal(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['vacancy', 'email'], name='unique_cv_per_vacancy')
         ]
+        ordering  = ['-created_at']
     
     def __str__(self):
         return self.vacancy.title_az
