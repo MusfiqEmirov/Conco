@@ -101,7 +101,7 @@ class VacancyPageView(View):
 
 
 class VacancyDetailPageView(View):
-    template_name = 'projects/vacancy_detail.html'
+    template_name = ''
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
