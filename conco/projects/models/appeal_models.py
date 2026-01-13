@@ -12,6 +12,11 @@ class Appeal(models.Model):
         blank=True,
         verbose_name='Vakansiya'
     )
+    email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name='Mail'
+    )
     cv = models.FileField(
         upload_to='cvs/',  
         validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])],
@@ -29,7 +34,10 @@ class Appeal(models.Model):
     class Meta:
         verbose_name = 'CV'
         verbose_name_plural = 'CV-lər'
-
+        constraints = [
+            models.UniqueConstraint(fields=['vacancy', 'email'], name='unique_cv_per_vacancy')
+        ]
+    
     def __str__(self):
         return self.vacancy.title_az
     

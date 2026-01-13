@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vacancy.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+        }
+        .apply-form {
+            width: 350px;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        .apply-form h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 22px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input[type="file"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group input[type="file"]:focus,
+        .form-group input[type="email"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .form-group .help-text {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        .form-group .error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .vacancy-content {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .vacancy-content h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .vacancy-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .vacancy-description {
+            color: #555;
+            line-height: 1.8;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="apply-form">
+            <h2>Müraciət et</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'success' %}success-message{% else %}error-message{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">E-poçt</label>
+                    {{ form.email }}
+                    {% if form.email.help_text %}
+                        <p class="help-text">{{ form.email.help_text }}</p>
+                    {% endif %}
+                    {% if form.email.errors %}
+                        <div class="error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.cv.id_for_label }}">CV faylı</label>
+                    {{ form.cv }}
+                    {% if form.cv.help_text %}
+                        <p class="help-text">{{ form.cv.help_text }}</p>
+                    {% endif %}
+                    {% if form.cv.errors %}
+                        <div class="error">{{ form.cv.errors }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="submit-btn">Göndər</button>
+            </form>
+        </div>
+        
+        <div class="vacancy-content">
+            <h1>{{ vacancy.title }}</h1>
+            {% if vacancy.image %}
+                <img src="{{ vacancy.image }}" alt="{{ vacancy.title }}" class="vacancy-image">
+            {% endif %}
+            <div class="vacancy-description">
+                {{ vacancy.description|linebreaks }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

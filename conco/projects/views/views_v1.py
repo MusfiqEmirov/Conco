@@ -1,10 +1,12 @@
 from django.views import View
 from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import IntegrityError
+from django.http import Http404
 
 from projects.models import Appeal
+from projects.forms.forms_v1 import AppealForm
 from projects.utils.queries import *
 
 
@@ -104,13 +106,48 @@ class VacancyDetailPageView(View):
     def get(self, request, slug):
         lang = get_language_from_request(request)
         vacancy = get_vacancy_by_slug(slug, lang)
+        if not vacancy:
+            from django.http import Http404
+            raise Http404("Vacancy not found")
+        
+        form = AppealForm()
         context = {
             'vacancy': serialize_vacancy(vacancy, lang),
             'language': lang,
             'background_image': get_background_image('vacancy'),
+            'form': form,
         }
         return render(request, self.template_name, context)
-
-
+    
+    def post(self, request, slug):
+        lang = get_language_from_request(request)
+        vacancy = get_vacancy_by_slug(slug, lang)
+        if not vacancy:
+            raise Http404("Vacancy not found")
+        
+        form = AppealForm(request.POST, request.FILES)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            if Appeal.objects.filter(vacancy=vacancy, email=email).exists():
+                messages.error(request, 'Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir.')
+            else:
+                try:
+                    appeal = form.save(commit=False)
+                    appeal.vacancy = vacancy
+                    appeal.save()
+                    messages.success(request, 'Müraciətiniz uğurla göndərildi.')
+                    return redirect('projects:vacancy-detail', slug=slug)
+                except IntegrityError:
+                    messages.error(request, 'Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir.')
+        else:
+            messages.error(request, 'Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.')
+        
+        context = {
+            'vacancy': serialize_vacancy(vacancy, lang),
+            'language': lang,
+            'background_image': get_background_image('vacancy'),
+            'form': form,
+        }
+        return render(request, self.template_name, context)
 
 
