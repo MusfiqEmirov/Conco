@@ -54,5 +54,5 @@ urlpatterns = [
         'vacancies/<slug:slug>/', 
         VacancyDetailPageView.as_view(), 
         name='vacancy-detail'
-    ), 
-]
+    )
+]   
