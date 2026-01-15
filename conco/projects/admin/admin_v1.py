@@ -490,6 +490,50 @@ class VacancyAdmin(admin.ModelAdmin):
         return format_html('<span style="color: #6c757d;">📄 0 CV</span>')
     appeals_count.short_description = "CV-lər"
 
+# Motto
+@admin.register(Motto)
+class MottoAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'text_preview_az',
+        'text_preview_en',
+        'text_preview_ru',
+    )
+    list_display_links = None
+    search_fields = ('text_az', 'text_en', 'text_ru')
+    list_per_page = 25
+    
+    fieldsets = (
+        ('Azərbaycan', {
+            'fields': ('text_az',)
+        }),
+        ('English', {
+            'fields': ('text_en',)
+        }),
+        ('Русский', {
+            'fields': ('text_ru',)
+        }),
+    )
+    
+    def text_preview_az(self, obj):
+        url = reverse('admin:projects_motto_change', args=[obj.pk])
+        preview = obj.text_az[:100] + '...' if len(obj.text_az) > 100 else obj.text_az
+        return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px;">🔗 {}</a>', url, preview)
+    text_preview_az.short_description = "Deviz (AZ)"
+    text_preview_az.admin_order_field = 'text_az'
+    
+    def text_preview_en(self, obj):
+        preview = obj.text_en[:100] + '...' if len(obj.text_en) > 100 else obj.text_en
+        return preview if obj.text_en else "-"
+    text_preview_en.short_description = "Deviz (EN)"
+    text_preview_en.admin_order_field = 'text_en'
+    
+    def text_preview_ru(self, obj):
+        preview = obj.text_ru[:100] + '...' if len(obj.text_ru) > 100 else obj.text_ru
+        return preview if obj.text_ru else "-"
+    text_preview_ru.short_description = "Deviz (RU)"
+    text_preview_ru.admin_order_field = 'text_ru'
+
 # Appeal (CV) 
 @admin.register(Appeal)
 class AppealAdmin(admin.ModelAdmin):

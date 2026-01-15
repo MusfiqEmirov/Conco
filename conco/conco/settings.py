@@ -1,20 +1,50 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv('')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+#
 
-
+##
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^-6d&m5n+l-@6yp#i+8))br#o%&tb+a&55nk8j%zh=480(^c@e'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://www.conco.az",
+    'https://conco.az',
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+]
+
+# # CSRF Cookie Settings
+# CSRF_COOKIE_SECURE = True  
+# CSRF_COOKIE_HTTPONLY = False
+# CSRF_USE_SESSIONS = False
+
+# # Session Cookie Settings
+# SESSION_COOKIE_SECURE = True  
+# SESSION_COOKIE_HTTPONLY = True
+
+
+# Admin URL - secret path (required)
+ADMIN_URL = os.getenv('ADMIN_URL')
+if not ADMIN_URL:
+    raise ValueError("ADMIN_URL environment variable is required!")
+if not ADMIN_URL.endswith('/'):
+    ADMIN_URL += '/'
+    
 
 # Application definition
 
@@ -66,13 +96,17 @@ WSGI_APPLICATION = 'conco.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -112,6 +146,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Static files directories
+STATICFILES_DIRS = [
+    os.path.join(str(BASE_DIR), 'static'),
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
