@@ -2,6 +2,8 @@ services:
   db:
     image: postgres:15-alpine
     container_name: conco_db
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -19,6 +21,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     container_name: conco_web
+    env_file:
+      - .env
     command: gunicorn --bind 0.0.0.0:8000 --workers 1 --timeout 60 --chdir conco conco.wsgi:application
     volumes:
       - ..:/app                                  # entire project mount
@@ -37,6 +41,14 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
       ADMIN_URL: ${ADMIN_URL}
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.smtp.EmailBackend}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-True}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-${EMAIL_HOST_USER}}
+      SERVER_EMAIL: ${SERVER_EMAIL:-${EMAIL_HOST_USER}}
     depends_on:
       db:
         condition: service_healthy
