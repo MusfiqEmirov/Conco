@@ -1,0 +1,96 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: projects/forms/forms_v1.py
+msgid "Ad Soyad"
+msgstr "Full Name"
+
+#: projects/forms/forms_v1.py
+msgid "E-poçt"
+msgstr "Email"
+
+#: projects/forms/forms_v1.py
+msgid "Nümunə: example@email.com"
+msgstr "Example: example@email.com"
+
+#: projects/forms/forms_v1.py
+msgid "Mobil Nömrə"
+msgstr "Phone Number"
+
+#: projects/forms/forms_v1.py
+msgid "Nümunə: 0501234567"
+msgstr "Example: 0501234567"
+
+#: projects/forms/forms_v1.py
+msgid "CV faylı"
+msgstr "CV File"
+
+#: projects/templates/vacancy_detail.html
+msgid "Vakansiya"
+msgstr "Vacancy"
+
+#: projects/templates/vacancy_detail.html
+msgid "Vakansiya Haqqında"
+msgstr "About Vacancy"
+
+#: projects/templates/vacancy_detail.html
+msgid "Məlumat yoxdur"
+msgstr "No information available"
+
+#: projects/templates/vacancy_detail.html
+msgid "Müraciət Formu"
+msgstr "Application Form"
+
+#: projects/templates/vacancy_detail.html
+msgid "Yalnız PDF, DOC və ya DOCX formatında fayllar qəbul olunur."
+msgstr "Only PDF, DOC or DOCX format files are accepted."
+
+#: projects/templates/vacancy_detail.html
+msgid "Müraciət Göndər"
+msgstr "Submit Application"
+
+#: projects/views/views_v1.py
+msgid "Vacancy not found"
+msgstr "Vacancy not found"
+
+#: projects/views/views_v1.py
+msgid "Bu vakansiyaya müraciət artıq göndərilmişdir."
+msgstr "Application for this vacancy has already been submitted."
+
+#: projects/views/views_v1.py
+msgid "Müraciətiniz uğurla göndərildi."
+msgstr "Your application has been submitted successfully."
+
+#: projects/views/views_v1.py
+msgid "Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir."
+msgstr "Application for this vacancy with this email address has already been submitted."
+
+#: projects/views/views_v1.py
+msgid "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
+msgstr "An error occurred. Please try again."
+
+#: projects/templates/vacancy_detail.html
+msgid "Dil"
+msgstr "Language"
+
+#: projects/templates/vacancy_detail.html
+msgid "Dəyiş"
+msgstr "Change"
+

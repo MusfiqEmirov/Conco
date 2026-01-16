@@ -538,25 +538,37 @@ class MottoAdmin(admin.ModelAdmin):
 @admin.register(Appeal)
 class AppealAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
+        'candidate_info',
+        'vacancy_info',
+        'contact_info',
+        'cv_download',
         'is_read',
-        'vacancy_title',
-        'cv_file_link',
-        'read_status',
+        'read_status_badge',
         'created_at_formatted',
     )
+
     list_display_links = None
     list_editable = ('is_read',)
     list_filter = ('is_read', 'created_at', 'vacancy')
     readonly_fields = ('created_at', 'cv_preview')
-    search_fields = ('vacancy__title_az', 'vacancy__title_en', 'vacancy__title_ru')
+    search_fields = (
+        'full_name',
+        'email',
+        'phone_number',
+        'vacancy__title_az',
+        'vacancy__title_en',
+        'vacancy__title_ru',
+    )
     ordering = ('-created_at',)
     list_per_page = 25
     date_hierarchy = 'created_at'
-    
+
     fieldsets = (
         ('Vakansiya', {
             'fields': ('vacancy',)
+        }),
+        ('Namizəd Məlumatları', {
+            'fields': ('full_name', 'email', 'phone_number')
         }),
         ('CV Faylı', {
             'fields': ('cv', 'cv_preview')
@@ -568,57 +580,178 @@ class AppealAdmin(admin.ModelAdmin):
             'fields': ('created_at',)
         }),
     )
-    
-    def vacancy_title(self, obj):
+
+    def candidate_info(self, obj):
+        """Namizəd məlumatlarını səliqəli şəkildə göstərir"""
         detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+        name = obj.full_name or "Ad Soyad yoxdur"
+        
+        return format_html(
+            '<div style="padding: 8px 0;">'
+            '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; '
+            'font-size: 15px; display: block; line-height: 1.4;">'
+            '👤 {}</a>'
+            '</div>',
+            detail_url,
+            name
+        )
+    candidate_info.short_description = "Namizəd"
+    candidate_info.admin_order_field = 'full_name'
+
+    def vacancy_info(self, obj):
+        """Vakansiya məlumatlarını səliqəli şəkildə göstərir"""
         if obj.vacancy:
             vacancy_url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
+            detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+            
             return format_html(
-                '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 10px;">🔗 {}</a> '
-                '<a href="{}" style="color: #6c757d; text-decoration: none; font-size: 11px;">💼 → Vakansiya</a>',
-                detail_url, obj.vacancy.title_az, vacancy_url
+                '<div style="padding: 8px 0;">'
+                '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 500; '
+                'font-size: 14px; display: block; margin-bottom: 4px; line-height: 1.4;">'
+                '💼 {}</a>'
+                '<a href="{}" style="color: #6c757d; text-decoration: none; font-size: 11px; '
+                'opacity: 0.8;">→ Vakansiyaya bax</a>'
+                '</div>',
+                detail_url,
+                obj.vacancy.title_az[:50] + ('...' if len(obj.vacancy.title_az) > 50 else ''),
+                vacancy_url
             )
-        return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px;">🔗 CV</a>', detail_url)
-    vacancy_title.short_description = "Vakansiya"
-    
-    def cv_file_link(self, obj):
+        return format_html('<span style="color: #999; font-size: 13px;">Vakansiya yoxdur</span>')
+    vacancy_info.short_description = "Vakansiya"
+    vacancy_info.admin_order_field = 'vacancy__title_az'
+
+    def contact_info(self, obj):
+        """Əlaqə məlumatlarını səliqəli şəkildə göstərir"""
+        contact_items = []
+        
+        if obj.email:
+            contact_items.append(
+                format_html(
+                    '<div style="margin-bottom: 4px;">'
+                    '<span style="color: #666; font-size: 12px;">✉️</span> '
+                    '<a href="mailto:{}" style="color: #417690; text-decoration: none; '
+                    'font-size: 13px;">{}</a>'
+                    '</div>',
+                    obj.email,
+                    obj.email[:30] + ('...' if len(obj.email) > 30 else '')
+                )
+            )
+        
+        if obj.phone_number:
+            contact_items.append(
+                format_html(
+                    '<div>'
+                    '<span style="color: #666; font-size: 12px;">📞</span> '
+                    '<span style="color: #333; font-size: 13px;">{}</span>'
+                    '</div>',
+                    obj.phone_number
+                )
+            )
+        
+        if not contact_items:
+            return format_html('<span style="color: #999; font-size: 12px;">Əlaqə məlumatı yoxdur</span>')
+        
+        return format_html(
+            '<div style="padding: 8px 0; line-height: 1.6;">{}</div>',
+            format_html(''.join(contact_items))
+        )
+    contact_info.short_description = "Əlaqə"
+
+    def cv_download(self, obj):
+        """CV faylını səliqəli şəkildə göstərir"""
         detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
-        file_name = obj.cv.name.split('/')[-1] if obj.cv else "CV"
+        
         if obj.cv:
+            file_name = obj.cv.name.split('/')[-1]
+            file_size = obj.cv.size if hasattr(obj.cv, 'size') else None
+            size_text = f"{round(file_size / 1024, 1)} KB" if isinstance(file_size, (int, float)) else "N/A"
+            
             return format_html(
-                '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 10px;">🔗 {}</a> '
-                '<a href="{}" target="_blank" style="background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">📎 Aç</a>',
-                detail_url, file_name, obj.cv.url
+                '<div style="padding: 8px 0;">'
+                '<a href="{}" target="_blank" '
+                'style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); '
+                'color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; '
+                'font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 4px; '
+                'box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">'
+                '📎 CV Endir</a>'
+                '<div style="color: #666; font-size: 11px; margin-top: 4px;">'
+                '📄 {} <span style="opacity: 0.7;">({})</span>'
+                '</div>'
+                '</div>',
+                obj.cv.url,
+                file_name[:25] + ('...' if len(file_name) > 25 else ''),
+                size_text
             )
-        return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px;">🔗 CV</a>', detail_url)
-    cv_file_link.short_description = "CV Faylı"
-    
+        
+        return format_html(
+            '<div style="padding: 8px 0;">'
+            '<a href="{}" style="color: #999; text-decoration: none; font-size: 12px;">'
+            'CV faylı yoxdur</a>'
+            '</div>',
+            detail_url
+        )
+    cv_download.short_description = "CV Faylı"
+
+    def read_status_badge(self, obj):
+        """Oxunma statusunu badge şəklində göstərir"""
+        if obj.is_read:
+            return format_html(
+                '<div style="padding: 8px 0;">'
+                '<span style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); '
+                'color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; '
+                'font-weight: 600; display: inline-block; box-shadow: 0 2px 4px rgba(40,167,69,0.3);">'
+                '✓ Oxunub</span>'
+                '</div>'
+            )
+        return format_html(
+            '<div style="padding: 8px 0;">'
+            '<span style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); '
+            'color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; '
+            'font-weight: 600; display: inline-block; box-shadow: 0 2px 4px rgba(220,53,69,0.3);">'
+            '🔴 Oxunmayıb</span>'
+            '</div>'
+        )
+    read_status_badge.short_description = "Status"
+    read_status_badge.admin_order_field = 'is_read'
+
+    def created_at_formatted(self, obj):
+        """Tarixi səliqəli formatda göstərir"""
+        if obj.created_at:
+            date_str = obj.created_at.strftime('%d.%m.%Y')
+            time_str = obj.created_at.strftime('%H:%M')
+            return format_html(
+                '<div style="padding: 8px 0;">'
+                '<div style="color: #333; font-size: 13px; font-weight: 500; margin-bottom: 2px;">{}</div>'
+                '<div style="color: #999; font-size: 11px;">{}</div>'
+                '</div>',
+                date_str,
+                time_str
+            )
+        return "-"
+    created_at_formatted.short_description = "Tarix"
+    created_at_formatted.admin_order_field = 'created_at'
+
     def cv_preview(self, obj):
         if obj.cv:
             file_name = obj.cv.name.split('/')[-1]
-            file_size = obj.cv.size if hasattr(obj.cv, 'size') else 'N/A'
+            file_size = obj.cv.size if hasattr(obj.cv, 'size') else None
+
             return format_html(
-                '<div style="padding: 12px; background: #e3f2fd; border-radius: 4px; border-left: 3px solid #2196f3;">'
-                '<span style="color: #1976d2; font-weight: 500;">📄 {}</span> '
-                '<span style="color: #666; font-size: 12px;">({} KB)</span> '
-                '<a href="{}" target="_blank" style="color: #2196f3; text-decoration: none; margin-left: 8px; font-weight: 500;">📥 Endir</a>'
+                '<div style="padding:12px;background:#e3f2fd;border-radius:4px;'
+                'border-left:3px solid #2196f3;">'
+                '<span style="color:#1976d2;font-weight:500;">📄 {}</span> '
+                '<span style="color:#666;font-size:12px;">({} KB)</span>'
+                '<a href="{}" target="_blank" '
+                'style="color:#2196f3;text-decoration:none;margin-left:8px;font-weight:500;">'
+                '📥 Endir</a>'
                 '</div>',
                 file_name,
-                round(file_size / 1024, 2) if isinstance(file_size, (int, float)) else file_size,
+                round(file_size / 1024, 2) if isinstance(file_size, (int, float)) else 'N/A',
                 obj.cv.url
             )
         return "-"
+
     cv_preview.short_description = "CV Önizləmə"
-    
-    def read_status(self, obj):
-        if obj.is_read:
-            return format_html('<span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">✓ Oxunub</span>')
-        return format_html('<span style="background: #dc3545; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🔴 Oxunmayıb</span>')
-    read_status.short_description = "Status"
-    
-    def created_at_formatted(self, obj):
-        return obj.created_at.strftime('%d.%m.%Y %H:%M') if obj.created_at else "-"
-    created_at_formatted.short_description = "Tarix"
 
 
 # Admin Site Customization
