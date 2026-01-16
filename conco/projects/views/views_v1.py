@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import Http404
+from django.utils.translation import gettext as _, activate
 
 from projects.models import Appeal
 from projects.forms.forms_v1 import AppealForm
@@ -15,6 +16,7 @@ class HomePageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         context = get_home_page_data(request, lang)
         context['language'] = lang
         return render(request, self.template_name, context)
@@ -25,16 +27,18 @@ class ProjectPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         context = get_project_list_data(request, lang)
         context['language'] = lang
         return render(request, self.template_name, context)
 
 
 class ProjectDetailPageView(View):
-    template_name = ''
+    template_name = 'project_detail.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
+        activate(lang)
         project = get_project_by_slug(slug, lang)
         context = {
             'project': serialize_project(project, lang),
@@ -50,6 +54,7 @@ class AboutPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         about = get_about(lang)
         context = {
             'about': serialize_about(about, lang),
@@ -65,6 +70,7 @@ class PartnerPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         is_active = request.GET.get('is_active', 'true').lower() == 'true'
         partners = get_partners(lang=lang, is_active=is_active)
         context = {
@@ -81,6 +87,7 @@ class ContactPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         contact = get_contact(lang)
         context = {
             'contact': serialize_contact(contact, lang),
@@ -95,20 +102,22 @@ class VacancyPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
+        activate(lang)
         context = get_vacancy_list_data(request, lang)
         context['language'] = lang
         return render(request, self.template_name, context)
 
 
 class VacancyDetailPageView(View):
-    template_name = ''
+    template_name = 'vacancy_detail.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
+        activate(lang)
         vacancy = get_vacancy_by_slug(slug, lang)
         if not vacancy:
             from django.http import Http404
-            raise Http404("Vacancy not found")
+            raise Http404(_("Vacancy not found"))
         
         form = AppealForm()
         context = {
@@ -121,26 +130,31 @@ class VacancyDetailPageView(View):
     
     def post(self, request, slug):
         lang = get_language_from_request(request)
+        activate(lang)
         vacancy = get_vacancy_by_slug(slug, lang)
         if not vacancy:
-            raise Http404("Vacancy not found")
+            raise Http404(_("Vacancy not found"))
         
         form = AppealForm(request.POST, request.FILES)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            if Appeal.objects.filter(vacancy=vacancy, email=email).exists():
-                messages.error(request, 'Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir.')
+            phone_number = form.cleaned_data.get('phone_number')
+            situation_one = Appeal.objects.filter(vacancy=vacancy, email=email).exists()
+            situation_two = Appeal.objects.filter(vacancy=vacancy, phone_number=phone_number).exists()
+            
+            if situation_one or situation_two :
+                messages.error(request, _('Bu vakansiyaya müraciət artıq göndərilmişdir.'))
             else:
                 try:
                     appeal = form.save(commit=False)
                     appeal.vacancy = vacancy
                     appeal.save()
-                    messages.success(request, 'Müraciətiniz uğurla göndərildi.')
+                    messages.success(request, _('Müraciətiniz uğurla göndərildi.'))
                     return redirect('projects:vacancy-detail', slug=slug)
                 except IntegrityError:
-                    messages.error(request, 'Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir.')
+                    messages.error(request, _('Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir.'))
         else:
-            messages.error(request, 'Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.')
+            messages.error(request, _('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.'))
         
         context = {
             'vacancy': serialize_vacancy(vacancy, lang),

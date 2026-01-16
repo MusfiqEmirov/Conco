@@ -8,18 +8,26 @@ from projects.models import *
 def get_language_from_request(request):
     lang = request.GET.get('lang', '').lower()
     if lang in ['az', 'en', 'ru']:
-        request.session['language'] = lang
+        request.session['django_language'] = lang
+        request.session['language'] = lang 
+        return lang
+    
+    lang = request.session.get('django_language', '').lower()
+    if lang in ['az', 'en', 'ru']:
         return lang
     
     lang = request.session.get('language', '').lower()
     if lang in ['az', 'en', 'ru']:
+        request.session['django_language'] = lang  # Migrate edirik
         return lang
     
     lang = getattr(request, 'LANGUAGE_CODE', 'az')
     if lang in ['az', 'en', 'ru']:
+        request.session['django_language'] = lang
         request.session['language'] = lang
         return lang
     
+    request.session['django_language'] = 'az'
     request.session['language'] = 'az'
     return 'az'
 
