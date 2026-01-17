@@ -321,6 +321,7 @@ section {
     transition: 0.3s;
     position: relative;
   }
+/* Scroll olduqda header fonu açıq olsun */
 
   .navbar a i,
   .navbar a:focus i {
@@ -328,6 +329,7 @@ section {
     line-height: 0;
     margin-left: 5px;
   }
+  
 
   .navbar>ul>li>a:before {
     content: "";
@@ -451,7 +453,7 @@ section {
     inset: 0;
     padding: 50px 0 10px 0;
     margin: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     overflow-y: auto;
     transition: 0.3s;
     z-index: 9998;
@@ -466,7 +468,7 @@ section {
     font-family: var(--font-primary);
     font-size: 15px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-primary);
     white-space: nowrap;
     text-transform: uppercase;
     transition: 0.3s;
@@ -783,16 +785,11 @@ section {
 .services .service-item .readmore {
   margin-top: 15px;
   display: inline-block;
-  color: var(--color-primary);
 }
 
-.services .service-item:hover .icon:before {
-  background: var(--color-primary);
-}
 
-.services .service-item:hover h3 {
-  border-color: var(--color-primary);
-}
+
+
 
 /*--------------------------------------------------------------
 # Features Section
@@ -1908,7 +1905,7 @@ section {
 
 .hero .carousel-item::before {
   content: "";
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6);
   position: absolute;
   inset: 0;
 }
@@ -2614,42 +2611,73 @@ section {
 
 .footer:before {
   content: "";
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
   position: absolute;
   inset: 0;
 }
 
+.footer .footer-content {
+  position: relative;
+}
+
+/* Ümumi footer blok */
 .footer .footer-content .footer-info {
   margin-bottom: 30px;
 }
 
+/* 🔶 BAŞLIQLAR – SARI */
 .footer .footer-content .footer-info h3 {
   font-size: 28px;
   margin: 0 0 20px 0;
-  padding: 2px 0 2px 0;
   line-height: 1;
   font-weight: 700;
   text-transform: uppercase;
+  color: #fbc531; /* SARI */
 }
 
-.footer .footer-content .footer-info h3 span {
+/* Footer link listləri */
+.footer .footer-content .footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Alt-alta aralıq */
+.footer .footer-content .footer-links ul li {
+  padding: 10px 0;
+}
+
+/* 🔹 Linklər – iri, ağ */
+.footer .footer-content .footer-links ul a {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  display: inline-block;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+/* Hover effekti */
+.footer .footer-content .footer-links ul a:hover {
   color: var(--color-primary);
 }
 
-.footer .footer-content .footer-info p {
-  font-size: 14px;
-  line-height: 24px;
-  margin-bottom: 0;
-  font-family: var(--font-primary);
+/* Əlaqə mətni */
+.footer .footer-content .footer-info p,
+.footer .footer-content .footer-info li {
+  font-size: 16px;
+  line-height: 26px;
   color: #fff;
 }
 
+/* Sosial ikonlar */
 .footer .footer-content .social-links a {
   font-size: 18px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  line-height: 1;
   margin-right: 8px;
   border-radius: 4px;
   width: 36px;
@@ -2659,57 +2687,13 @@ section {
 
 .footer .footer-content .social-links a:hover {
   background: var(--color-primary);
-  text-decoration: none;
 }
 
-.footer .footer-content h4 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  position: relative;
-  padding-bottom: 12px;
-}
-
-.footer .footer-content .footer-links {
-  margin-bottom: 30px;
-}
-
-.footer .footer-content .footer-links ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer .footer-content .footer-links ul li {
-  padding: 8px 0;
-}
-
-.footer .footer-content .footer-links ul li:first-child {
-  padding-top: 0;
-}
-
-.footer .footer-content .footer-links ul a {
-  color: rgba(255, 255, 255, 0.6);
-  transition: 0.3s;
-  display: inline-block;
-  line-height: 1;
-}
-
-.footer .footer-content .footer-links ul a:hover {
-  color: #fff;
-}
-
+/* Alt copyright hissə */
 .footer .footer-legal .copyright {
   padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.footer .footer-legal .credits {
-  padding-top: 4px;
-  font-size: 13px;
+  border-top: 1px solid var(--color-primary);
   color: #fff;
 }
 
-.footer .footer-legal .credits a {
-  color: var(--color-primary);
-}
+

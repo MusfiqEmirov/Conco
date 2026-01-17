@@ -62,8 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   navDropdowns.forEach(el => {
     el.addEventListener('click', function(event) {
-      if (document.querySelector('.mobile-nav-active')) {
-        event.preventDefault();
+      // Yalnız '#' linkləri üçün preventDefault
+      if (this.getAttribute('href') === '#') {
+        event.preventDefault(); // adi linkləri bloklamır
         this.classList.toggle('active');
         this.nextElementSibling.classList.toggle('dropdown-active');
 
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropDownIndicator.classList.toggle('bi-chevron-up');
         dropDownIndicator.classList.toggle('bi-chevron-down');
       }
-    })
+    });
   });
 
   /**
@@ -242,4 +243,28 @@ document.addEventListener('DOMContentLoaded', () => {
     aos_init();
   });
 
+});
+
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+    document.querySelectorAll("#navbar a").forEach(link => {
+      const linkPage = link.getAttribute("href");
+
+      if (linkPage === currentPage) {
+        link.classList.add("active");
+      }
+    });
+  });
+
+document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    // Mobil nav açıqdırsa, bağla
+    if (document.body.classList.contains('mobile-nav-active')) {
+      mobileNavToogle();
+    }
+    // heç bir preventDefault yoxdur -> link işləyir
+  });
 });
