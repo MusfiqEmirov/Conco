@@ -58,9 +58,11 @@
           <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li ><a href="{% url 'projects:project-page' %}">TİKİNTİ</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
             </ul>
           </li>
           <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
@@ -83,14 +85,22 @@
   <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% static 'assets/img/breadcrumbs-bg.jpg' %}');">
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
-
-        <h2>VAkansiya</h2>
+        {% if vacancy %}
+        <h2>{{ vacancy.title }}</h2>
         <ol>
-          <li><a href="{% url 'projects:home-page' %}">ANA sehife</a></li>
-          <li>Vakansiya adi</li>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+          <li>{{ vacancy.title }}</li>
         </ol>
+        {% else %}
+        <h2>Vakansiya</h2>
+        <ol>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li>Vakansiyalar</li>
+        </ol>
+        {% endif %}
 
       </div>
     </div><!-- End Breadcrumbs -->
@@ -102,74 +112,109 @@
         <div class="row g-5">
 
           <div class="col-lg-6">
+            {% if vacancy %}
             <article class="blog-details">
 
               <div class="post-img">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" alt="" class="img-fluid">
+                {% if vacancy.image %}
+                <img src="{{ vacancy.image }}" alt="{{ vacancy.title }}" class="img-fluid">
+                {% else %}
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" alt="{{ vacancy.title }}" class="img-fluid">
+                {% endif %}
               </div>
 
-              <h2 class="title">Vakansiya adi</h2>
+              <h2 class="title">{{ vacancy.title }}</h2>
 
               <div class="meta-top">
                 <ul>
-                
+                  {% if vacancy.created_at %}
                   <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time
-                        datetime="2020-01-01">vakansiya tarixi</time></a></li>
+                        datetime="{{ vacancy.created_at|date:'Y-m-d' }}">{{ vacancy.created_at|date:"d M Y" }}</time></a></li>
+                  {% endif %}
                 </ul>
               </div><!-- End meta top -->
 
               <div class="content">
-
-
+                {% if vacancy.description %}
+                <div>
+                  {{ vacancy.description|safe }}
+                </div>
+                {% else %}
                 <blockquote>
-                  <p>
-                    vakansiya haqqinda
-                    vakansiya haqqinda
-                    vakansiya haqqinda
-                    vakansiya haqqinda
-                    vakansiya haqqinda
-                    vakansiya haqqinda
-                  </p>
+                  <p>Məlumat tapılmadı.</p>
                 </blockquote>
+                {% endif %}
 
               </div><!-- End post content -->
             </article><!-- End blog post -->
+            {% else %}
+            <article class="blog-details">
+              <div class="content">
+                <p>Vakansiya tapılmadı.</p>
+              </div>
+            </article>
+            {% endif %}
           </div>
           
           <div class="col-lg-6">
             <div class="comments">
               <div class="reply-form">
 
-                <h4>Muraciet et</h4>
-                <form action="">
+                <h4>Müraciət et</h4>
+                {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% if form %}
+                <form method="post" action="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" enctype="multipart/form-data">
+                  {% csrf_token %}
                   <div class="row">
 
                     <div class="col-md-6 form-group">
-                      <input name="name" type="text" class="form-control" placeholder="AD ve soyad*">
+                      {{ form.full_name.label_tag }}
+                      {{ form.full_name }}
+                      {% if form.full_name.errors %}
+                        <div class="text-danger">{{ form.full_name.errors }}</div>
+                      {% endif %}
                     </div>
 
                     <div class="col-md-6 form-group">
-                      <input name="email" type="text" class="form-control" placeholder="Email ve ya gmail unvani*">
+                      {{ form.email.label_tag }}
+                      {{ form.email }}
+                      {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors }}</div>
+                      {% endif %}
                     </div>
 
-                    <div class="col-md-6 form-group">
-                      <input name="website" type="text" class="form-control" placeholder="secilmis vakansiya adi">
+                    <div class="col-md-12 form-group">
+                      {{ form.phone_number.label_tag }}
+                      {{ form.phone_number }}
+                      {% if form.phone_number.errors %}
+                        <div class="text-danger">{{ form.phone_number.errors }}</div>
+                      {% endif %}
                     </div>
-                    <div class="col-md-6 form-group">
-                      <input  type="file" class="form-control">
-                    </div>
-
-                  </div>
-
                     
-                  <div class="row">
-                    <div class="col form-group">
-                      <textarea name="comment" class="form-control" placeholder="Elave melumat"></textarea>
+                    <div class="col-md-12 form-group">
+                      {{ form.cv.label_tag }}
+                      {{ form.cv }}
+                      {% if form.cv.errors %}
+                        <div class="text-danger">{{ form.cv.errors }}</div>
+                      {% endif %}
                     </div>
+
                   </div>
-                  <button type="submit" class="btn btn-primary">Gonder</button>
+
+                  <button type="submit" class="btn btn-primary">Göndər</button>
 
                 </form>
+                {% else %}
+                <p>Form tapılmadı.</p>
+                {% endif %}
 
             </div>
             </div>
@@ -185,34 +230,53 @@
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
 
     <div class="footer-content position-relative">
       <div class="container">
         <div class="row">
           <!-- Əsas -->
+          {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
               <h3>Əlaqə</h3>
               <ul>
-                <li>Bakı şəhəri, Nərimanov rayonu</li>
-                <li>Əhməd Rəcəbli 2/1</li>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
                 <li>
-                  <a href="tel:+994557169791">📞 Zəng et: 055 716 97 91</a>
+                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
                 </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
                 <li>
-                  <a href="https://wa.me/994557169791" target="_blank">
-                    💬 Whatsapp: 055 716 97 91
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
                   </a>
                 </li>
+                {% endif %}
+                {% if contact.email %}
                 <li>
-                  <a href="mailto:info@conco.az">✉️ info@conco.az</a>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
                 </li>
+                {% endif %}
               </ul>
 
-              <div class="social-links d-flex mt-3"> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a> </div>
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
             </div>
           </div>
+          {% endif %}
 
 
 
@@ -233,9 +297,7 @@
             <div class="footer-info footer-links">
               <h3>Layihələr</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Tikinti</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Təmir</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Dizayn</a></li>
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
               </ul>
             </div>
           </div>

@@ -58,9 +58,11 @@
           <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li ><a href="{% url 'projects:project-page' %}">TİKİNTİ</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
             </ul>
           </li>
           <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
@@ -83,10 +85,10 @@
   <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% static 'assets/img/breadcrumbs-bg.jpg' %}');">
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>Layihə adi</h2>
+        <h2>{% if selected_category %}{{ selected_category.name }}{% else %}Layihələr{% endif %}</h2>
  
 
       </div>
@@ -103,95 +105,34 @@
             <li data-filter="*" class="filter-active">Hamisi</li>
             <li data-filter=".filter-remodeling">DAVAM EDƏN LAYİHƏLƏR</li>
             <li data-filter=".filter-construction">TAMAMLANMIŞ LAYİHƏLƏR</li>
-
           </ul><!-- End Projects Filters -->
 
           <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
-            <!-- temir ancaq -->
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-construction{% else %}filter-remodeling{% endif %}">
               <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
+                {% if project.medias %}
+                  {% with project.medias|first as first_media %}
+                    {% if first_media.image %}
+                    <img src="{{ first_media.image }}" class="img-fluid" alt="{{ project.name }}">
+                    {% else %}
+                    <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                    {% endif %}
+                  {% endwith %}
+                {% else %}
+                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                {% endif %}
                 <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
+                  <h4>{% if project.is_completed %}Tamamlanmış{% else %}Davam edən{% endif %}</h4>
+                  <p>{{ project.name }} <a href="{% url 'projects:project-detail' slug=project.slug %}" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
                 </div>
               </div>
             </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Tamamlanmis</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Tamamlanmis</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-            
-
-
-            <!-- tikinti ancaq -->
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/construction-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/construction-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>tamamlanmis</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/construction-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/construction-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>tamamlanmis</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-
+            {% empty %}
+            <div class="col-12">
+              <p>Layihə tapılmadı.</p>
+            </div>
+            {% endfor %}
 
           </div><!-- End Projects Container -->
 
@@ -203,7 +144,7 @@
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
 
     <div class="footer-content position-relative">
       <div class="container">
@@ -251,9 +192,11 @@
             <div class="footer-info footer-links">
               <h3>Layihələr</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Tikinti</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Təmir</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Dizayn</a></li>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+                {% empty %}
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                {% endfor %}
               </ul>
             </div>
           </div>
@@ -291,6 +234,10 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>
 
 </body>
 

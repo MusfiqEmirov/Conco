@@ -61,9 +61,9 @@ class Media(models.Model):
         default=False,
         verbose_name='Haqqımızda səhifəsi üçü arxa plan şəkli'
     )
-    is_partner_background_image = models.BooleanField(
+    is_contact_page_background_image = models.BooleanField(
         default=False,
-        verbose_name='Əməkdaş səhifəsi üçün arxa plan şəkli'
+        verbose_name='Əlaqə səhifəsi üçün arxa plan şəkli'
     )
     is_project_page_background_image = models.BooleanField(
         default=False,
@@ -72,6 +72,10 @@ class Media(models.Model):
     is_vacany_page_background_image = models.BooleanField(
         default=False,
         verbose_name='Vakansiya səhifəsi üçün arxa plan şəkli'
+    )
+    is_footer_background_image = models.BooleanField(
+        default=False,
+        verbose_name='Websiten-ın aşağı hissəsi üçün arxa plan şəkli'
     )
 
     created_at = models.DateTimeField(

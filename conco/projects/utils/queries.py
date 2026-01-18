@@ -44,7 +44,9 @@ def get_localized_field_name(field_base, lang):
         return f'{field_base}_az'
 
 
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_project_categories(lang='az'):
+    """Layihə kateqoriyalarını qaytarır"""
     name_field = get_localized_field_name('name', lang)
     return ProjectCategory.objects.all().order_by('id')
 
@@ -128,9 +130,11 @@ def get_background_image(page_type):
     image_map = {
         'home': 'is_home_page_background_image',
         'about': 'is_about_page_background_image',
+        'contact': 'is_contact_page_background_image',
         'partner': 'is_partner_background_image',
         'project': 'is_project_page_background_image',
         'vacancy': 'is_vacany_page_background_image',
+        'footer': 'is_footer_background_image',
     }
     
     if page_type not in image_map:
@@ -155,7 +159,6 @@ def get_home_background_images(limit=3):
 
 @cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_motto(lang='az'):
-    """Motto modelindən deviz qaytarır"""
     motto = Motto.objects.first()
     if not motto:
         return None
@@ -163,6 +166,33 @@ def get_motto(lang='az'):
     text_field = get_localized_field_name('text', lang)
     text = getattr(motto, text_field, motto.text_az)
     return text
+
+
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
+def get_statistics():
+
+    statistic = Statistic.objects.first()
+    
+    if statistic:
+        return {
+            'client_count': statistic.value_one,
+            'project_count': statistic.value_two,
+            'partner_count': statistic.value_three,
+        }
+    
+    # Əgər Statistic yoxdursa, fallback olaraq dinamik hesabla
+    from projects.models import Appeal
+    
+    client_count = Appeal.objects.values('email', 'phone_number').distinct().count()
+    project_count = Project.objects.filter(is_active=True).count()
+    partner_count = Partner.objects.filter(is_active=True).count()
+    
+    return {
+        'client_count': client_count,
+        'project_count': project_count,
+        'partner_count': partner_count,
+    }
 
 
 def serialize_project(project, lang='az'):
@@ -396,6 +426,8 @@ def get_home_page_data(request, lang):
         'background_image': get_background_image('home'),
         'hero_background_images': hero_background_images,
         'motto': motto,
+        'statistics': get_statistics(),
+        'footer_image': get_background_image('footer'),
     }
 
 
@@ -432,9 +464,23 @@ def get_project_list_data(request, lang):
         for category in categories
     ]
     
+    selected_category = None
+    if category_id:
+        try:
+            category_obj = next((cat for cat in categories if cat.id == int(category_id)), None)
+            if category_obj:
+                selected_category = serialize_project_category(category_obj, lang)
+        except (ValueError, TypeError):
+            pass
+    
+    contact = get_contact(lang)
+    serialized_contact = serialize_contact(contact, lang) if contact else None
+    
     return {
         'projects': serialized_projects,
         'categories': serialized_categories,
+        'selected_category': selected_category,
+        'contact': serialized_contact,
         'pagination': get_pagination_data(projects_page_obj, projects_paginator),
         'filters': {
             'category_id': category_id,
@@ -442,6 +488,7 @@ def get_project_list_data(request, lang):
             'is_active': is_active,
         },
         'background_image': get_background_image('project'),
+        'footer_image': get_background_image('footer'),
     }
 
 
@@ -459,8 +506,13 @@ def get_vacancy_list_data(request, lang):
         for vacancy in vacancies_page_obj
     ]
     
+    contact = get_contact(lang)
+    serialized_contact = serialize_contact(contact, lang) if contact else None
+    
     return {
         'vacancies': serialized_vacancies,
+        'contact': serialized_contact,
         'pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
         'background_image': get_background_image('vacancy'),
+        'footer_image': get_background_image('footer'),
     }

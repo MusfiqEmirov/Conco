@@ -58,12 +58,14 @@
           <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li ><a href="{% url 'projects:project-page' %}">TİKİNTİ</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
             </ul>
           </li>
-          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
+          <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
           <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
           <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
           <li class="dropdown"><a href="#"><span>AZ</span> <i
@@ -83,10 +85,10 @@
   <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% static 'assets/img/breadcrumbs-bg.jpg' %}');">
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>Haqqimizda</h2>
+        <h2>Haqqımızda</h2>
       </div>
     </div><!-- End Breadcrumbs -->
 
@@ -96,23 +98,52 @@
 
         <div class="row position-relative">
 
+          {% if about %}
+          {% if about.medias %}
+            {% with about.medias|first as first_media %}
+              {% if first_media.image %}
+              <div class="col-lg-7 about-img" style="background-image: url({{ first_media.image }});"></div>
+              {% else %}
+              <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
+              {% endif %}
+            {% endwith %}
+          {% else %}
           <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
+          {% endif %}
 
           <div class="col-lg-7">
-            <h2>Əsas başlıq</h2>
+            {% if about.main_title %}
+            <h2>{{ about.main_title }}</h2>
+            {% endif %}
             <div class="our-story">
-              <h3>alt başlıq</h3>
-              <p>Ana mətn 
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus aliquid dolorem cum excepturi, ipsa autem at commodi dignissimos placeat doloribus perspiciatis dicta magni vero vel, ex tempore quibusdam veniam id..</p>
+              {% if about.second_title %}
+              <h3>{{ about.second_title }}</h3>
+              {% endif %}
+              {% if about.description %}
+              <p>{{ about.description|safe }}</p>
+              {% endif %}
 
-
-
+              {% if about.medias %}
+                {% for media in about.medias %}
+                  {% if media.video %}
               <div class="watch-video d-flex align-items-center position-relative">
                 <i class="bi bi-play-circle"></i>
-                <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox stretched-link">Watch Video</a>
+                <a href="{{ media.video }}" class="glightbox stretched-link">Video izlə</a>
               </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </div>
           </div>
+          {% else %}
+          <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
+          <div class="col-lg-7">
+            <h2>Haqqımızda</h2>
+            <div class="our-story">
+              <p>Məlumat tapılmadı.</p>
+            </div>
+          </div>
+          {% endif %}
 
         </div>
 
@@ -125,107 +156,46 @@
       <div class="container" data-aos="fade-up">
 
         <div class="section-header">
-          <h2>Terefdaslar</h2>
+          <h2>Tərəfdaşlar</h2>
         </div>
 
         <div class="team-slider swiper">
           <div class="swiper-wrapper">
-
+            {% for partner in partners %}
             <div class="swiper-slide">
               <div class="member">
                 <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="">
+                  {% if partner.logo %}
+                  <img src="{{ partner.logo }}" class="img-fluid" alt="{{ partner.name }}">
+                  {% else %}
+                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
+                  {% endif %}
                   <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    {% if contact.facebook %}
+                    <a href="{{ contact.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if partner.url %}
+                    <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
+                    {% endif %}
+                    {% if contact.instagram %}
+                    <a href="{{ contact.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
                   </div>
                 </div>
                 <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
+                  <h4>{{ partner.name }}</h4>
                 </div>
               </div>
             </div><!-- End Team Member -->
-
+            {% empty %}
             <div class="swiper-slide">
               <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-2.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
                 <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
+                  <h4>Tərəfdaş tapılmadı</h4>
                 </div>
               </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-3.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-4.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-5.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-6.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
+            </div>
+            {% endfor %}
 
           </div>
           <div class="swiper-pagination"></div>
@@ -237,17 +207,17 @@
     <!-- ======= Stats Counter Section ======= -->
     <section id="stats-counter" class="stats-counter section-bg">
       <div class="section-header">
-          <h2>Statistikalarimiz</h2>
+          <h2>Statistikalarımız</h2>
         </div>
       <div class="container">
 
         <div class="row gy-4">
-
+          {% if statistics %}
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-emoji-smile color-blue flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1"
+                <span data-purecounter-start="0" data-purecounter-end="{{ statistics.client_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
                 <p>Müştərilər</p>
               </div>
@@ -258,25 +228,24 @@
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-journal-richtext color-orange flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1"
+                <span data-purecounter-start="0" data-purecounter-end="{{ statistics.project_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
-                <p>layihələr sayi</p>
+                <p>Layihə sayı</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
-
-
 
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 ">
               <i class="bi bi-people color-pink flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1"
+                <span data-purecounter-start="0" data-purecounter-end="{{ statistics.partner_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
-                <p>Tərəfdaş sayi</p>
+                <p>Tərəfdaş sayı</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
+          {% endif %}
 
         </div>
 
@@ -287,34 +256,53 @@
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
 
     <div class="footer-content position-relative">
       <div class="container">
         <div class="row">
           <!-- Əsas -->
+          {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
               <h3>Əlaqə</h3>
               <ul>
-                <li>Bakı şəhəri, Nərimanov rayonu</li>
-                <li>Əhməd Rəcəbli 2/1</li>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
                 <li>
-                  <a href="tel:+994557169791">📞 Zəng et: 055 716 97 91</a>
+                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
                 </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
                 <li>
-                  <a href="https://wa.me/994557169791" target="_blank">
-                    💬 Whatsapp: 055 716 97 91
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
                   </a>
                 </li>
+                {% endif %}
+                {% if contact.email %}
                 <li>
-                  <a href="mailto:info@conco.az">✉️ info@conco.az</a>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
                 </li>
+                {% endif %}
               </ul>
 
-              <div class="social-links d-flex mt-3"> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a> </div>
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
             </div>
           </div>
+          {% endif %}
 
 
 
@@ -335,9 +323,7 @@
             <div class="footer-info footer-links">
               <h3>Layihələr</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Tikinti</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Təmir</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Dizayn</a></li>
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
               </ul>
             </div>
           </div>

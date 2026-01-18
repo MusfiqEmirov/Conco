@@ -58,9 +58,11 @@
           <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li ><a href="{% url 'projects:project-page' %}">TİKİNTİ</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
-              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
             </ul>
           </li>
           <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
@@ -121,6 +123,7 @@
   <main id="main">
 
     <!-- ======= About Section ======= -->
+    {% if about %}
     <section id="features" class="features section-bg">
       <div class="container" data-aos="fade-up">
         <div class="tab-content">
@@ -129,30 +132,39 @@
             <div class="row">
               <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center"
                 data-aos="fade-up" data-aos-delay="100">
-                <h3>Esas basliq Esas basliq Esas basliq Esas basliq Esas basliq</h3>
+                {% if about.main_title %}
+                <h3>{{ about.main_title }}</h3>
+                {% endif %}
+                {% if about.second_title %}
                 <h4 class="fst-italic">
-                  alt basliq alt basliq alt basliq alt basliq
+                  {{ about.second_title }}
                 </h4>
+                {% endif %}
+                {% if about.description %}
                 <ul>
-                  <li><i class="bi bi-check2-all"></i>ana metn ana metn ana metn ana metn ana metn ana metn ana metn ana metn
-                  ana metn ana metn ana metn ana metn ana metn ana metn ana metn ana metn 
-                ana metn ana metn ana metn ana metn ana metn ana metn ana metn ana metn  </li>
+                  <li><i class="bi bi-check2-all"></i>{{ about.description|safe }}</li>
                 </ul>
+                {% endif %}
               </div>
               <div class="col-lg-6 order-1 order-lg-2 text-center" data-aos="fade-up" data-aos-delay="200">
-
-                <!-- sekil carusel olacaq -->
+                {% if about.medias %}
+                  {% for media in about.medias %}
+                    {% if media.image %}
+                    <img src="{{ media.image }}" alt="" class="img-fluid">
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
                 <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
+                {% endif %}
               </div>
             </div>
           </div>
-
-
 
         </div>
 
       </div>
     </section>
+    {% endif %}
 
 
 
@@ -170,140 +182,37 @@
 
           <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
             <li data-filter="*" class="filter-active">Hamisi</li>
-            <li data-filter=".filter-remodeling">temir</li>
-            <li data-filter=".filter-construction">tikinti</li>
-            <li data-filter=".filter-repairs">berpa</li>
+            {% for category in categories %}
+            <li data-filter=".filter-category-{{ category.id }}">{{ category.name }}</li>
+            {% endfor %}
           </ul>
 
           <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
-            
-
-            <!-- temir ancaq -->
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
               <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
+                {% if project.medias %}
+                  {% with project.medias|first as first_media %}
+                    {% if first_media.image %}
+                    <img src="{{ first_media.image }}" class="img-fluid" alt="{{ project.name }}">
+                    {% else %}
+                    <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                    {% endif %}
+                  {% endwith %}
+                {% else %}
+                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                {% endif %}
                 <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
+                  <h4>{% if project.is_completed %}Tamamlanmış{% else %}Davam edən{% endif %}</h4>
+                  <p>{{ project.name }} <a href="{% url 'projects:project-detail' slug=project.slug %}" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
                 </div>
               </div>
             </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-remodeling">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-            
-
-
-            <!-- tikinti ancaq -->
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-construction">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-            
-
-            <!-- berpa ancaq -->
-            <div class="col-lg-4 col-md-6 portfolio-item filter-repairs">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-repairs">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-repairs">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-repairs">
-              <div class="portfolio-content h-100">
-                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>davam eden</h4>
-                  <p>Layihenin adi <a href="#" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
-                </div>
-              </div>
-            </div><!-- End Projects Item -->
-
+            {% empty %}
+            <div class="col-12">
+              <p>Layihə tapılmadı.</p>
+            </div>
+            {% endfor %}
 
           </div><!-- End Projects Container -->
 
@@ -323,102 +232,41 @@
 
         <div class="team-slider swiper">
           <div class="swiper-wrapper">
-
+            {% for partner in partners %}
             <div class="swiper-slide">
               <div class="member">
                 <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="">
+                  {% if partner.logo %}
+                  <img src="{{ partner.logo }}" class="img-fluid" alt="{{ partner.name }}">
+                  {% else %}
+                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
+                  {% endif %}
                   <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    {% if contact.facebook %}
+                    <a href="{{ contact.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if partner.url %}
+                    <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
+                    {% endif %}
+                    {% if contact.instagram %}
+                    <a href="{{ contact.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
                   </div>
                 </div>
                 <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
+                  <h4>{{ partner.name }}</h4>
                 </div>
               </div>
             </div><!-- End Team Member -->
-
+            {% empty %}
             <div class="swiper-slide">
               <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-2.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
                 <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
+                  <h4>Tərəfdaş tapılmadı</h4>
                 </div>
               </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-3.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-4.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-5.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-
-            <div class="swiper-slide">
-              <div class="member">
-                <div class="member-img">
-                  <img src="{% static 'assets/img/team/team-6.jpg' %}" class="img-fluid" alt="">
-                  <div class="social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-globe"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                  </div>
-                </div>
-                <div class="member-info text-center">
-                  <h4>Sirketin adi</h4>
-                </div>
-              </div>
-            </div><!-- End Team Member -->
+            </div>
+            {% endfor %}
 
           </div>
           <div class="swiper-pagination"></div>
@@ -440,147 +288,37 @@
         </div>
 
         <div class="row gy-5">
-
+          {% for vacancy in vacancies %}
           <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
+                {% if vacancy.image %}
+                <img src="{{ vacancy.image }}" class="img-fluid" alt="{{ vacancy.title }}">
+                {% else %}
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="{{ vacancy.title }}">
+                {% endif %}
+                <span class="post-date">{{ vacancy.created_at|date:"d M Y" }}</span>
               </div>
 
               <div class="post-content d-flex flex-column">
 
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
+                <h3 class="post-title">{{ vacancy.title }}</h3>
 
                 <hr>
 
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
 
             </div>
           </div><!-- End post item -->
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="post-item position-relative h-100">
-
-              <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
-              </div>
-
-              <div class="post-content d-flex flex-column">
-
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
-
-                <hr>
-
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
-                    class="bi bi-arrow-right"></i></a>
-
-              </div>
-
-            </div>
-          </div><!-- End post item -->
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="post-item position-relative h-100">
-
-              <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
-              </div>
-
-              <div class="post-content d-flex flex-column">
-
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
-
-                <hr>
-
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
-                    class="bi bi-arrow-right"></i></a>
-
-              </div>
-
-            </div>
-          </div><!-- End post item -->
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="post-item position-relative h-100">
-
-              <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
-              </div>
-
-              <div class="post-content d-flex flex-column">
-
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
-
-                <hr>
-
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
-                    class="bi bi-arrow-right"></i></a>
-
-              </div>
-
-            </div>
-          </div><!-- End post item -->
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="post-item position-relative h-100">
-
-              <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
-              </div>
-
-              <div class="post-content d-flex flex-column">
-
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
-
-                <hr>
-
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
-                    class="bi bi-arrow-right"></i></a>
-
-              </div>
-
-            </div>
-          </div><!-- End post item -->
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="post-item position-relative h-100">
-
-              <div class="post-img position-relative overflow-hidden">
-                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
-                <span class="post-date">Vakansiya tarixi</span>
-              </div>
-
-              <div class="post-content d-flex flex-column">
-
-                <h3 class="post-title">Vakansiya novu</h3>
-
-
-
-                <hr>
-
-                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
-                    class="bi bi-arrow-right"></i></a>
-
-              </div>
-
-            </div>
-          </div><!-- End post item -->
-
-
+          {% empty %}
+          <div class="col-12">
+            <p>Vakansiya tapılmadı.</p>
+          </div>
+          {% endfor %}
 
         </div>
 
@@ -598,34 +336,53 @@
 
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
 
     <div class="footer-content position-relative">
       <div class="container">
         <div class="row">
           <!-- Əsas -->
+          {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
               <h3>Əlaqə</h3>
               <ul>
-                <li>Bakı şəhəri, Nərimanov rayonu</li>
-                <li>Əhməd Rəcəbli 2/1</li>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
                 <li>
-                  <a href="tel:+994557169791">📞 Zəng et: 055 716 97 91</a>
+                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
                 </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
                 <li>
-                  <a href="https://wa.me/994557169791" target="_blank">
-                    💬 Whatsapp: 055 716 97 91
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
                   </a>
                 </li>
+                {% endif %}
+                {% if contact.email %}
                 <li>
-                  <a href="mailto:info@conco.az">✉️ info@conco.az</a>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
                 </li>
+                {% endif %}
               </ul>
 
-              <div class="social-links d-flex mt-3"> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a> </div>
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
             </div>
           </div>
+          {% endif %}
 
 
 
@@ -646,9 +403,11 @@
             <div class="footer-info footer-links">
               <h3>Layihələr</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Tikinti</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Təmir</a></li>
-                <li><a href="{% url 'projects:project-page' %}">Dizayn</a></li>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+                {% empty %}
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                {% endfor %}
               </ul>
             </div>
           </div>

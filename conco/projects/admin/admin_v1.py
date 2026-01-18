@@ -20,9 +20,10 @@ class MediaAdmin(admin.ModelAdmin):
     list_filter = (
         'is_home_page_background_image',
         'is_about_page_background_image',
-        'is_partner_background_image',
+        'is_contact_page_background_image',
         'is_project_page_background_image',
         'is_vacany_page_background_image',
+        'is_footer_background_image',
         'created_at',
     )
     readonly_fields = ('created_at', 'media_preview_detailed')
@@ -35,9 +36,10 @@ class MediaAdmin(admin.ModelAdmin):
             'fields': (
                 'is_home_page_background_image',
                 'is_about_page_background_image',
-                'is_partner_background_image',
+                'is_contact_page_background_image',
                 'is_project_page_background_image',
                 'is_vacany_page_background_image',
+                'is_footer_background_image',
             ),
         }),
     )
@@ -53,9 +55,10 @@ class MediaAdmin(admin.ModelAdmin):
         return qs.filter(
             models.Q(is_home_page_background_image=True) |
             models.Q(is_about_page_background_image=True) |
-            models.Q(is_partner_background_image=True) |
+            models.Q(is_contact_page_background_image=True) |
             models.Q(is_project_page_background_image=True) |
-            models.Q(is_vacany_page_background_image=True)
+            models.Q(is_vacany_page_background_image=True)  |
+            models.Q(is_footer_background_image=True)
         )
 
     def media_preview(self, obj):
@@ -82,12 +85,14 @@ class MediaAdmin(admin.ModelAdmin):
             flags.append("🏠 Ana səhifə")
         if obj.is_about_page_background_image:
             flags.append("ℹ️ Haqqımızda səhifəsi")
-        if obj.is_partner_background_image:
-            flags.append("🤝 Əməkdaşlar səhifəi")
+        if obj.is_contact_page_background_image:
+            flags.append("🤝 Əlaqə səhifəi")
         if obj.is_project_page_background_image:
             flags.append("📁 Layihələr səhifəsi")
         if obj.is_vacany_page_background_image:
             flags.append("💼 Vakansiyalar səhifəsi")
+        if obj.is_footer_background_image:
+            flags.append("🖼️ Websiten-ın aşağı hissəsi üçün")
         return " | ".join(flags) if flags else "-"
     background_flags.short_description = "Arxa Plan"
 
@@ -758,6 +763,27 @@ class AppealAdmin(admin.ModelAdmin):
         return "-"
 
     cv_preview.short_description = "CV Önizləmə"
+
+
+# Statistic
+@admin.register(Statistic)
+class StatisticAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'value_one',
+        'value_two',
+        'value_three',
+    )
+    list_display_links = ('id',)
+    fieldsets = (
+        ('Statistikalar', {
+            'fields': (
+                'value_one',
+                'value_two',
+                'value_three',
+            ),
+        }),
+    )
 
 
 # Admin Site Customization

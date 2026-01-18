@@ -113,26 +113,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let portfolioSort = portfolionIsotope.getAttribute('data-portfolio-sort') ? portfolionIsotope.getAttribute('data-portfolio-sort') : 'original-order';
 
     window.addEventListener('load', () => {
-      let portfolioIsotope = new Isotope(document.querySelector('.portfolio-container'), {
-        itemSelector: '.portfolio-item',
-        layoutMode: portfolioLayout,
-        filter: portfolioFilter,
-        sortBy: portfolioSort
-      });
+      const container = document.querySelector('.portfolio-container');
+      if (container) {
+        let portfolioIsotope = new Isotope(container, {
+          itemSelector: '.portfolio-item',
+          layoutMode: portfolioLayout,
+          filter: portfolioFilter,
+          sortBy: portfolioSort
+        });
 
-      let menuFilters = document.querySelectorAll('.portfolio-isotope .portfolio-flters li');
-      menuFilters.forEach(function(el) {
-        el.addEventListener('click', function() {
-          document.querySelector('.portfolio-isotope .portfolio-flters .filter-active').classList.remove('filter-active');
-          this.classList.add('filter-active');
-          portfolioIsotope.arrange({
-            filter: this.getAttribute('data-filter')
-          });
-          if (typeof aos_init === 'function') {
-            aos_init();
-          }
-        }, false);
-      });
+        // Isotope instance-ini global saxla
+        window.portfolioIsotopeInstance = portfolioIsotope;
+
+        let menuFilters = document.querySelectorAll('.portfolio-isotope .portfolio-flters li');
+        menuFilters.forEach(function(el) {
+          el.addEventListener('click', function(e) {
+            e.preventDefault();
+            const activeFilter = document.querySelector('.portfolio-isotope .portfolio-flters .filter-active');
+            if (activeFilter) {
+              activeFilter.classList.remove('filter-active');
+            }
+            this.classList.add('filter-active');
+            const filterValue = this.getAttribute('data-filter');
+            if (portfolioIsotope && filterValue) {
+              portfolioIsotope.arrange({
+                filter: filterValue
+              });
+            }
+            if (typeof aos_init === 'function') {
+              aos_init();
+            }
+          }, false);
+        });
+      }
 
     });
 
