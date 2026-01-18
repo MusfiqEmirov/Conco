@@ -16,21 +16,36 @@ def generate_cache_key(prefix, *args, **kwargs):
     Args:
         prefix: Cache key prefix (e.g., 'page_home', 'query_projects')
         *args: Positional arguments to include in key
-        **kwargs: Keyword arguments to include in key
+        **kwargs: Keyword arguments to include in key (None values are skipped)
     
     Returns:
         str: Generated cache key
     """
+    # Filter out None values from kwargs for consistent key generation
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    
     # Sort kwargs for consistent key generation
-    sorted_kwargs = sorted(kwargs.items())
+    sorted_kwargs = sorted(filtered_kwargs.items())
     
     # Create a string representation of all arguments
-    key_parts = [prefix] + [str(arg) for arg in args] + [f"{k}={v}" for k, v in sorted_kwargs]
+    # Handle different types properly
+    def safe_str(val):
+        if val is None:
+            return 'None'
+        elif isinstance(val, (list, tuple)):
+            return ','.join(str(item) for item in val)
+        elif isinstance(val, dict):
+            return ','.join(f"{k}:{v}" for k, v in sorted(val.items()))
+        else:
+            return str(val)
+    
+    key_parts = [prefix] + [safe_str(arg) for arg in args] + [f"{k}={safe_str(v)}" for k, v in sorted_kwargs]
     key_string = "|".join(key_parts)
     
-    # Hash the key if it's too long
-    if len(key_string) > 250:
+    # Hash the key if it's too long (Django cache keys have length limits)
+    if len(key_string) > 200:
         key_string = hashlib.md5(key_string.encode()).hexdigest()
+        return f"conco:{prefix}:{key_string}"
     
     return f"conco:{key_string}"
 
@@ -72,34 +87,88 @@ def cached_query(timeout=None):
     Decorator to cache the result of a query function.
     
     Args:
-        timeout: Cache timeout in seconds. If None, uses CACHE_TIMEOUT_MEDIUM.
+        timeout: Cache timeout in seconds, callable function, or None (uses CACHE_TIMEOUT_MEDIUM).
+                 Can also be string like 'CACHE_TIMEOUT_LONG' to read from settings.
     
     Usage:
         @cached_query(timeout=300)
+        @cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
         def get_projects(lang='az', category_id=None):
             ...
     """
+    # If timeout is a string, it's a settings attribute name
+    timeout_settings_key = None
+    if isinstance(timeout, str):
+        timeout_settings_key = timeout
+        timeout = None
+    
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            if timeout is None:
+            # Get timeout value - handle all cases
+            try:
+                if timeout_settings_key:
+                    # Read from settings dynamically
+                    cache_timeout = getattr(settings, timeout_settings_key, getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+                elif callable(timeout):
+                    # Callable function (e.g., lambda)
+                    cache_timeout = timeout()
+                elif timeout is None:
+                    # Default timeout from settings
+                    cache_timeout = getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300)
+                else:
+                    # Fixed timeout value
+                    cache_timeout = int(timeout)
+            except Exception:
+                # Fallback to default timeout if any error
                 cache_timeout = getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300)
-            else:
-                cache_timeout = timeout
             
             # Generate cache key from function name and arguments
-            cache_key = get_query_cache_key(func.__name__, *args, **kwargs)
+            # Include cache version for invalidation support
+            try:
+                cache_version = cache.get('cache_version', 0)
+            except Exception:
+                cache_version = 0
+            
+            # Generate cache key with all parameters
+            try:
+                cache_key = get_query_cache_key(
+                    func.__name__, 
+                    *args, 
+                    cache_version=cache_version,
+                    **kwargs
+                )
+            except Exception as e:
+                # If key generation fails, skip caching
+                return func(*args, **kwargs)
             
             # Try to get from cache
-            result = cache.get(cache_key)
-            if result is not None:
-                return result
+            try:
+                result = cache.get(cache_key)
+                if result is not None:
+                    return result
+            except Exception:
+                # If cache read fails, continue without cache
+                pass
             
             # Execute function and cache result
-            result = func(*args, **kwargs)
-            cache.set(cache_key, result, cache_timeout)
-            
-            return result
+            try:
+                result = func(*args, **kwargs)
+                # Cache result (including None values, but with shorter timeout)
+                try:
+                    if result is None:
+                        # Cache None values with shorter timeout
+                        cache.set(cache_key, result, min(cache_timeout, 60))
+                    else:
+                        # Cache actual values with full timeout
+                        cache.set(cache_key, result, cache_timeout)
+                except Exception:
+                    # If cache write fails, just return result without caching
+                    pass
+                return result
+            except Exception as e:
+                # If function fails, don't cache the error, just raise it
+                raise
         return wrapper
     return decorator
 
@@ -129,11 +198,14 @@ def invalidate_query_cache(query_names=None):
         query_names: List of query names to invalidate. If None, invalidates all queries.
     """
     if query_names is None:
-        # Clear all cache
-        cache.clear()
+        # Increment cache version to invalidate all queries
+        current_version = cache.get('cache_version', 0)
+        cache.set('cache_version', current_version + 1, None)
     else:
-        # Clear specific query patterns (simplified - would need key tracking for production)
-        cache.set('cache_version', cache.get('cache_version', 0) + 1, None)
+        # Increment cache version to invalidate specific queries
+        # Since we can't pattern match with locmem cache, we invalidate all
+        current_version = cache.get('cache_version', 0)
+        cache.set('cache_version', current_version + 1, None)
 
 
 def cached_page_data(timeout=None):
@@ -141,35 +213,82 @@ def cached_page_data(timeout=None):
     Decorator to cache page data functions (like get_home_page_data, get_project_list_data).
     
     Args:
-        timeout: Cache timeout in seconds. If None, uses CACHE_TIMEOUT_MEDIUM.
+        timeout: Cache timeout in seconds, callable function, or None (uses CACHE_TIMEOUT_MEDIUM).
+                 Can also be string like 'CACHE_TIMEOUT_MEDIUM' to read from settings.
     
     Usage:
         @cached_page_data(timeout=300)
+        @cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
         def get_home_page_data(request, lang):
             ...
     """
+    # If timeout is a string, it's a settings attribute name
+    timeout_settings_key = None
+    if isinstance(timeout, str):
+        timeout_settings_key = timeout
+        timeout = None
+    
     def decorator(func):
         @wraps(func)
         def wrapper(request, lang, *args, **kwargs):
-            if timeout is None:
+            # Get timeout value - handle all cases
+            try:
+                if timeout_settings_key:
+                    # Read from settings dynamically
+                    cache_timeout = getattr(settings, timeout_settings_key, getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+                elif callable(timeout):
+                    # Callable function (e.g., lambda)
+                    cache_timeout = timeout()
+                elif timeout is None:
+                    # Default timeout from settings
+                    cache_timeout = getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300)
+                else:
+                    # Fixed timeout value
+                    cache_timeout = int(timeout)
+            except Exception:
+                # Fallback to default timeout if any error
                 cache_timeout = getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300)
-            else:
-                cache_timeout = timeout
             
             # Generate cache key from function name, language, and query parameters
-            query_params = dict(request.GET.items())
-            cache_key = get_page_cache_key(func.__name__.replace('get_', '').replace('_data', ''), lang, **query_params)
+            # Include cache version for invalidation support
+            try:
+                cache_version = cache.get('cache_version', 0)
+            except Exception:
+                cache_version = 0
+            
+            try:
+                query_params = dict(request.GET.items())
+                view_name = func.__name__.replace('get_', '').replace('_data', '')
+                cache_key = get_page_cache_key(view_name, lang, cache_version=cache_version, **query_params)
+            except Exception:
+                # If key generation fails, skip caching
+                return func(request, lang, *args, **kwargs)
             
             # Try to get from cache
-            result = cache.get(cache_key)
-            if result is not None:
-                return result
+            try:
+                result = cache.get(cache_key)
+                if result is not None:
+                    return result
+            except Exception:
+                # If cache read fails, continue without cache
+                pass
             
             # Execute function and cache result
-            result = func(request, lang, *args, **kwargs)
-            cache.set(cache_key, result, cache_timeout)
-            
-            return result
+            try:
+                result = func(request, lang, *args, **kwargs)
+                # Always cache result (including None, but with shorter timeout)
+                try:
+                    if result is None:
+                        cache.set(cache_key, result, min(cache_timeout, 60))
+                    else:
+                        cache.set(cache_key, result, cache_timeout)
+                except Exception:
+                    # If cache write fails, just return result without caching
+                    pass
+                return result
+            except Exception as e:
+                # If function fails, don't cache the error, just raise it
+                raise
         return wrapper
     return decorator
 
@@ -179,38 +298,17 @@ def invalidate_model_cache(model_name):
     Invalidate all cache entries related to a specific model.
     
     Args:
-        model_name: Name of the model (e.g., 'Project', 'Vacancy', 'About')
+        model_name: Name of the model (e.g., 'Project', 'Vacancy', 'About', 'Media', 'Motto')
     """
-    # Map model names to related views/queries
-    model_to_views = {
-        'Project': ['home', 'project-list', 'project-detail'],
-        'ProjectCategory': ['home', 'project-list'],
-        'Vacancy': ['home', 'vacancy-list', 'vacancy-detail'],
-        'Partner': ['home', 'partner-list'],
-        'About': ['home', 'about'],
-        'Contact': ['home', 'contact'],
-        'Media': ['home', 'project-list', 'project-detail', 'about', 'partner-list', 'vacancy-list', 'vacancy-detail'],
-    }
-    
-    views_to_invalidate = model_to_views.get(model_name, [])
-    
-    # Also invalidate related queries
-    model_to_queries = {
-        'Project': ['get_projects', 'get_project_by_slug', 'get_project_categories'],
-        'ProjectCategory': ['get_project_categories', 'get_projects'],
-        'Vacancy': ['get_vacancies', 'get_vacancy_by_slug'],
-        'Partner': ['get_partners'],
-        'About': ['get_about'],
-        'Contact': ['get_contact'],
-        'Media': ['get_projects', 'get_project_by_slug', 'get_about', 'get_partners', 
-                  'get_vacancies', 'get_vacancy_by_slug', 'get_background_image'],
-    }
-    
-    queries_to_invalidate = model_to_queries.get(model_name, [])
-    
     # Increment cache version to invalidate all related caches
-    cache.set('cache_version', cache.get('cache_version', 0) + 1, None)
-    
-    # Also clear specific cache keys if we track them
-    # For simplicity, we'll just increment version which forces key regeneration
+    # This ensures all cache keys with cache_version parameter are invalidated
+    try:
+        current_version = cache.get('cache_version', 0)
+        cache.set('cache_version', current_version + 1, None)
+    except Exception:
+        # If cache version update fails, clear all cache as fallback
+        try:
+            cache.clear()
+        except Exception:
+            pass
 

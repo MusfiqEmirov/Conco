@@ -45,6 +45,9 @@ class MediaAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     list_per_page = 25
 
+    class Media:
+        js = ('assets/js/admin_image_compress.js',)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(
@@ -97,6 +100,9 @@ class MediaInlineBase(admin.TabularInline):
     fields = ('image', 'video', 'thumbnail_preview', 'created_at')
     verbose_name = "Media"
     verbose_name_plural = "Medialar"
+    
+    class Media:
+        js = ('assets/js/admin_image_compress.js',)
     
     def thumbnail_preview(self, obj):
         if obj and obj.image:

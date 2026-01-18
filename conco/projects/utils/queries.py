@@ -66,7 +66,7 @@ def get_projects(lang='az', category_id=None, is_active=True, is_completed=None)
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_project_by_slug(slug, lang='az'):
     try:
         project = Project.objects.select_related('category').prefetch_related(
@@ -77,7 +77,7 @@ def get_project_by_slug(slug, lang='az'):
         return None
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_about(lang='az'):
     about = About.objects.prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
@@ -96,7 +96,7 @@ def get_partners(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_contact(lang='az'):
     return Contact.objects.first()
 
@@ -112,7 +112,7 @@ def get_vacancies(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_vacancy_by_slug(slug, lang='az'):
     try:
         vacancy = Vacancy.objects.prefetch_related(
@@ -123,7 +123,7 @@ def get_vacancy_by_slug(slug, lang='az'):
         return None
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_background_image(page_type):
     image_map = {
         'home': 'is_home_page_background_image',
@@ -140,6 +140,29 @@ def get_background_image(page_type):
     if media and media.image:
         return media.image.url
     return None
+
+
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+def get_home_background_images(limit=3):
+    """Ana səhifə üçün background image-ləri qaytarır (maksimum 3 ədəd)"""
+    media_list = Media.objects.filter(
+        is_home_page_background_image=True,
+        image__isnull=False
+    ).order_by('-created_at')[:limit]
+    
+    return [media.image.url for media in media_list if media.image]
+
+
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+def get_motto(lang='az'):
+    """Motto modelindən deviz qaytarır"""
+    motto = Motto.objects.first()
+    if not motto:
+        return None
+    
+    text_field = get_localized_field_name('text', lang)
+    text = getattr(motto, text_field, motto.text_az)
+    return text
 
 
 def serialize_project(project, lang='az'):
@@ -290,7 +313,7 @@ def get_pagination_data(page_obj, paginator):
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_home_page_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -349,6 +372,12 @@ def get_home_page_data(request, lang):
     contact = get_contact(lang)
     serialized_contact = serialize_contact(contact, lang) if contact else None
     
+    # Hero carousel üçün 3 ədəd background image
+    hero_background_images = get_home_background_images(limit=3)
+    
+    # Motto modelindən deviz
+    motto = get_motto(lang)
+    
     return {
         'projects': serialized_projects,
         'categories': serialized_categories,
@@ -365,10 +394,12 @@ def get_home_page_data(request, lang):
             'is_active': is_active,
         },
         'background_image': get_background_image('home'),
+        'hero_background_images': hero_background_images,
+        'motto': motto,
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_project_list_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -414,7 +445,7 @@ def get_project_list_data(request, lang):
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_vacancy_list_data(request, lang):
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
     page = request.GET.get('page', 1)
