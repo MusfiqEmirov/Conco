@@ -12,7 +12,7 @@ from projects.utils.queries import *
 
 
 class HomePageView(View):
-    template_name = ''
+    template_name = 'index.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
@@ -23,7 +23,7 @@ class HomePageView(View):
 
 
 class ProjectPageView(View):
-    template_name = ''
+    template_name = 'projects.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
@@ -34,7 +34,7 @@ class ProjectPageView(View):
 
 
 class ProjectDetailPageView(View):
-    template_name = 'project_detail.html'
+    template_name = 'project-details.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
@@ -50,14 +50,17 @@ class ProjectDetailPageView(View):
 
 
 class AboutPageView(View):
-    template_name = ''
+    template_name = 'about.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
+        is_active = request.GET.get('is_active', 'true').lower() == 'true'
         activate(lang)
         about = get_about(lang)
+        partners = get_partners(lang=lang, is_active=is_active)
         context = {
             'about': serialize_about(about, lang),
+            'partners': [serialize_partner(p, lang) for p in partners],
             'language': lang,
             'background_image': get_background_image('about'),
         }
@@ -65,25 +68,8 @@ class AboutPageView(View):
         return render(request, self.template_name, context)
 
 
-class PartnerPageView(View):
-    template_name = 'projects/partner_list.html'
-    
-    def get(self, request):
-        lang = get_language_from_request(request)
-        activate(lang)
-        is_active = request.GET.get('is_active', 'true').lower() == 'true'
-        partners = get_partners(lang=lang, is_active=is_active)
-        context = {
-            'partners': [serialize_partner(p, lang) for p in partners],
-            'language': lang,
-            'background_image': get_background_image('partner'),
-        }
-
-        return render(request, self.template_name, context)
-
-
 class ContactPageView(View):
-    template_name = 'projects/contact.html'
+    template_name = 'contact.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
@@ -98,7 +84,7 @@ class ContactPageView(View):
 
 
 class VacancyPageView(View):
-    template_name = 'projects/vacancy_list.html'
+    template_name = 'vacancy.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
@@ -109,7 +95,7 @@ class VacancyPageView(View):
 
 
 class VacancyDetailPageView(View):
-    template_name = 'vacancy_detail.html'
+    template_name = 'vacancy-details.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)

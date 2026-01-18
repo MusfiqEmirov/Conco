@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +11,8 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,15 +22,15 @@
     rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: UpConstruction - v1.3.0
@@ -45,26 +46,34 @@
   <header id="header" class="header d-flex align-items-center">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
-        <h1>Logo</h1>
+      <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
+        <img src="{% static 'assets/img/my_logo.png' %}" alt="Logo" class="logo-img">
       </a>
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-      <nav id="navbar" class="navbar">
+      <nav id="navbar" class="navbar " >
         <ul>
-          <li><a href="index.html" >Ana səhifə</a></li>
-          <li class="dropdown"><a href="#"><span>Layihələr</span> <i
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li ><a href="projects.html">TİKİNTİ</li>
-              <li ><a href="projects.html">TƏMİR</li>
-              <li ><a href="projects.html">TƏMİR</li>
+              <li ><a href="{% url 'projects:project-page' %}">TİKİNTİ</li>
+              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
+              <li ><a href="{% url 'projects:project-page' %}">TƏMİR</li>
             </ul>
           </li>
-          <li><a href="about.html">Haqqimizda</a></li>
-          <li><a href="vacancy.html">Vakansiyalar</a></li>
-          <li><a href="contact.html">Əlaqə</a></li>
+          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+          <li class="dropdown"><a href="#"><span>AZ</span> <i
+                class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">EN</a></li>
+              <li><a href="#" class="lang-option" data-lang="ru">RU</a></li>
+            </ul>
+          </li>
         </ul>
       </nav><!-- .navbar -->
 
@@ -74,12 +83,12 @@
   <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('assets/img/breadcrumbs-bg.jpg');">
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% static 'assets/img/breadcrumbs-bg.jpg' %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
         <h2>Blog</h2>
         <ol>
-          <li><a href="index.html">Home</a></li>
+          <li><a href="{% url 'projects:home-page' %}">Home</a></li>
           <li>Blog</li>
         </ol>
 
@@ -103,7 +112,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -115,7 +124,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -126,7 +135,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -138,7 +147,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -149,7 +158,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -161,7 +170,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -172,7 +181,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -184,7 +193,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -195,7 +204,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -207,7 +216,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -218,7 +227,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="assets/img/blog/blog-1.jpg" class="img-fluid" alt="">
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="">
                 <span class="post-date">Vakansiya tarixi</span>
               </div>
 
@@ -230,7 +239,7 @@
 
                 <hr>
 
-                <a href="vacancy-details.html" class="readmore stretched-link"><span>Etrafli</span><i
+                <a href="#" class="readmore stretched-link"><span>Etrafli</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -284,10 +293,10 @@
             <div class="footer-info footer-links">
               <h3>Əsas</h3>
               <ul>
-                <li><a href="index.html">Ana səhifə</a></li>
-                <li><a href="about.html">Haqqımızda</a></li>
-                <li><a href="vacancy.html">Vakansiyalar</a></li>
-                <li><a href="contact.html">Əlaqə</a></li>
+                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
               </ul>
             </div>
           </div>
@@ -297,9 +306,9 @@
             <div class="footer-info footer-links">
               <h3>Layihələr</h3>
               <ul>
-                <li><a href="projects.html">Tikinti</a></li>
-                <li><a href="projects.html">Təmir</a></li>
-                <li><a href="projects.html">Dizayn</a></li>
+                <li><a href="{% url 'projects:project-page' %}">Tikinti</a></li>
+                <li><a href="{% url 'projects:project-page' %}">Təmir</a></li>
+                <li><a href="{% url 'projects:project-page' %}">Dizayn</a></li>
               </ul>
             </div>
           </div>
@@ -327,16 +336,16 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
 
   <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="{% static 'assets/js/main.js' %}"></script>
 
 </body>
 
