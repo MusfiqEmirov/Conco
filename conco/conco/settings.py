@@ -176,6 +176,26 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     os.path.join(str(BASE_DIR), 'static'),
 ]
+
+# Cache configuration
+# https://docs.djangoproject.com/en/5.2/topics/cache/
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'conco-cache',
+        'TIMEOUT': 7200,  # 2 hours default timeout
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
+}
+
+# Cache timeout settings (in seconds)
+CACHE_TIMEOUT_SHORT = 1800  # 30 minutes for occasionally changing data
+CACHE_TIMEOUT_MEDIUM = 7200  # 2 hours for normal pages (projects, vacancies lists)
+CACHE_TIMEOUT_LONG = 86400  # 24 hours for stable data (about, contact, background images)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
