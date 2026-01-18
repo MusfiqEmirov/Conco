@@ -44,7 +44,9 @@ def get_localized_field_name(field_base, lang):
         return f'{field_base}_az'
 
 
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_project_categories(lang='az'):
+    """Layihə kateqoriyalarını qaytarır"""
     name_field = get_localized_field_name('name', lang)
     return ProjectCategory.objects.all().order_by('id')
 
@@ -66,7 +68,7 @@ def get_projects(lang='az', category_id=None, is_active=True, is_completed=None)
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_project_by_slug(slug, lang='az'):
     try:
         project = Project.objects.select_related('category').prefetch_related(
@@ -77,7 +79,7 @@ def get_project_by_slug(slug, lang='az'):
         return None
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_about(lang='az'):
     about = About.objects.prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
@@ -96,7 +98,7 @@ def get_partners(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_contact(lang='az'):
     return Contact.objects.first()
 
@@ -112,7 +114,7 @@ def get_vacancies(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_vacancy_by_slug(slug, lang='az'):
     try:
         vacancy = Vacancy.objects.prefetch_related(
@@ -123,14 +125,16 @@ def get_vacancy_by_slug(slug, lang='az'):
         return None
 
 
-@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_background_image(page_type):
     image_map = {
         'home': 'is_home_page_background_image',
         'about': 'is_about_page_background_image',
+        'contact': 'is_contact_page_background_image',
         'partner': 'is_partner_background_image',
         'project': 'is_project_page_background_image',
         'vacancy': 'is_vacany_page_background_image',
+        'footer': 'is_footer_background_image',
     }
     
     if page_type not in image_map:
@@ -142,7 +146,59 @@ def get_background_image(page_type):
     return None
 
 
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+def get_home_background_images(limit=3):
+    """Ana səhifə üçün background image-ləri qaytarır (maksimum 3 ədəd)"""
+    media_list = Media.objects.filter(
+        is_home_page_background_image=True,
+        image__isnull=False
+    ).order_by('-created_at')[:limit]
+    
+    return [media.image.url for media in media_list if media.image]
+
+
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+def get_motto(lang='az'):
+    motto = Motto.objects.first()
+    if not motto:
+        return None
+    
+    text_field = get_localized_field_name('text', lang)
+    text = getattr(motto, text_field, motto.text_az)
+    return text
+
+
+@cached_query(timeout='CACHE_TIMEOUT_LONG')
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
+def get_statistics():
+
+    statistic = Statistic.objects.first()
+    
+    if statistic:
+        return {
+            'client_count': statistic.value_one,
+            'project_count': statistic.value_two,
+            'partner_count': statistic.value_three,
+        }
+    
+    # Əgər Statistic yoxdursa, fallback olaraq dinamik hesabla
+    from projects.models import Appeal
+    
+    client_count = Appeal.objects.values('email', 'phone_number').distinct().count()
+    project_count = Project.objects.filter(is_active=True).count()
+    partner_count = Partner.objects.filter(is_active=True).count()
+    
+    return {
+        'client_count': client_count,
+        'project_count': project_count,
+        'partner_count': partner_count,
+    }
+
+
 def serialize_project(project, lang='az'):
+    if project is None:
+        return None
+    
     name_field = get_localized_field_name('name', lang)
     desc_field = get_localized_field_name('description', lang)
     cat_name_field = get_localized_field_name('name', lang)
@@ -181,6 +237,9 @@ def serialize_project_category(category, lang='az'):
 
 
 def serialize_about(about, lang='az'):
+    if about is None:
+        return None
+    
     main_title_field = get_localized_field_name('main_title', lang)
     second_title_field = get_localized_field_name('second_title', lang)
     desc_field = get_localized_field_name('description', lang)
@@ -202,6 +261,9 @@ def serialize_about(about, lang='az'):
 
 
 def serialize_partner(partner, lang='az'):
+    if partner is None:
+        return None
+    
     name_field = get_localized_field_name('name', lang)
     
     media = partner.medias.first()
@@ -217,6 +279,9 @@ def serialize_partner(partner, lang='az'):
 
 
 def serialize_contact(contact, lang='az'):
+    if contact is None:
+        return None
+    
     address_field = get_localized_field_name('address', lang)
     
     return {
@@ -236,6 +301,9 @@ def serialize_contact(contact, lang='az'):
 
 
 def serialize_vacancy(vacancy, lang='az'):
+    if vacancy is None:
+        return None
+    
     title_field = get_localized_field_name('title', lang)
     desc_field = get_localized_field_name('description', lang)
     
@@ -275,7 +343,7 @@ def get_pagination_data(page_obj, paginator):
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_home_page_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -334,6 +402,12 @@ def get_home_page_data(request, lang):
     contact = get_contact(lang)
     serialized_contact = serialize_contact(contact, lang) if contact else None
     
+    # Hero carousel üçün 3 ədəd background image
+    hero_background_images = get_home_background_images(limit=3)
+    
+    # Motto modelindən deviz
+    motto = get_motto(lang)
+    
     return {
         'projects': serialized_projects,
         'categories': serialized_categories,
@@ -350,10 +424,14 @@ def get_home_page_data(request, lang):
             'is_active': is_active,
         },
         'background_image': get_background_image('home'),
+        'hero_background_images': hero_background_images,
+        'motto': motto,
+        'statistics': get_statistics(),
+        'footer_image': get_background_image('footer'),
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_project_list_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -386,9 +464,23 @@ def get_project_list_data(request, lang):
         for category in categories
     ]
     
+    selected_category = None
+    if category_id:
+        try:
+            category_obj = next((cat for cat in categories if cat.id == int(category_id)), None)
+            if category_obj:
+                selected_category = serialize_project_category(category_obj, lang)
+        except (ValueError, TypeError):
+            pass
+    
+    contact = get_contact(lang)
+    serialized_contact = serialize_contact(contact, lang) if contact else None
+    
     return {
         'projects': serialized_projects,
         'categories': serialized_categories,
+        'selected_category': selected_category,
+        'contact': serialized_contact,
         'pagination': get_pagination_data(projects_page_obj, projects_paginator),
         'filters': {
             'category_id': category_id,
@@ -396,10 +488,11 @@ def get_project_list_data(request, lang):
             'is_active': is_active,
         },
         'background_image': get_background_image('project'),
+        'footer_image': get_background_image('footer'),
     }
 
 
-@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
+@cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_vacancy_list_data(request, lang):
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
     page = request.GET.get('page', 1)
@@ -413,8 +506,13 @@ def get_vacancy_list_data(request, lang):
         for vacancy in vacancies_page_obj
     ]
     
+    contact = get_contact(lang)
+    serialized_contact = serialize_contact(contact, lang) if contact else None
+    
     return {
         'vacancies': serialized_vacancies,
+        'contact': serialized_contact,
         'pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
         'background_image': get_background_image('vacancy'),
+        'footer_image': get_background_image('footer'),
     }

@@ -6,3 +6,4 @@ from .contact_models import Contact
 from .vacancy_models import Vacancy
 from .appeal_models import Appeal
 from .motto_models import Motto
+from .statistic_models import Statistic

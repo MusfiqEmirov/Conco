@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>CONCO, Tikinti | construction</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: UpConstruction - v1.3.0
+  * Template URL: https://bootstrapmade.com/upconstruction-bootstrap-construction-website-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header d-flex align-items-center">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
+        <img src="{% static 'assets/img/my_logo.png' %}" alt="Logo" class="logo-img">
+      </a>
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      <nav id="navbar" class="navbar " >
+        <ul>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
+                class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+          <li class="dropdown"><a href="#"><span>AZ</span> <i
+                class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">EN</a></li>
+              <li><a href="#" class="lang-option" data-lang="ru">RU</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero">
+
+    <div class="info d-flex align-items-center">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-6 text-center">
+            <h2 data-aos="fade-down">{% if motto %}{{ motto }}{% else %}deviz{% endif %}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hero-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+      {% if hero_background_images %}
+        {% for image_url in hero_background_images %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image: url('{{ image_url }}')">
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="carousel-item active" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})">
+        </div>
+        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+      {% endif %}
+
+      <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
+      </a>
+
+      <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
+        <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <main id="main">
+
+    <!-- ======= About Section ======= -->
+    {% if about %}
+    <section id="features" class="features section-bg">
+      <div class="container" data-aos="fade-up">
+        <div class="tab-content">
+
+          <div class="tab-pane active show" id="tab-1">
+            <div class="row">
+              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center"
+                data-aos="fade-up" data-aos-delay="100">
+                {% if about.main_title %}
+                <h3>{{ about.main_title }}</h3>
+                {% endif %}
+                {% if about.second_title %}
+                <h4 class="fst-italic">
+                  {{ about.second_title }}
+                </h4>
+                {% endif %}
+                {% if about.description %}
+                <ul>
+                  <li><i class="bi bi-check2-all"></i>{{ about.description|safe }}</li>
+                </ul>
+                {% endif %}
+              </div>
+              <div class="col-lg-6 order-1 order-lg-2 text-center" data-aos="fade-up" data-aos-delay="200">
+                {% if about.medias %}
+                  {% for media in about.medias %}
+                    {% if media.image %}
+                    <img src="{{ media.image }}" alt="" class="img-fluid">
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+    {% endif %}
+
+
+
+
+    <!-- ======= Our Projects Section ======= -->
+    <section id="projects" class="projects">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-header">
+          <h2>Butun layiheler</h2>
+        </div>
+
+        <div class="portfolio-isotope" data-portfolio-filter="*" data-portfolio-layout="masonry"
+          data-portfolio-sort="original-order">
+
+          <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
+            <li data-filter="*" class="filter-active">Hamisi</li>
+            {% for category in categories %}
+            <li data-filter=".filter-category-{{ category.id }}">{{ category.name }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
+              <div class="portfolio-content h-100">
+                {% if project.medias %}
+                  {% with project.medias|first as first_media %}
+                    {% if first_media.image %}
+                    <img src="{{ first_media.image }}" class="img-fluid" alt="{{ project.name }}">
+                    {% else %}
+                    <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                    {% endif %}
+                  {% endwith %}
+                {% else %}
+                <img src="{% static 'assets/img/projects/remodeling-1.jpg' %}" class="img-fluid" alt="{{ project.name }}">
+                {% endif %}
+                <div class="portfolio-info">
+                  <h4>{% if project.is_completed %}Tamamlanmış{% else %}Davam edən{% endif %}</h4>
+                  <p>{{ project.name }} <a href="{% url 'projects:project-detail' slug=project.slug %}" title="More Details" class="btn btn-sm btn-warning ms-2">Etrafli</a></p>
+                </div>
+              </div>
+            </div><!-- End Projects Item -->
+            {% empty %}
+            <div class="col-12">
+              <p>Layihə tapılmadı.</p>
+            </div>
+            {% endfor %}
+
+          </div><!-- End Projects Container -->
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ======= Terefdaslar Section ======= -->
+    <section id="team" class="team">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-header">
+          <h2>Tərəfdaşlar</h2>
+        </div>
+
+        <div class="team-slider swiper">
+          <div class="swiper-wrapper">
+            {% for partner in partners %}
+            <div class="swiper-slide">
+              <div class="member">
+                <div class="member-img">
+                  {% if partner.logo %}
+                  <img src="{{ partner.logo }}" class="img-fluid" alt="{{ partner.name }}">
+                  {% else %}
+                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
+                  {% endif %}
+                  <div class="social">
+                    {% if partner.url %}
+                    <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="member-info text-center">
+                  <h4>{{ partner.name }}</h4>
+                </div>
+              </div>
+            </div><!-- End Team Member -->
+            {% empty %}
+            <div class="swiper-slide">
+              <div class="member">
+                <div class="member-info text-center">
+                  <h4>Tərəfdaş tapılmadı</h4>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+      </div>
+    </section><!-- End Our Team Section -->
+
+
+
+    <!-- ======= Vakansiyalar Section ======= -->
+    <section id="recent-blog-posts" class="recent-blog-posts">
+      <div class="container" data-aos="fade-up">
+
+    
+    
+        <div class=" section-header">
+          <h2>Sonuncu Vakansiyalar</h2>
+        </div>
+
+        <div class="row gy-5">
+          {% for vacancy in vacancies %}
+          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="post-item position-relative h-100">
+
+              <div class="post-img position-relative overflow-hidden">
+                {% if vacancy.image %}
+                <img src="{{ vacancy.image }}" class="img-fluid" alt="{{ vacancy.title }}">
+                {% else %}
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" class="img-fluid" alt="{{ vacancy.title }}">
+                {% endif %}
+                <span class="post-date">{{ vacancy.created_at|date:"d M Y" }}</span>
+              </div>
+
+              <div class="post-content d-flex flex-column">
+
+                <h3 class="post-title">{{ vacancy.title }}</h3>
+
+                <hr>
+
+                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>Etrafli</span><i
+                    class="bi bi-arrow-right"></i></a>
+
+              </div>
+
+            </div>
+          </div><!-- End post item -->
+          {% empty %}
+          <div class="col-12">
+            <p>Vakansiya tapılmadı.</p>
+          </div>
+          {% endfor %}
+
+        </div>
+
+      </div>
+    </section>
+    <!-- End Recent Blog Posts Section -->
+
+  </main><!-- End #main -->
+
+
+
+
+
+
+
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
+
+    <div class="footer-content position-relative">
+      <div class="container">
+        <div class="row">
+          <!-- Əsas -->
+          {% if contact %}
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Əlaqə</h3>
+              <ul>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
+                <li>
+                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
+                </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
+                <li>
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
+                  </a>
+                </li>
+                {% endif %}
+                {% if contact.email %}
+                <li>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
+                </li>
+                {% endif %}
+              </ul>
+
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+
+
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Əsas</h3>
+              <ul>
+                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+              </ul>
+            </div>
+          </div>
+
+
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Layihələr</h3>
+              <ul>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+                {% empty %}
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-legal text-center position-relative danger">
+      <div class="container">
+        <div class="copyright">
+          &copy;<strong><span>Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur.</span></strong>
+        </div>
+
+      </div>
+    </div>
+
+  </footer>
+
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

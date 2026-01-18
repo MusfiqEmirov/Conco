@@ -8,108 +8,143 @@ from django.utils.translation import gettext as _, activate
 
 from projects.models import Appeal
 from projects.forms.forms_v1 import AppealForm
-from projects.utils.queries import *
+from projects.utils.queries import (
+    get_language_from_request, get_home_page_data, get_project_list_data,
+    get_project_by_slug, serialize_project, get_background_image,
+    get_about, serialize_about, get_partners, serialize_partner,
+    get_contact, serialize_contact, get_vacancy_list_data,
+    get_vacancy_by_slug, serialize_vacancy, get_statistics,
+    get_project_categories, serialize_project_category
+)
 
 
 class HomePageView(View):
-    template_name = ''
+    template_name = 'index.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
         activate(lang)
         context = get_home_page_data(request, lang)
+        context['footer_image'] = get_background_image('footer')
         context['language'] = lang
         return render(request, self.template_name, context)
 
 
 class ProjectPageView(View):
-    template_name = ''
+    template_name = 'projects.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
         activate(lang)
         context = get_project_list_data(request, lang)
+        context['background_image'] = get_background_image('project')
+        context['footer_image'] = get_background_image('footer')
         context['language'] = lang
         return render(request, self.template_name, context)
 
 
 class ProjectDetailPageView(View):
-    template_name = 'project_detail.html'
+    template_name = 'project-details.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
         activate(lang)
         project = get_project_by_slug(slug, lang)
+        if not project:
+            raise Http404(_("Project not found"))
+        
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
+        contact = get_contact(lang)
+        
         context = {
             'project': serialize_project(project, lang),
+            'categories': serialized_categories,
+            'contact': serialize_contact(contact, lang) if contact else None,
             'language': lang,
             'background_image': get_background_image('project'),
+            'footer_image': get_background_image('footer'),
         }
 
         return render(request, self.template_name, context)
 
 
 class AboutPageView(View):
-    template_name = ''
+    template_name = 'about.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
+        is_active = request.GET.get('is_active', 'true').lower() == 'true'
         activate(lang)
         about = get_about(lang)
+        partners = get_partners(lang=lang, is_active=is_active)
+        contact = get_contact(lang)
+        statistics = get_statistics()
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
         context = {
-            'about': serialize_about(about, lang),
+            'about': serialize_about(about, lang) if about else None,
+            'partners': [serialize_partner(p, lang) for p in partners],
+            'contact': serialize_contact(contact, lang) if contact else None,
+            'categories': serialized_categories,
+            'statistics': statistics,
             'language': lang,
             'background_image': get_background_image('about'),
-        }
-
-        return render(request, self.template_name, context)
-
-
-class PartnerPageView(View):
-    template_name = 'projects/partner_list.html'
-    
-    def get(self, request):
-        lang = get_language_from_request(request)
-        activate(lang)
-        is_active = request.GET.get('is_active', 'true').lower() == 'true'
-        partners = get_partners(lang=lang, is_active=is_active)
-        context = {
-            'partners': [serialize_partner(p, lang) for p in partners],
-            'language': lang,
-            'background_image': get_background_image('partner'),
+            'footer_image': get_background_image('footer'),
         }
 
         return render(request, self.template_name, context)
 
 
 class ContactPageView(View):
-    template_name = 'projects/contact.html'
+    template_name = 'contact.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
         activate(lang)
         contact = get_contact(lang)
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
         context = {
-            'contact': serialize_contact(contact, lang),
+            'contact': serialize_contact(contact, lang) if contact else None,
+            'categories': serialized_categories,
             'language': lang,
+            'background_image': get_background_image('contact'),
+            'footer_image': get_background_image('footer'),
         }
 
         return render(request, self.template_name, context)
 
 
 class VacancyPageView(View):
-    template_name = 'projects/vacancy_list.html'
+    template_name = 'vacancy.html'
     
     def get(self, request):
         lang = get_language_from_request(request)
         activate(lang)
         context = get_vacancy_list_data(request, lang)
+        categories = get_project_categories(lang)
+        context['categories'] = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
+        context['background_image'] = get_background_image('vacancy')
+        context['footer_image'] = get_background_image('footer')
         context['language'] = lang
         return render(request, self.template_name, context)
 
 
 class VacancyDetailPageView(View):
-    template_name = 'vacancy_detail.html'
+    template_name = 'vacancy-details.html'
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
@@ -120,10 +155,19 @@ class VacancyDetailPageView(View):
             raise Http404(_("Vacancy not found"))
         
         form = AppealForm()
+        contact = get_contact(lang)
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
         context = {
             'vacancy': serialize_vacancy(vacancy, lang),
+            'contact': serialize_contact(contact, lang) if contact else None,
+            'categories': serialized_categories,
             'language': lang,
             'background_image': get_background_image('vacancy'),
+            'footer_image': get_background_image('footer'),
             'form': form,
         }
         return render(request, self.template_name, context)
@@ -156,10 +200,19 @@ class VacancyDetailPageView(View):
         else:
             messages.error(request, _('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.'))
         
+        contact = get_contact(lang)
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
         context = {
             'vacancy': serialize_vacancy(vacancy, lang),
+            'contact': serialize_contact(contact, lang) if contact else None,
+            'categories': serialized_categories,
             'language': lang,
             'background_image': get_background_image('vacancy'),
+            'footer_image': get_background_image('footer'),
             'form': form,
         }
         return render(request, self.template_name, context)

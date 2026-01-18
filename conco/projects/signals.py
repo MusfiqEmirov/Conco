@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.conf import settings
 
-from projects.models import Appeal, Project, ProjectCategory, Vacancy, Partner, About, Contact, Media
+from projects.models import Appeal, Project, ProjectCategory, Vacancy, Partner, About, Contact, Media, Motto, Statistic
 from projects.utils import send_mail_func
 from projects.utils.cache_utils import invalidate_model_cache
 
@@ -96,3 +96,26 @@ def invalidate_media_cache(sender, instance, **kwargs):
         invalidate_model_cache('About')
     if instance.vacancy:
         invalidate_model_cache('Vacancy')
+    
+    # If media is a background image for home page, invalidate home page cache
+    if instance.is_home_page_background_image:
+        invalidate_model_cache('Media')
+
+
+@receiver(post_save, sender=Motto)
+@receiver(post_delete, sender=Motto)
+def invalidate_motto_cache(sender, instance, **kwargs):
+    """Invalidate cache when Motto is saved or deleted."""
+    invalidate_model_cache('Motto')
+    # Motto affects home page, so invalidate home page cache
+    invalidate_model_cache('Media')
+
+
+@receiver(post_save, sender=Statistic)
+@receiver(post_delete, sender=Statistic)
+def invalidate_statistic_cache(sender, instance, **kwargs):
+    """Invalidate cache when Statistic is saved or deleted."""
+    from projects.utils.cache_utils import invalidate_query_cache
+    # Invalidate statistics cache
+    invalidate_query_cache(['get_statistics'])
+    invalidate_model_cache('Statistic')

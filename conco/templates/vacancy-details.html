@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>CONCO, Tikinti | construction</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: UpConstruction - v1.3.0
+  * Template URL: https://bootstrapmade.com/upconstruction-bootstrap-construction-website-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header d-flex align-items-center">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
+        <img src="{% static 'assets/img/my_logo.png' %}" alt="Logo" class="logo-img">
+      </a>
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      <nav id="navbar" class="navbar " >
+        <ul>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
+                class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              {% for category in categories %}
+              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+          <li class="dropdown"><a href="#"><span>AZ</span> <i
+                class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">EN</a></li>
+              <li><a href="#" class="lang-option" data-lang="ru">RU</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
+      <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
+        {% if vacancy %}
+        <h2>{{ vacancy.title }}</h2>
+        <ol>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+          <li>{{ vacancy.title }}</li>
+        </ol>
+        {% else %}
+        <h2>Vakansiya</h2>
+        <ol>
+          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+          <li>Vakansiyalar</li>
+        </ol>
+        {% endif %}
+
+      </div>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- =======Vakansiya Details Section ======= -->
+    <section id="blog" class="blog">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-5">
+
+          <div class="col-lg-6">
+            {% if vacancy %}
+            <article class="blog-details">
+
+              <div class="post-img">
+                {% if vacancy.image %}
+                <img src="{{ vacancy.image }}" alt="{{ vacancy.title }}" class="img-fluid">
+                {% else %}
+                <img src="{% static 'assets/img/blog/blog-1.jpg' %}" alt="{{ vacancy.title }}" class="img-fluid">
+                {% endif %}
+              </div>
+
+              <h2 class="title">{{ vacancy.title }}</h2>
+
+              <div class="meta-top">
+                <ul>
+                  {% if vacancy.created_at %}
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time
+                        datetime="{{ vacancy.created_at|date:'Y-m-d' }}">{{ vacancy.created_at|date:"d M Y" }}</time></a></li>
+                  {% endif %}
+                </ul>
+              </div><!-- End meta top -->
+
+              <div class="content">
+                {% if vacancy.description %}
+                <div>
+                  {{ vacancy.description|safe }}
+                </div>
+                {% else %}
+                <blockquote>
+                  <p>Məlumat tapılmadı.</p>
+                </blockquote>
+                {% endif %}
+
+              </div><!-- End post content -->
+            </article><!-- End blog post -->
+            {% else %}
+            <article class="blog-details">
+              <div class="content">
+                <p>Vakansiya tapılmadı.</p>
+              </div>
+            </article>
+            {% endif %}
+          </div>
+          
+          <div class="col-lg-6">
+            <div class="comments">
+              <div class="reply-form">
+
+                <h4>Müraciət et</h4>
+                {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% if form %}
+                <form method="post" action="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="row">
+
+                    <div class="col-md-6 form-group">
+                      {{ form.full_name.label_tag }}
+                      {{ form.full_name }}
+                      {% if form.full_name.errors %}
+                        <div class="text-danger">{{ form.full_name.errors }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                      {{ form.email.label_tag }}
+                      {{ form.email }}
+                      {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                      {{ form.phone_number.label_tag }}
+                      {{ form.phone_number }}
+                      {% if form.phone_number.errors %}
+                        <div class="text-danger">{{ form.phone_number.errors }}</div>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="col-md-12 form-group">
+                      {{ form.cv.label_tag }}
+                      {{ form.cv }}
+                      {% if form.cv.errors %}
+                        <div class="text-danger">{{ form.cv.errors }}</div>
+                      {% endif %}
+                    </div>
+
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Göndər</button>
+
+                </form>
+                {% else %}
+                <p>Form tapılmadı.</p>
+                {% endif %}
+
+            </div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+      </div>
+    </section><!-- End Blog Details Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer" {% if footer_image %}style="background-image: url('{{ footer_image }}');"{% endif %}>
+
+    <div class="footer-content position-relative">
+      <div class="container">
+        <div class="row">
+          <!-- Əsas -->
+          {% if contact %}
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Əlaqə</h3>
+              <ul>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
+                <li>
+                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
+                </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
+                <li>
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
+                  </a>
+                </li>
+                {% endif %}
+                {% if contact.email %}
+                <li>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
+                </li>
+                {% endif %}
+              </ul>
+
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+
+
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Əsas</h3>
+              <ul>
+                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
+                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+              </ul>
+            </div>
+          </div>
+
+
+          <div class="col-lg-4 col-md-4">
+            <div class="footer-info footer-links">
+              <h3>Layihələr</h3>
+              <ul>
+                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              </ul>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-legal text-center position-relative danger">
+      <div class="container">
+        <div class="copyright">
+          &copy;<strong><span>Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur.</span></strong>
+        </div>
+
+      </div>
+    </div>
+
+  </footer>
+  <!-- End Footer -->
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>
