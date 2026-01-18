@@ -143,6 +143,9 @@ def get_background_image(page_type):
 
 
 def serialize_project(project, lang='az'):
+    if project is None:
+        return None
+    
     name_field = get_localized_field_name('name', lang)
     desc_field = get_localized_field_name('description', lang)
     cat_name_field = get_localized_field_name('name', lang)
@@ -181,6 +184,9 @@ def serialize_project_category(category, lang='az'):
 
 
 def serialize_about(about, lang='az'):
+    if about is None:
+        return None
+    
     main_title_field = get_localized_field_name('main_title', lang)
     second_title_field = get_localized_field_name('second_title', lang)
     desc_field = get_localized_field_name('description', lang)
@@ -202,6 +208,9 @@ def serialize_about(about, lang='az'):
 
 
 def serialize_partner(partner, lang='az'):
+    if partner is None:
+        return None
+    
     name_field = get_localized_field_name('name', lang)
     
     media = partner.medias.first()
@@ -217,6 +226,9 @@ def serialize_partner(partner, lang='az'):
 
 
 def serialize_contact(contact, lang='az'):
+    if contact is None:
+        return None
+    
     address_field = get_localized_field_name('address', lang)
     
     return {
@@ -236,6 +248,9 @@ def serialize_contact(contact, lang='az'):
 
 
 def serialize_vacancy(vacancy, lang='az'):
+    if vacancy is None:
+        return None
+    
     title_field = get_localized_field_name('title', lang)
     desc_field = get_localized_field_name('description', lang)
     

@@ -40,6 +40,9 @@ class ProjectDetailPageView(View):
         lang = get_language_from_request(request)
         activate(lang)
         project = get_project_by_slug(slug, lang)
+        if not project:
+            raise Http404(_("Project not found"))
+        
         context = {
             'project': serialize_project(project, lang),
             'language': lang,
@@ -59,7 +62,7 @@ class AboutPageView(View):
         about = get_about(lang)
         partners = get_partners(lang=lang, is_active=is_active)
         context = {
-            'about': serialize_about(about, lang),
+            'about': serialize_about(about, lang) if about else None,
             'partners': [serialize_partner(p, lang) for p in partners],
             'language': lang,
             'background_image': get_background_image('about'),
@@ -76,7 +79,7 @@ class ContactPageView(View):
         activate(lang)
         contact = get_contact(lang)
         context = {
-            'contact': serialize_contact(contact, lang),
+            'contact': serialize_contact(contact, lang) if contact else None,
             'language': lang,
         }
 
