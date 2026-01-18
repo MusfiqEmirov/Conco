@@ -1,8 +1,11 @@
 from django.db.models import Q, Prefetch
 from django.utils import translation
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 
 from projects.models import *
+from projects.utils.cache_utils import cached_query, get_query_cache_key, cached_page_data
+from django.core.cache import cache
 
 
 def get_language_from_request(request):
@@ -63,19 +66,23 @@ def get_projects(lang='az', category_id=None, is_active=True, is_completed=None)
     return queryset.order_by('-created_at')
 
 
+@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
 def get_project_by_slug(slug, lang='az'):
     try:
-        return Project.objects.select_related('category').prefetch_related(
+        project = Project.objects.select_related('category').prefetch_related(
             Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
         ).get(slug=slug, is_active=True)
+        return project
     except Project.DoesNotExist:
         return None
 
 
+@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
 def get_about(lang='az'):
-    return About.objects.prefetch_related(
+    about = About.objects.prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
     ).first()
+    return about
 
 
 def get_partners(lang='az', is_active=True):
@@ -89,6 +96,7 @@ def get_partners(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
+@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
 def get_contact(lang='az'):
     return Contact.objects.first()
 
@@ -104,15 +112,18 @@ def get_vacancies(lang='az', is_active=True):
     return queryset.order_by('-created_at')
 
 
+@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
 def get_vacancy_by_slug(slug, lang='az'):
     try:
-        return Vacancy.objects.prefetch_related(
+        vacancy = Vacancy.objects.prefetch_related(
             Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
         ).get(slug=slug, is_active=True)
+        return vacancy
     except Vacancy.DoesNotExist:
         return None
 
 
+@cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
 def get_background_image(page_type):
     image_map = {
         'home': 'is_home_page_background_image',
@@ -264,6 +275,7 @@ def get_pagination_data(page_obj, paginator):
     }
 
 
+@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
 def get_home_page_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -341,6 +353,7 @@ def get_home_page_data(request, lang):
     }
 
 
+@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
 def get_project_list_data(request, lang):
     category_id = request.GET.get('category_id')
     is_completed = request.GET.get('is_completed')
@@ -386,6 +399,7 @@ def get_project_list_data(request, lang):
     }
 
 
+@cached_page_data(timeout=getattr(settings, 'CACHE_TIMEOUT_MEDIUM', 300))
 def get_vacancy_list_data(request, lang):
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
     page = request.GET.get('page', 1)
