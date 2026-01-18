@@ -171,14 +171,8 @@
                   <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
                   {% endif %}
                   <div class="social">
-                    {% if contact.facebook %}
-                    <a href="{{ contact.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
-                    {% endif %}
                     {% if partner.url %}
                     <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
-                    {% endif %}
-                    {% if contact.instagram %}
-                    <a href="{{ contact.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
                     {% endif %}
                   </div>
                 </div>

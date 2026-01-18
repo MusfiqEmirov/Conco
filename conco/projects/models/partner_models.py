@@ -29,6 +29,7 @@ class Partner(models.Model):
         validators=[MaxLengthValidator(120)],
         verbose_name='Əməkdaş adı (RU)'
     )
+
     is_active = models.BooleanField(
         default=True,
         verbose_name='Əməkdaş aktivliyi'

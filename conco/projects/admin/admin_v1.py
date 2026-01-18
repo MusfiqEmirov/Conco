@@ -378,7 +378,7 @@ class ContactAdmin(admin.ModelAdmin):
     list_display_links = None
     search_fields = (
         'address_az', 'address_en', 'address_ru',
-        'phone', 'whatsapp_number', 'whatsapp_number_2', 'phone_three',
+        'phone', 'whatsapp_number',
         'email',
     )
     list_per_page = 25
@@ -388,13 +388,13 @@ class ContactAdmin(admin.ModelAdmin):
             'fields': ('address_az', 'address_en', 'address_ru')
         }),
         ('Əlaqə Nömrələri', {
-            'fields': ('phone', 'whatsapp_number', 'whatsapp_number_2', 'phone_three')
+            'fields': ('phone', 'whatsapp_number')
         }),
         ('Email', {
             'fields': ('email',)
         }),
         ('Sosial Şəbəkələr', {
-            'fields': ('instagram', 'facebook', 'youtube', 'linkedn', 'tiktok')
+            'fields': ('instagram', 'facebook', 'linkedn')
         }),
     )
     

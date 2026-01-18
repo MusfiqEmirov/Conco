@@ -47,11 +47,13 @@ class Contact(models.Model):
     )
     instagram = models.URLField(
         null=True,
-        blank=True
+        blank=True,
+        verbose_name=('Instagram')
     )
     facebook = models.URLField(
         null=True,
-        blank=True
+        blank=True,
+        verbose_name=('Facebook')
     )
     youtube = models.URLField(
         null=True,
@@ -59,7 +61,8 @@ class Contact(models.Model):
     )
     linkedn = models.URLField(
         null=True,
-        blank=True
+        blank=True,
+        verbose_name=('Linkedn')
     )
     tiktok = models.URLField(
         null=True,
