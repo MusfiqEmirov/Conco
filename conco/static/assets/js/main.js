@@ -98,7 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
    * Initiate glightbox
    */
   const glightbox = GLightbox({
-    selector: '.glightbox'
+    selector: '.glightbox',
+    touchNavigation: true,
+    loop: false,
+    autoplayVideos: false,
+    videoAutoplay: false,
+    videoMaxWidth: '1280px',
+    videoMaxHeight: '720px'
   });
 
   /**

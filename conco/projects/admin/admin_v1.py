@@ -121,7 +121,7 @@ class MediaInlineBase(admin.TabularInline):
 
 class MediaInlineProject(MediaInlineBase):
     fk_name = 'project'
-    fields = ('image', 'video', 'thumbnail_preview', 'created_at')
+    fields = ('image', 'thumbnail_preview', 'created_at')
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -134,7 +134,27 @@ class MediaInlinePartner(MediaInlineBase):
 
 
 class MediaInlineAbout(MediaInlineBase):
-    fields = ('image', 'thumbnail_preview', 'created_at')
+    fields = ('image', 'video', 'thumbnail_preview', 'created_at')
+    max_num = None  
+    
+    def get_formset(self, request, obj=None, **kwargs):
+        from django.forms import BaseInlineFormSet
+        from django.core.exceptions import ValidationError
+        
+        class MediaAboutFormSet(BaseInlineFormSet):
+            def clean(self):
+                super().clean()
+                video_count = 0
+                for form in self.forms:
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                        if form.cleaned_data.get('video'):
+                            video_count += 1
+                
+                if video_count > 1:
+                    raise ValidationError('Yalnız bir video yükləmək mümkündür. Lütfən, yalnız bir media-da video əlavə edin.')
+        
+        kwargs['formset'] = MediaAboutFormSet
+        return super().get_formset(request, obj, **kwargs)
 
 
 class MediaInlineVacancy(MediaInlineBase):

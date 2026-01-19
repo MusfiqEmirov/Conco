@@ -144,7 +144,7 @@
                   {% if media.video %}
               <div class="watch-video d-flex align-items-center position-relative">
                 <i class="bi bi-play-circle"></i>
-                <a href="{{ media.video }}" class="glightbox stretched-link">{% trans "Video izlə" %}</a>
+                <a href="{{ media.video }}" class="glightbox stretched-link" data-type="video" data-source="url" data-video-type="video/mp4">{% trans "Video izlə" %}</a>
               </div>
                   {% endif %}
                 {% endfor %}

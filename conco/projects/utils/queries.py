@@ -92,7 +92,9 @@ def get_project_by_slug(slug, lang='az'):
 @cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_about(lang='az'):
     about = About.objects.prefetch_related(
-        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+        Prefetch('medias', queryset=Media.objects.filter(
+            Q(image__isnull=False) | Q(video__isnull=False)
+        ))
     ).first()
     return about
 
