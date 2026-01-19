@@ -400,7 +400,7 @@ def get_home_page_data(request, lang):
     ]
     
     vacancies_page = request.GET.get('vacancies_page', 1)
-    vacancies_per_page = int(request.GET.get('vacancies_per_page', 10))
+    vacancies_per_page = int(request.GET.get('vacancies_per_page', 9))
     
     all_vacancies = get_vacancies(lang=lang, is_active=True)
     vacancies_page_obj, vacancies_paginator = paginate_queryset(all_vacancies, vacancies_page, vacancies_per_page)

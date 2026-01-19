@@ -381,10 +381,14 @@ msgid "construction"
 msgstr "строительство"
 
 #: templates/about.html
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
-#: templates/about.html
 msgid "Logo"
 msgstr "Логотип"
+
+#: templates/index.html
+msgid "Bütün vakansiyaları gör"
+msgstr "Посмотреть все вакансии"
+
+#: templates/vacancy.html
+msgid "Bütün vakansiyalar"
+msgstr "Все вакансии"
 
