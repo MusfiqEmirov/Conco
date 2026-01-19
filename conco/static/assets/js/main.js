@@ -293,6 +293,7 @@ document.querySelectorAll('.lang-option').forEach(langOption => {
     const dropdownMenu = dropdown.querySelector('ul');
     const dropdownIndicator = dropdownToggle.querySelector('.dropdown-indicator');
     
+    // UI-ni dəyiş
     dropdownToggle.querySelector('span').textContent = selectedLang.toUpperCase();
     
     dropdownMenu.style.opacity = '0';
@@ -308,48 +309,10 @@ document.querySelectorAll('.lang-option').forEach(langOption => {
       dropdownIndicator.classList.add('bi-chevron-down');
     }
     
-    const observer = new MutationObserver(() => {
-      if (dropdownToggle.classList.contains('active')) {
-        dropdownToggle.classList.remove('active');
-      }
-      if (dropdownIndicator && dropdownIndicator.classList.contains('bi-chevron-up')) {
-        dropdownIndicator.classList.remove('bi-chevron-up');
-        dropdownIndicator.classList.add('bi-chevron-down');
-      }
-    });
-    
-    observer.observe(dropdownToggle, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-    
-    setTimeout(() => {
-      observer.disconnect();
-    }, 500);
-    
-    dropdownToggle.style.setProperty('--hover-disabled', '1');
-    
-    setTimeout(() => {
-      dropdown.classList.remove('dropdown-closed');
-      dropdownMenu.style.opacity = '';
-      dropdownMenu.style.visibility = '';
-      dropdownMenu.style.pointerEvents = '';
-      dropdownMenu.style.top = '';
-      dropdownToggle.style.setProperty('--hover-disabled', '');
-    }, 300);
-    
-    if (dropdownToggle.classList.contains('active')) {
-      dropdownToggle.classList.remove('active');
-      dropdownMenu.classList.remove('dropdown-active');
-      if (dropdownIndicator) {
-        dropdownIndicator.classList.remove('bi-chevron-up');
-        dropdownIndicator.classList.add('bi-chevron-down');
-      }
-    }
-    
-    if (document.body.classList.contains('mobile-nav-active')) {
-      mobileNavToogle();
-    }
+    // Django-ya dil dəyişmə sorğusu göndər (GET metodu ilə)
+    const currentUrl = window.location.pathname + window.location.search;
+    const setLangUrl = `/i18n/setlang/?language=${selectedLang}&next=${encodeURIComponent(currentUrl)}`;
+    window.location.href = setLangUrl;
   });
 });
 

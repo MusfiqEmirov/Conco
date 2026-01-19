@@ -94,3 +94,280 @@ msgstr "Language"
 msgid "Dəyiş"
 msgstr "Change"
 
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Ana səhifə"
+msgstr "Home"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Layihələr"
+msgstr "Projects"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Bütün layihələr"
+msgstr "All Projects"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Haqqimizda"
+msgstr "About Us"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Haqqımızda"
+msgstr "About Us"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Vakansiyalar"
+msgstr "Vacancies"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Əlaqə"
+msgstr "Contact"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "Etrafli"
+msgstr "Details"
+
+#: templates/index.html
+msgid "deviz"
+msgstr "motto"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "Hamisi"
+msgstr "All"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "DAVAM EDƏN LAYİHƏLƏR"
+msgstr "ONGOING PROJECTS"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "TAMAMLANMIŞ LAYİHƏLƏR"
+msgstr "COMPLETED PROJECTS"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "Tamamlanmış"
+msgstr "Completed"
+
+#: templates/index.html
+#: templates/projects.html
+msgid "Davam edən"
+msgstr "Ongoing"
+
+#: templates/index.html
+#: templates/vacancy.html
+msgid "Sonuncu Vakansiyalar"
+msgstr "Latest Vacancies"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Əsas"
+msgstr "Main"
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+#: templates/vacancy.html
+#: templates/project-details.html
+#: templates/vacancy-details.html
+msgid "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur."
+msgstr "Developed by Digiboom.az. All rights reserved."
+
+#: templates/index.html
+#: templates/projects.html
+#: templates/about.html
+#: templates/contact.html
+msgid "Zəng et"
+msgstr "Call"
+
+#: templates/projects.html
+msgid "Layihə tapılmadı."
+msgstr "No projects found."
+
+#: templates/projects.html
+msgid "More Details"
+msgstr "More Details"
+
+#: templates/about.html
+#: templates/contact.html
+msgid "Ünvanımız"
+msgstr "Our Address"
+
+#: templates/contact.html
+msgid "e-poçt ünvanımız"
+msgstr "our email address"
+
+#: templates/contact.html
+msgid "Whatsapp"
+msgstr "WhatsApp"
+
+#: templates/contact.html
+msgid "Ad soyad"
+msgstr "Full Name"
+
+#: templates/contact.html
+msgid "e-poçt unvani"
+msgstr "email address"
+
+#: templates/contact.html
+msgid "Təmsil olunan subyekt"
+msgstr "Subject"
+
+#: templates/contact.html
+msgid "Mesajiniz"
+msgstr "Your Message"
+
+#: templates/contact.html
+msgid "Mesajiniz gondərildi"
+msgstr "Your message has been sent"
+
+#: templates/contact.html
+msgid "Mesaj gondər"
+msgstr "Send Message"
+
+#: templates/vacancy.html
+msgid "Anə Səhifə"
+msgstr "Home"
+
+#: templates/index.html
+msgid "Tərəfdaşlar"
+msgstr "Partners"
+
+#: templates/index.html
+#: templates/about.html
+msgid "Tərəfdaş tapılmadı"
+msgstr "No partners found"
+
+#: templates/index.html
+#: templates/vacancy.html
+msgid "Vakansiya tapılmadı."
+msgstr "No vacancies found."
+
+#: templates/about.html
+msgid "Video izlə"
+msgstr "Watch video"
+
+#: templates/about.html
+#: templates/vacancy-details.html
+#: templates/project-details.html
+msgid "Məlumat tapılmadı."
+msgstr "No information found."
+
+#: templates/about.html
+msgid "Statistikalarımız"
+msgstr "Our Statistics"
+
+#: templates/about.html
+msgid "Müştərilər"
+msgstr "Clients"
+
+#: templates/about.html
+msgid "Layihə sayı"
+msgstr "Number of Projects"
+
+#: templates/about.html
+msgid "Tərəfdaş sayı"
+msgstr "Number of Partners"
+
+#: templates/contact.html
+msgid "Yüklənir"
+msgstr "Loading"
+
+#: templates/vacancy-details.html
+msgid "Müraciət et"
+msgstr "Apply"
+
+#: templates/vacancy-details.html
+msgid "Göndər"
+msgstr "Send"
+
+#: templates/vacancy-details.html
+msgid "Form tapılmadı."
+msgstr "Form not found."
+
+#: templates/project-details.html
+msgid "Layihə"
+msgstr "Project"
+
+#: templates/project-details.html
+msgid "Layihə tapılmadı"
+msgstr "Project not found"
+
+#: templates/project-details.html
+msgid "Layihə məlumatı"
+msgstr "Project Information"
+
+#: templates/project-details.html
+msgid "Kateqoriya"
+msgstr "Category"
+
+#: templates/project-details.html
+msgid "Layihə tarixi"
+msgstr "Project Date"
+
+#: templates/project-details.html
+msgid "Status"
+msgstr "Status"
+
+#: templates/project-details.html
+msgid "Davam edir"
+msgstr "In Progress"
+
+#: templates/project-details.html
+msgid "Keçid"
+msgstr "Visit"
+
+#: projects/views/views_v1.py
+msgid "Project not found"
+msgstr "Project not found"
+

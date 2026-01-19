@@ -120,7 +120,13 @@ class MediaInlineBase(admin.TabularInline):
 
 
 class MediaInlineProject(MediaInlineBase):
+    fk_name = 'project'
     fields = ('image', 'video', 'thumbnail_preview', 'created_at')
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Project silinəndə media-ları təhlükəsiz şəkildə tap
+        return qs.select_related('project')
 
 
 class MediaInlinePartner(MediaInlineBase):
@@ -139,7 +145,7 @@ class MediaInlineVacancy(MediaInlineBase):
 @admin.register(ProjectCategory)
 class ProjectCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name_link', 'name_en', 'name_ru', 'projects_count')
-    list_display_links = None
+    list_display_links = ('id',)
     search_fields = ('name_az', 'name_en', 'name_ru')
     list_per_page = 25
     
@@ -176,11 +182,11 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'name_link',
-        'category',
+        'category_display',
         'status_badges',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('id',)
     list_filter = (
         'category',
         'is_completed',
@@ -215,11 +221,40 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
     )
     
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('category')
+    
+    def response_delete(self, request, obj_display, obj_id):
+        """Override delete response to handle inline media deletion"""
+        try:
+            return super().response_delete(request, obj_display, obj_id)
+        except Exception as e:
+            from django.contrib import messages
+            from django.http import HttpResponseRedirect
+            from django.urls import reverse
+            
+            try:
+                from projects.models import Media
+                Media.objects.filter(project_id=obj_id).delete()
+            except Exception:
+                pass
+            
+            messages.success(request, f'"{obj_display}" uğurla silindi.')
+            return HttpResponseRedirect(reverse('admin:projects_project_changelist'))
+    
     def name_link(self, obj):
         url = reverse('admin:projects_project_change', args=[obj.pk])
         return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px;">🔗 {}</a>', url, obj.name_az)
     name_link.short_description = "Layihə Adı"
     name_link.admin_order_field = 'name_az'
+    
+    def category_display(self, obj):
+        if obj.category:
+            return obj.category.name_az or '-'
+        return '-'
+    category_display.short_description = "Kateqoriya"
+    category_display.admin_order_field = 'category'
     
     def status_badges(self, obj):
         badges = []
@@ -247,7 +282,7 @@ class PartnerAdmin(admin.ModelAdmin):
         'active_status',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('name_link',)
     list_filter = ('is_active', 'created_at')
     search_fields = ('name_az', 'name_en', 'name_ru')
     ordering = ('-created_at',)
@@ -322,7 +357,7 @@ class PartnerAdmin(admin.ModelAdmin):
 @admin.register(About)
 class AboutAdmin(admin.ModelAdmin):
     list_display = ('id', 'title_link', 'second_title_az', 'media_count', 'updated_info')
-    list_display_links = None
+    list_display_links = ('id',)
     search_fields = ('main_title_az', 'main_title_en', 'main_title_ru', 'second_title_az', 'second_title_en', 'second_title_ru', 'description_az', 'description_en', 'description_ru')
     inlines = [MediaInlineAbout]
     list_per_page = 25
@@ -375,7 +410,7 @@ class ContactAdmin(admin.ModelAdmin):
         'contact_email',
         'social_links',
     )
-    list_display_links = None
+    list_display_links = ('address_link',)
     search_fields = (
         'address_az', 'address_en', 'address_ru',
         'phone', 'whatsapp_number',
@@ -446,7 +481,7 @@ class VacancyAdmin(admin.ModelAdmin):
         'appeals_count',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('id',)
     list_filter = ('is_active', 'created_at')
     search_fields = ('title_az', 'title_en', 'title_ru', 'description_az', 'description_en', 'description_ru')
     exclude = ('slug',)
@@ -510,7 +545,7 @@ class MottoAdmin(admin.ModelAdmin):
         'text_preview_en',
         'text_preview_ru',
     )
-    list_display_links = None
+    list_display_links = ('text_preview_az',)
     search_fields = ('text_az', 'text_en', 'text_ru')
     list_per_page = 25
     

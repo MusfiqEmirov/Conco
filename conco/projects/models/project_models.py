@@ -4,7 +4,7 @@ from django.core.validators import MaxLengthValidator
 from projects.utils import SluggedModel
 
 
-class ProjectCategory(models.Model):
+class ProjectCategory(SluggedModel):
     name_az = models.CharField(
         max_length=50,
         null=True,
@@ -27,6 +27,9 @@ class ProjectCategory(models.Model):
     class Meta:
         verbose_name = 'Kateqoriya adı'
         verbose_name_plural = 'Kateqoriya adları'
+    
+    def get_slug_source(self) -> str:
+        return self.name_az
 
     def __str__(self):
         return self.name_az or 'Kateqoriya'
@@ -35,7 +38,7 @@ class ProjectCategory(models.Model):
 class Project(SluggedModel):
     category = models.ForeignKey(
         ProjectCategory,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='projects',
         verbose_name='Kateqoriya'
     )

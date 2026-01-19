@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,21 +55,21 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar " >
         <ul>
-          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
+          <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+          <li class="dropdown"><a href="#" ><span>{% trans "Layihələr" %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               {% for category in categories %}
-              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
-          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
-          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
-          <li class="dropdown"><a href="#"><span>AZ</span> <i
+          <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqimizda" %}</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
+          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
@@ -90,18 +91,18 @@
         {% if project %}
         <h2>{{ project.name }}</h2>
         <ol>
-          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-          <li><a href="{% url 'projects:project-page' %}">Layihələr</a></li>
+          <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+          <li><a href="{% url 'projects:project-page' %}">{% trans "Layihələr" %}</a></li>
           {% if project.category %}
-          <li><a href="{% url 'projects:project-page' %}?category_id={{ project.category.id }}">{{ project.category.name }}</a></li>
+          <li><a href="{% url 'projects:project-page' %}?slug={{ project.category.slug }}">{{ project.category.name }}</a></li>
           {% endif %}
           <li>{{ project.name }}</li>
         </ol>
         {% else %}
-        <h2>Layihə</h2>
+        <h2>{% trans "Layihə" %}</h2>
         <ol>
-          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-          <li>Layihələr</li>
+          <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+          <li>{% trans "Layihələr" %}</li>
         </ol>
         {% endif %}
 
@@ -164,7 +165,7 @@
               <div class="testimonial-item">
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
-                  Məlumat tapılmadı.
+                  {% trans "Məlumat tapılmadı." %}
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
               </div>
@@ -173,7 +174,7 @@
             </div>
             {% else %}
             <div class="portfolio-description">
-              <h2>Layihə tapılmadı</h2>
+              <h2>{% trans "Layihə tapılmadı" %}</h2>
             </div>
             {% endif %}
           </div>
@@ -181,23 +182,23 @@
           <div class="col-lg-3">
             {% if project %}
             <div class="portfolio-info">
-              <h3>Layihə məlumatı</h3>
+              <h3>{% trans "Layihə məlumatı" %}</h3>
               <ul>
                 {% if project.category %}
-                <li><strong>Kateqoriya</strong> <span>{{ project.category.name }}</span></li>
+                <li><strong>{% trans "Kateqoriya" %}</strong> <span>{{ project.category.name }}</span></li>
                 {% endif %}
                 {% if project.created_at %}
-                <li><strong>Layihə tarixi</strong>
+                <li><strong>{% trans "Layihə tarixi" %}</strong>
                   <span>{{ project.created_at|date:"d M Y" }}</span>
                 </li>
                 {% endif %}
                 {% if project.is_completed %}
-                <li><strong>Status</strong> <span>Tamamlanmış</span></li>
+                <li><strong>{% trans "Status" %}</strong> <span>{% trans "Tamamlanmış" %}</span></li>
                 {% else %}
-                <li><strong>Status</strong> <span>Davam edir</span></li>
+                <li><strong>{% trans "Status" %}</strong> <span>{% trans "Davam edir" %}</span></li>
                 {% endif %}
                 {% if project.url %}
-                <li><a href="{{ project.url }}" target="_blank" class="btn-visit align-self-start">Keçid</a></li>
+                <li><a href="{{ project.url }}" target="_blank" class="btn-visit align-self-start">{% trans "Keçid" %}</a></li>
                 {% endif %}
               </ul>
             </div>
@@ -221,14 +222,14 @@
           {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əlaqə</h3>
+              <h3>{% trans "Əlaqə" %}</h3>
               <ul>
                 {% if contact.address %}
                 <li>{{ contact.address }}</li>
                 {% endif %}
                 {% if contact.phone %}
                 <li>
-                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
+                  <a href="tel:{{ contact.phone }}">📞 {% trans "Zəng et" %}: {{ contact.phone }}</a>
                 </li>
                 {% endif %}
                 {% if contact.whatsapp_number %}
@@ -264,12 +265,12 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əsas</h3>
+              <h3>{% trans "Əsas" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
-                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+                <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+                <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
               </ul>
             </div>
           </div>
@@ -277,12 +278,12 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Layihələr</h3>
+              <h3>{% trans "Layihələr" %}</h3>
               <ul>
                 {% for category in categories %}
-                <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+                <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
                 {% empty %}
-                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
                 {% endfor %}
               </ul>
             </div>
@@ -296,7 +297,7 @@
     <div class="footer-legal text-center position-relative danger">
       <div class="container">
         <div class="copyright">
-          &copy;<strong><span>Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur.</span></strong>
+          &copy;<strong><span>{% trans "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur." %}</span></strong>
         </div>
 
       </div>

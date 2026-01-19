@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,21 +55,21 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar " >
         <ul>
-          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
+          <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+          <li class="dropdown"><a href="#" ><span>{% trans "Layihələr" %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               {% for category in categories %}
-              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
-          <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
-          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
-          <li class="dropdown"><a href="#"><span>AZ</span> <i
+          <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
+          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
@@ -88,7 +89,7 @@
     <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>Haqqımızda</h2>
+        <h2>{% trans "Haqqımızda" %}</h2>
       </div>
     </div><!-- End Breadcrumbs -->
 
@@ -128,7 +129,7 @@
                   {% if media.video %}
               <div class="watch-video d-flex align-items-center position-relative">
                 <i class="bi bi-play-circle"></i>
-                <a href="{{ media.video }}" class="glightbox stretched-link">Video izlə</a>
+                <a href="{{ media.video }}" class="glightbox stretched-link">{% trans "Video izlə" %}</a>
               </div>
                   {% endif %}
                 {% endfor %}
@@ -138,9 +139,9 @@
           {% else %}
           <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
           <div class="col-lg-7">
-            <h2>Haqqımızda</h2>
+            <h2>{% trans "Haqqımızda" %}</h2>
             <div class="our-story">
-              <p>Məlumat tapılmadı.</p>
+              <p>{% trans "Məlumat tapılmadı." %}</p>
             </div>
           </div>
           {% endif %}
@@ -156,7 +157,7 @@
       <div class="container" data-aos="fade-up">
 
         <div class="section-header">
-          <h2>Tərəfdaşlar</h2>
+          <h2>{% trans "Tərəfdaşlar" %}</h2>
         </div>
 
         <div class="team-slider swiper">
@@ -185,7 +186,7 @@
             <div class="swiper-slide">
               <div class="member">
                 <div class="member-info text-center">
-                  <h4>Tərəfdaş tapılmadı</h4>
+                  <h4>{% trans "Tərəfdaş tapılmadı" %}</h4>
                 </div>
               </div>
             </div>
@@ -201,7 +202,7 @@
     <!-- ======= Stats Counter Section ======= -->
     <section id="stats-counter" class="stats-counter section-bg">
       <div class="section-header">
-          <h2>Statistikalarımız</h2>
+          <h2>{% trans "Statistikalarımız" %}</h2>
         </div>
       <div class="container">
 
@@ -213,7 +214,7 @@
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="{{ statistics.client_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
-                <p>Müştərilər</p>
+                <p>{% trans "Müştərilər" %}</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
@@ -224,7 +225,7 @@
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="{{ statistics.project_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
-                <p>Layihə sayı</p>
+                <p>{% trans "Layihə sayı" %}</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
@@ -235,7 +236,7 @@
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="{{ statistics.partner_count }}" data-purecounter-duration="1"
                   class="purecounter"></span>
-                <p>Tərəfdaş sayı</p>
+                <p>{% trans "Tərəfdaş sayı" %}</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
@@ -259,14 +260,14 @@
           {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əlaqə</h3>
+              <h3>{% trans "Əlaqə" %}</h3>
               <ul>
                 {% if contact.address %}
                 <li>{{ contact.address }}</li>
                 {% endif %}
                 {% if contact.phone %}
                 <li>
-                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
+                  <a href="tel:{{ contact.phone }}">📞 {% trans "Zəng et" %}: {{ contact.phone }}</a>
                 </li>
                 {% endif %}
                 {% if contact.whatsapp_number %}
@@ -302,12 +303,12 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əsas</h3>
+              <h3>{% trans "Əsas" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
-                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+                <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+                <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
               </ul>
             </div>
           </div>
@@ -315,9 +316,9 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Layihələr</h3>
+              <h3>{% trans "Layihələr" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
               </ul>
             </div>
           </div>
@@ -330,7 +331,7 @@
     <div class="footer-legal text-center position-relative danger">
       <div class="container">
         <div class="copyright">
-          &copy;<strong><span>Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur.</span></strong>
+          &copy;<strong><span>{% trans "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur." %}</span></strong>
         </div>
 
       </div>

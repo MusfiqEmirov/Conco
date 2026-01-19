@@ -88,13 +88,15 @@ def invalidate_media_cache(sender, instance, **kwargs):
     invalidate_model_cache('Media')
     
     # Also invalidate related model caches if media belongs to them
-    if instance.project:
+    # IMPORTANT: use *_id to avoid DoesNotExist during cascaded deletes
+    # (accessing instance.project may trigger a DB fetch and fail mid-delete)
+    if getattr(instance, 'project_id', None):
         invalidate_model_cache('Project')
-    if instance.partner:
+    if getattr(instance, 'partner_id', None):
         invalidate_model_cache('Partner')
-    if instance.about:
+    if getattr(instance, 'about_id', None):
         invalidate_model_cache('About')
-    if instance.vacancy:
+    if getattr(instance, 'vacancy_id', None):
         invalidate_model_cache('Vacancy')
     
     # If media is a background image for home page, invalidate home page cache

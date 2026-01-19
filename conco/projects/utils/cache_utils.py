@@ -93,7 +93,7 @@ def cached_query(timeout=None):
     Usage:
         @cached_query(timeout=300)
         @cached_query(timeout=getattr(settings, 'CACHE_TIMEOUT_LONG', 3600))
-        def get_projects(lang='az', category_id=None):
+        def get_projects(lang='az', category_slug=None):
             ...
     """
     # If timeout is a string, it's a settings attribute name
