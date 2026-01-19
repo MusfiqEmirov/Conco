@@ -61,7 +61,7 @@ def get_project_categories(lang='az'):
     return ProjectCategory.objects.all().order_by('id')
 
 
-def get_projects(lang='az', category_slug=None, is_active=True, is_completed=None):
+def get_projects(lang='az', category_slug=None, is_active=True, is_completed=None, on_main_page=None):
     queryset = Project.objects.select_related('category').prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
     )
@@ -74,6 +74,9 @@ def get_projects(lang='az', category_slug=None, is_active=True, is_completed=Non
     
     if category_slug:
         queryset = queryset.filter(category__slug=category_slug)
+    
+    if on_main_page is not None:
+        queryset = queryset.filter(on_main_page=on_main_page)
     
     return queryset.order_by('-created_at')
 
@@ -368,13 +371,15 @@ def get_home_page_data(request, lang):
         is_completed = None
     
     projects_page = request.GET.get('page', 1)
-    projects_per_page = int(request.GET.get('per_page', 6))
+    projects_per_page = int(request.GET.get('per_page', 9))
     
+   
     projects = get_projects(
         lang=lang,
         category_slug=category_slug,
         is_active=is_active,
-        is_completed=is_completed
+        is_completed=is_completed,
+        on_main_page=True
     )
     
     projects_page_obj, projects_paginator = paginate_queryset(projects, projects_page, projects_per_page)

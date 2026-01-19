@@ -62,7 +62,7 @@
               {% for category in categories %}
               <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
@@ -192,14 +192,14 @@
       <div class="container" data-aos="fade-up">
 
         <div class="section-header">
-          <h2>{% trans "Bütün layihələr" %}</h2>
+          <h2>{% trans "Seçilmiş layihələr" %}</h2>
         </div>
 
         <div class="portfolio-isotope" data-portfolio-filter="*" data-portfolio-layout="masonry"
           data-portfolio-sort="original-order">
 
           <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter="*" class="filter-active">{% trans "Hamisi" %}</li>
+            <li data-filter="*" class="filter-active">{% trans "Hamısı" %}</li>
             {% for category in categories %}
             <li data-filter=".filter-category-{{ category.id }}">{{ category.name }}</li>
             {% endfor %}
@@ -422,7 +422,7 @@
                 {% for category in categories %}
                 <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
                 {% empty %}
-                <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
                 {% endfor %}
               </ul>
             </div>

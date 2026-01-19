@@ -62,7 +62,7 @@
               {% for category in categories %}
               <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
@@ -250,7 +250,7 @@
             <div class="footer-info footer-links">
               <h3>{% trans "Layihələr" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               </ul>
             </div>
           </div>

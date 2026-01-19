@@ -3,6 +3,8 @@ from django.db.models import Q
 from django.db import models
 from django.utils.html import format_html
 from django.urls import reverse
+from django import forms
+from django.core.exceptions import ValidationError
 
 from projects.models import *
 
@@ -125,7 +127,6 @@ class MediaInlineProject(MediaInlineBase):
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # Project silinəndə media-ları təhlükəsiz şəkildə tap
         return qs.select_related('project')
 
 
@@ -197,8 +198,42 @@ class ProjectCategoryAdmin(admin.ModelAdmin):
     projects_count.short_description = "Layihələr"
 
 # Project 
+class ProjectAdminForm(forms.ModelForm):
+    """Layihə admin formu - on_main_page limitini yoxlayır"""
+    
+    class Meta:
+        model = Project
+        fields = '__all__'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        on_main_page = cleaned_data.get('on_main_page')
+        
+        if on_main_page:
+            existing_count = Project.objects.filter(on_main_page=True).count()
+            
+            if self.instance and self.instance.pk:
+                try:
+                    old_obj = Project.objects.get(pk=self.instance.pk)
+                    if old_obj.on_main_page:
+                        existing_count -= 1
+                except Project.DoesNotExist:
+                    pass
+            
+            if existing_count >= 9:
+                raise ValidationError({
+                    'on_main_page': (
+                        '⚠️ Xəbərdarlıq: Ana səhifədə maksimum 9 layihə ola bilər. '
+                        'Yeni layihəni ana səhifəyə əlavə etmək üçün köhnələrdən birinin "Ana səhifədə olsun" seçimini silməlisiniz.'
+                    )
+                })
+        
+        return cleaned_data
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
+    form = ProjectAdminForm
     list_display = (
         'id',
         'name_link',
@@ -211,6 +246,7 @@ class ProjectAdmin(admin.ModelAdmin):
         'category',
         'is_completed',
         'is_active',
+        'on_main_page',
         'created_at',
     )
     search_fields = ('name_az', 'name_en', 'name_ru', 'description_az', 'description_en', 'description_ru')
@@ -234,7 +270,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('name_ru', 'description_ru')
         }),
         ('Status', {
-            'fields': ('is_completed', 'is_active')
+            'fields': ('is_completed', 'is_active', 'on_main_page')
         }),
         ('Tarix', {
             'fields': ('created_at',)
@@ -246,7 +282,6 @@ class ProjectAdmin(admin.ModelAdmin):
         return qs.select_related('category')
     
     def response_delete(self, request, obj_display, obj_id):
-        """Override delete response to handle inline media deletion"""
         try:
             return super().response_delete(request, obj_display, obj_id)
         except Exception as e:
@@ -287,6 +322,9 @@ class ProjectAdmin(admin.ModelAdmin):
             badges.append('<span style="background: #17a2b8; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">✓ Tamamlanıb</span>')
         else:
             badges.append('<span style="background: #ffc107; color: #333; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🔄 Davam edir</span>')
+        
+        if obj.on_main_page:
+            badges.append('<span style="background: #6f42c1; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🏠 Ana səhifədə</span>')
         
         return format_html(' '.join(badges))
     status_badges.short_description = "Status"
@@ -665,7 +703,6 @@ class AppealAdmin(admin.ModelAdmin):
     candidate_info.admin_order_field = 'full_name'
 
     def vacancy_info(self, obj):
-        """Vakansiya məlumatlarını səliqəli şəkildə göstərir"""
         if obj.vacancy:
             vacancy_url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
             detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
@@ -724,7 +761,6 @@ class AppealAdmin(admin.ModelAdmin):
     contact_info.short_description = "Əlaqə"
 
     def cv_download(self, obj):
-        """CV faylını səliqəli şəkildə göstərir"""
         detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
         
         if obj.cv:
@@ -759,7 +795,6 @@ class AppealAdmin(admin.ModelAdmin):
     cv_download.short_description = "CV Faylı"
 
     def read_status_badge(self, obj):
-        """Oxunma statusunu badge şəklində göstərir"""
         if obj.is_read:
             return format_html(
                 '<div style="padding: 8px 0;">'
@@ -781,7 +816,6 @@ class AppealAdmin(admin.ModelAdmin):
     read_status_badge.admin_order_field = 'is_read'
 
     def created_at_formatted(self, obj):
-        """Tarixi səliqəli formatda göstərir"""
         if obj.created_at:
             date_str = obj.created_at.strftime('%d.%m.%Y')
             time_str = obj.created_at.strftime('%H:%M')

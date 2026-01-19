@@ -62,7 +62,7 @@
               {% for category in categories %}
               <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
@@ -103,7 +103,7 @@
           data-portfolio-sort="original-order">
 
           <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter="*" class="filter-active">{% trans "Hamisi" %}</li>
+            <li data-filter="*" class="filter-active">{% trans "Hamısı" %}</li>
             <li data-filter=".filter-remodeling">{% trans "DAVAM EDƏN LAYİHƏLƏR" %}</li>
             <li data-filter=".filter-construction">{% trans "TAMAMLANMIŞ LAYİHƏLƏR" %}</li>
           </ul><!-- End Projects Filters -->
@@ -196,7 +196,7 @@
                 {% for category in categories %}
                 <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
                 {% empty %}
-                <li><a href="{% url 'projects:project-page' %}">{% trans "Bütün layihələr" %}</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
                 {% endfor %}
               </ul>
             </div>

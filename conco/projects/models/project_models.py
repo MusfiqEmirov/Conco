@@ -91,6 +91,12 @@ class Project(SluggedModel):
         blank=True,
         verbose_name='Lahiyə aktivliyi'
     )
+    on_main_page = models.BooleanField(
+        default=True,
+        null=True,
+        blank=True,
+        verbose_name='Ana səhifədə olsun'
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Lahiyə yaradılma tarixi'
