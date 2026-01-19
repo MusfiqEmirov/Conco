@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import Http404
-from django.utils.translation import gettext as _, activate
+from django.utils.translation import gettext as _
 
 from projects.models import Appeal
 from projects.forms.forms_v1 import AppealForm
@@ -23,7 +23,6 @@ class HomePageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
-        activate(lang)
         context = get_home_page_data(request, lang)
         context['footer_image'] = get_background_image('footer')
         context['language'] = lang
@@ -33,9 +32,11 @@ class HomePageView(View):
 class ProjectPageView(View):
     template_name = 'projects.html'
     
-    def get(self, request):
+    def get(self, request, category_slug=None):
         lang = get_language_from_request(request)
-        activate(lang)
+        if category_slug:
+            request.GET = request.GET.copy()
+            request.GET['slug'] = category_slug
         context = get_project_list_data(request, lang)
         context['background_image'] = get_background_image('project')
         context['footer_image'] = get_background_image('footer')
@@ -48,28 +49,42 @@ class ProjectDetailPageView(View):
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
-        activate(lang)
+        
+        # Əvvəlcə layihə kimi yoxla
         project = get_project_by_slug(slug, lang)
-        if not project:
+        if project:
+            # Bu layihədir, detalları göstər
+            categories = get_project_categories(lang)
+            serialized_categories = [
+                serialize_project_category(category, lang)
+                for category in categories
+            ]
+            contact = get_contact(lang)
+            
+            context = {
+                'project': serialize_project(project, lang),
+                'categories': serialized_categories,
+                'contact': serialize_contact(contact, lang) if contact else None,
+                'language': lang,
+                'background_image': get_background_image('project'),
+                'footer_image': get_background_image('footer'),
+            }
+            return render(request, self.template_name, context)
+        
+        # Əgər layihə deyilsə, kateqoriya kimi yoxla
+        from projects.models import ProjectCategory
+        try:
+            category = ProjectCategory.objects.get(slug=slug)
+            # Bu kateqoriyadır, kateqoriya səhifəsini göstər
+            request.GET = request.GET.copy()
+            request.GET['slug'] = slug
+            context = get_project_list_data(request, lang)
+            context['background_image'] = get_background_image('project')
+            context['footer_image'] = get_background_image('footer')
+            context['language'] = lang
+            return render(request, 'projects.html', context)
+        except ProjectCategory.DoesNotExist:
             raise Http404(_("Project not found"))
-        
-        categories = get_project_categories(lang)
-        serialized_categories = [
-            serialize_project_category(category, lang)
-            for category in categories
-        ]
-        contact = get_contact(lang)
-        
-        context = {
-            'project': serialize_project(project, lang),
-            'categories': serialized_categories,
-            'contact': serialize_contact(contact, lang) if contact else None,
-            'language': lang,
-            'background_image': get_background_image('project'),
-            'footer_image': get_background_image('footer'),
-        }
-
-        return render(request, self.template_name, context)
 
 
 class AboutPageView(View):
@@ -78,7 +93,6 @@ class AboutPageView(View):
     def get(self, request):
         lang = get_language_from_request(request)
         is_active = request.GET.get('is_active', 'true').lower() == 'true'
-        activate(lang)
         about = get_about(lang)
         partners = get_partners(lang=lang, is_active=is_active)
         contact = get_contact(lang)
@@ -107,7 +121,6 @@ class ContactPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
-        activate(lang)
         contact = get_contact(lang)
         categories = get_project_categories(lang)
         serialized_categories = [
@@ -130,7 +143,6 @@ class VacancyPageView(View):
     
     def get(self, request):
         lang = get_language_from_request(request)
-        activate(lang)
         context = get_vacancy_list_data(request, lang)
         categories = get_project_categories(lang)
         context['categories'] = [
@@ -148,7 +160,6 @@ class VacancyDetailPageView(View):
     
     def get(self, request, slug):
         lang = get_language_from_request(request)
-        activate(lang)
         vacancy = get_vacancy_by_slug(slug, lang)
         if not vacancy:
             from django.http import Http404
@@ -174,7 +185,6 @@ class VacancyDetailPageView(View):
     
     def post(self, request, slug):
         lang = get_language_from_request(request)
-        activate(lang)
         vacancy = get_vacancy_by_slug(slug, lang)
         if not vacancy:
             raise Http404(_("Vacancy not found"))

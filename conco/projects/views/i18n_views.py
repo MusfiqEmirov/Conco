@@ -1,9 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.utils import translation
-from django.views.decorators.http import require_POST
 from django.conf import settings
 
-@require_POST
 def set_language(request):
     next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
     admin_path = f'/{settings.ADMIN_URL.strip("/")}/'
@@ -16,6 +14,10 @@ def set_language(request):
             request.session['admin_language'] = settings.LANGUAGE_CODE
         else:
             request.session['django_language'] = language
+            request.session['language'] = language  
+            request.session.modified = True
+            request.session.save()
+
             translation.activate(language)
 
     return HttpResponseRedirect(next_url)

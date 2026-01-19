@@ -9,29 +9,39 @@ from django.core.cache import cache
 
 
 def get_language_from_request(request):
-    lang = request.GET.get('lang', '').lower()
+    lang = request.GET.get('lang', '').lower() or request.GET.get('language', '').lower()
     if lang in ['az', 'en', 'ru']:
         request.session['django_language'] = lang
         request.session['language'] = lang 
+        request.session.modified = True
+        translation.activate(lang)
         return lang
     
     lang = request.session.get('django_language', '').lower()
     if lang in ['az', 'en', 'ru']:
+        translation.activate(lang)
         return lang
     
     lang = request.session.get('language', '').lower()
     if lang in ['az', 'en', 'ru']:
-        request.session['django_language'] = lang  # Migrate edirik
+        request.session['django_language'] = lang
+        request.session.modified = True
+        translation.activate(lang)
         return lang
     
     lang = getattr(request, 'LANGUAGE_CODE', 'az')
     if lang in ['az', 'en', 'ru']:
         request.session['django_language'] = lang
         request.session['language'] = lang
+        request.session.modified = True
+        translation.activate(lang)
         return lang
     
+    # Default olaraq az
     request.session['django_language'] = 'az'
     request.session['language'] = 'az'
+    request.session.modified = True
+    translation.activate('az')
     return 'az'
 
 
@@ -51,7 +61,7 @@ def get_project_categories(lang='az'):
     return ProjectCategory.objects.all().order_by('id')
 
 
-def get_projects(lang='az', category_id=None, is_active=True, is_completed=None):
+def get_projects(lang='az', category_slug=None, is_active=True, is_completed=None, on_main_page=None):
     queryset = Project.objects.select_related('category').prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
     )
@@ -62,8 +72,11 @@ def get_projects(lang='az', category_id=None, is_active=True, is_completed=None)
     if is_completed is not None:
         queryset = queryset.filter(is_completed=is_completed)
     
-    if category_id:
-        queryset = queryset.filter(category_id=category_id)
+    if category_slug:
+        queryset = queryset.filter(category__slug=category_slug)
+    
+    if on_main_page is not None:
+        queryset = queryset.filter(on_main_page=on_main_page)
     
     return queryset.order_by('-created_at')
 
@@ -82,7 +95,9 @@ def get_project_by_slug(slug, lang='az'):
 @cached_query(timeout='CACHE_TIMEOUT_LONG')
 def get_about(lang='az'):
     about = About.objects.prefetch_related(
-        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+        Prefetch('medias', queryset=Media.objects.filter(
+            Q(image__isnull=False) | Q(video__isnull=False)
+        ))
     ).first()
     return about
 
@@ -181,7 +196,6 @@ def get_statistics():
             'partner_count': statistic.value_three,
         }
     
-    # Əgər Statistic yoxdursa, fallback olaraq dinamik hesabla
     from projects.models import Appeal
     
     client_count = Appeal.objects.values('email', 'phone_number').distinct().count()
@@ -214,6 +228,7 @@ def serialize_project(project, lang='az'):
         'created_at': project.created_at,
         'category': {
             'id': project.category.id,
+            'slug': project.category.slug,
             'name': getattr(project.category, cat_name_field, project.category.name_az),
         },
         'medias': [
@@ -232,6 +247,7 @@ def serialize_project_category(category, lang='az'):
     
     return {
         'id': category.id,
+        'slug': category.slug,
         'name': getattr(category, name_field, category.name_az),
     }
 
@@ -345,7 +361,7 @@ def get_pagination_data(page_obj, paginator):
 
 @cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_home_page_data(request, lang):
-    category_id = request.GET.get('category_id')
+    category_slug = request.GET.get('slug')  # category_slug -> slug
     is_completed = request.GET.get('is_completed')
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
     
@@ -355,13 +371,15 @@ def get_home_page_data(request, lang):
         is_completed = None
     
     projects_page = request.GET.get('page', 1)
-    projects_per_page = int(request.GET.get('per_page', 6))
+    projects_per_page = int(request.GET.get('per_page', 9))
     
+   
     projects = get_projects(
         lang=lang,
-        category_id=category_id,
+        category_slug=category_slug,
         is_active=is_active,
-        is_completed=is_completed
+        is_completed=is_completed,
+        on_main_page=True
     )
     
     projects_page_obj, projects_paginator = paginate_queryset(projects, projects_page, projects_per_page)
@@ -387,7 +405,7 @@ def get_home_page_data(request, lang):
     ]
     
     vacancies_page = request.GET.get('vacancies_page', 1)
-    vacancies_per_page = int(request.GET.get('vacancies_per_page', 10))
+    vacancies_per_page = int(request.GET.get('vacancies_per_page', 9))
     
     all_vacancies = get_vacancies(lang=lang, is_active=True)
     vacancies_page_obj, vacancies_paginator = paginate_queryset(all_vacancies, vacancies_page, vacancies_per_page)
@@ -419,7 +437,7 @@ def get_home_page_data(request, lang):
         'partners_pagination': get_pagination_data(partners_page_obj, partners_paginator),
         'vacancies_pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
         'filters': {
-            'category_id': category_id,
+            'slug': category_slug,  # category_slug -> slug
             'is_completed': is_completed,
             'is_active': is_active,
         },
@@ -433,7 +451,7 @@ def get_home_page_data(request, lang):
 
 @cached_page_data(timeout='CACHE_TIMEOUT_MEDIUM')
 def get_project_list_data(request, lang):
-    category_id = request.GET.get('category_id')
+    category_slug = request.GET.get('slug')  # category_slug -> slug
     is_completed = request.GET.get('is_completed')
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
     
@@ -447,7 +465,7 @@ def get_project_list_data(request, lang):
     
     projects = get_projects(
         lang=lang,
-        category_id=category_id,
+        category_slug=category_slug,
         is_active=is_active,
         is_completed=is_completed
     )
@@ -465,9 +483,9 @@ def get_project_list_data(request, lang):
     ]
     
     selected_category = None
-    if category_id:
+    if category_slug:
         try:
-            category_obj = next((cat for cat in categories if cat.id == int(category_id)), None)
+            category_obj = next((cat for cat in categories if cat.slug == category_slug), None)
             if category_obj:
                 selected_category = serialize_project_category(category_obj, lang)
         except (ValueError, TypeError):
@@ -483,7 +501,7 @@ def get_project_list_data(request, lang):
         'contact': serialized_contact,
         'pagination': get_pagination_data(projects_page_obj, projects_paginator),
         'filters': {
-            'category_id': category_id,
+            'slug': category_slug,  # category_slug -> slug
             'is_completed': is_completed,
             'is_active': is_active,
         },

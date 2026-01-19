@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,21 +55,21 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar " >
         <ul>
-          <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-          <li class="dropdown"><a href="#" ><span>Layihələr</span> <i
+          <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+          <li class="dropdown"><a href="#" ><span>{% trans "Layihələr" %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               {% for category in categories %}
-              <li><a href="{% url 'projects:project-page' %}?category_id={{ category.id }}">{{ category.name }}</a></li>
+              <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
-          <li><a href="{% url 'projects:about-page' %}">Haqqimizda</a></li>
-          <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-          <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
-          <li class="dropdown"><a href="#"><span>AZ</span> <i
+          <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqimizda" %}</a></li>
+          <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+          <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
+          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> <i
                 class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
@@ -88,7 +89,7 @@
     <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>Əlaqə</h2>
+        <h2>{% trans "Əlaqə" %}</h2>
 
 
       </div>
@@ -104,7 +105,7 @@
           <div class="col-lg-3">
             <div class="info-item  d-flex flex-column justify-content-center align-items-center">
               <i class="bi bi-map"></i>
-              <h3>Ünvanımız</h3>
+              <h3>{% trans "Ünvanımız" %}</h3>
               <p>{{ contact.address }}</p>
             </div>
           </div><!-- End Info Item -->
@@ -114,7 +115,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="info-item d-flex flex-column justify-content-center align-items-center">
               <i class="bi bi-envelope"></i>
-              <h3>e-poçt ünvanımız</h3>
+              <h3>{% trans "e-poçt ünvanımız" %}</h3>
               <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
             </div>
           </div><!-- End Info Item -->
@@ -124,7 +125,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="info-item  d-flex flex-column justify-content-center align-items-center">
               <i class="bi bi-telephone"></i>
-              <h3>Zəng et</h3>
+              <h3>{% trans "Zəng et" %}</h3>
               <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
             </div>
           </div><!-- End Info Item -->
@@ -134,7 +135,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="info-item  d-flex flex-column justify-content-center align-items-center">
               <i class="bi bi-whatsapp"></i>
-              <h3>Whatsapp</h3>
+              <h3>{% trans "Whatsapp" %}</h3>
               <a href="https://wa.me/{{ contact.whatsapp_number }}">{{ contact.whatsapp_number }}</a>
             </div>
           </div><!-- End Info Item -->
@@ -153,24 +154,24 @@
             <form action="forms/contact.php" method="post" role="form" class="php-email-form">
               <div class="row gy-4">
                 <div class="col-lg-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Ad soyad" required>
+                  <input type="text" name="name" class="form-control" id="name" placeholder="{% trans 'Ad soyad' %}" required>
                 </div>
                 <div class="col-lg-6 form-group">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="e-poçt unvani" required>
+                  <input type="email" class="form-control" name="email" id="email" placeholder="{% trans 'e-poçt unvani' %}" required>
                 </div>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Təmsil olunan subyekt" required>
+                <input type="text" class="form-control" name="subject" id="subject" placeholder="{% trans 'Təmsil olunan subyekt' %}" required>
               </div>
               <div class="form-group">
-                <textarea class="form-control" name="message" rows="5" placeholder="Mesajiniz" required></textarea>
+                <textarea class="form-control" name="message" rows="5" placeholder="{% trans 'Mesajiniz' %}" required></textarea>
               </div>
               <div class="my-3">
-                <div class="loading">Loading</div>
+                <div class="loading">{% trans "Yüklənir" %}</div>
                 <div class="error-message"></div>
-                <div class="sent-message">Mesajiniz gondərildi</div>
+                <div class="sent-message">{% trans "Mesajiniz gondərildi" %}</div>
               </div>
-              <div class="text-center"><button type="submit">Mesaj gondər</button></div>
+              <div class="text-center"><button type="submit">{% trans "Mesaj gondər" %}</button></div>
             </form>
           </div><!-- End Contact Form -->
 
@@ -191,14 +192,14 @@
           {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əlaqə</h3>
+              <h3>{% trans "Əlaqə" %}</h3>
               <ul>
                 {% if contact.address %}
                 <li>{{ contact.address }}</li>
                 {% endif %}
                 {% if contact.phone %}
                 <li>
-                  <a href="tel:{{ contact.phone }}">📞 Zəng et: {{ contact.phone }}</a>
+                  <a href="tel:{{ contact.phone }}">📞 {% trans "Zəng et" %}: {{ contact.phone }}</a>
                 </li>
                 {% endif %}
                 {% if contact.whatsapp_number %}
@@ -234,12 +235,12 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Əsas</h3>
+              <h3>{% trans "Əsas" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:home-page' %}">Ana səhifə</a></li>
-                <li><a href="{% url 'projects:about-page' %}">Haqqımızda</a></li>
-                <li><a href="{% url 'projects:vacancy-page' %}">Vakansiyalar</a></li>
-                <li><a href="{% url 'projects:contact-page' %}">Əlaqə</a></li>
+                <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
+                <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+                <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
+                <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
               </ul>
             </div>
           </div>
@@ -247,9 +248,9 @@
 
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
-              <h3>Layihələr</h3>
+              <h3>{% trans "Layihələr" %}</h3>
               <ul>
-                <li><a href="{% url 'projects:project-page' %}">Bütün layihələr</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
               </ul>
             </div>
           </div>
@@ -262,7 +263,7 @@
     <div class="footer-legal text-center position-relative danger">
       <div class="container">
         <div class="copyright">
-          &copy;<strong><span>Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur.</span></strong>
+          &copy;<strong><span>{% trans "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur." %}</span></strong>
         </div>
 
       </div>

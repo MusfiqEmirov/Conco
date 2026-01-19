@@ -3,6 +3,8 @@ from django.db.models import Q
 from django.db import models
 from django.utils.html import format_html
 from django.urls import reverse
+from django import forms
+from django.core.exceptions import ValidationError
 
 from projects.models import *
 
@@ -120,7 +122,12 @@ class MediaInlineBase(admin.TabularInline):
 
 
 class MediaInlineProject(MediaInlineBase):
-    fields = ('image', 'video', 'thumbnail_preview', 'created_at')
+    fk_name = 'project'
+    fields = ('image', 'thumbnail_preview', 'created_at')
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('project')
 
 
 class MediaInlinePartner(MediaInlineBase):
@@ -128,7 +135,27 @@ class MediaInlinePartner(MediaInlineBase):
 
 
 class MediaInlineAbout(MediaInlineBase):
-    fields = ('image', 'thumbnail_preview', 'created_at')
+    fields = ('image', 'video', 'thumbnail_preview', 'created_at')
+    max_num = None  
+    
+    def get_formset(self, request, obj=None, **kwargs):
+        from django.forms import BaseInlineFormSet
+        from django.core.exceptions import ValidationError
+        
+        class MediaAboutFormSet(BaseInlineFormSet):
+            def clean(self):
+                super().clean()
+                video_count = 0
+                for form in self.forms:
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                        if form.cleaned_data.get('video'):
+                            video_count += 1
+                
+                if video_count > 1:
+                    raise ValidationError('Yalnız bir video yükləmək mümkündür. Lütfən, yalnız bir media-da video əlavə edin.')
+        
+        kwargs['formset'] = MediaAboutFormSet
+        return super().get_formset(request, obj, **kwargs)
 
 
 class MediaInlineVacancy(MediaInlineBase):
@@ -139,7 +166,7 @@ class MediaInlineVacancy(MediaInlineBase):
 @admin.register(ProjectCategory)
 class ProjectCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name_link', 'name_en', 'name_ru', 'projects_count')
-    list_display_links = None
+    list_display_links = ('id',)
     search_fields = ('name_az', 'name_en', 'name_ru')
     list_per_page = 25
     
@@ -171,20 +198,55 @@ class ProjectCategoryAdmin(admin.ModelAdmin):
     projects_count.short_description = "Layihələr"
 
 # Project 
+class ProjectAdminForm(forms.ModelForm):
+    """Layihə admin formu - on_main_page limitini yoxlayır"""
+    
+    class Meta:
+        model = Project
+        fields = '__all__'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        on_main_page = cleaned_data.get('on_main_page')
+        
+        if on_main_page:
+            existing_count = Project.objects.filter(on_main_page=True).count()
+            
+            if self.instance and self.instance.pk:
+                try:
+                    old_obj = Project.objects.get(pk=self.instance.pk)
+                    if old_obj.on_main_page:
+                        existing_count -= 1
+                except Project.DoesNotExist:
+                    pass
+            
+            if existing_count >= 9:
+                raise ValidationError({
+                    'on_main_page': (
+                        '⚠️ Xəbərdarlıq: Ana səhifədə maksimum 9 layihə ola bilər. '
+                        'Yeni layihəni ana səhifəyə əlavə etmək üçün köhnələrdən birinin "Ana səhifədə olsun" seçimini silməlisiniz.'
+                    )
+                })
+        
+        return cleaned_data
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
+    form = ProjectAdminForm
     list_display = (
         'id',
         'name_link',
-        'category',
+        'category_display',
         'status_badges',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('id',)
     list_filter = (
         'category',
         'is_completed',
         'is_active',
+        'on_main_page',
         'created_at',
     )
     search_fields = ('name_az', 'name_en', 'name_ru', 'description_az', 'description_en', 'description_ru')
@@ -208,18 +270,46 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('name_ru', 'description_ru')
         }),
         ('Status', {
-            'fields': ('is_completed', 'is_active')
+            'fields': ('is_completed', 'is_active', 'on_main_page')
         }),
         ('Tarix', {
             'fields': ('created_at',)
         }),
     )
     
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('category')
+    
+    def response_delete(self, request, obj_display, obj_id):
+        try:
+            return super().response_delete(request, obj_display, obj_id)
+        except Exception as e:
+            from django.contrib import messages
+            from django.http import HttpResponseRedirect
+            from django.urls import reverse
+            
+            try:
+                from projects.models import Media
+                Media.objects.filter(project_id=obj_id).delete()
+            except Exception:
+                pass
+            
+            messages.success(request, f'"{obj_display}" uğurla silindi.')
+            return HttpResponseRedirect(reverse('admin:projects_project_changelist'))
+    
     def name_link(self, obj):
         url = reverse('admin:projects_project_change', args=[obj.pk])
         return format_html('<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; font-size: 14px;">🔗 {}</a>', url, obj.name_az)
     name_link.short_description = "Layihə Adı"
     name_link.admin_order_field = 'name_az'
+    
+    def category_display(self, obj):
+        if obj.category:
+            return obj.category.name_az or '-'
+        return '-'
+    category_display.short_description = "Kateqoriya"
+    category_display.admin_order_field = 'category'
     
     def status_badges(self, obj):
         badges = []
@@ -232,6 +322,9 @@ class ProjectAdmin(admin.ModelAdmin):
             badges.append('<span style="background: #17a2b8; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">✓ Tamamlanıb</span>')
         else:
             badges.append('<span style="background: #ffc107; color: #333; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🔄 Davam edir</span>')
+        
+        if obj.on_main_page:
+            badges.append('<span style="background: #6f42c1; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🏠 Ana səhifədə</span>')
         
         return format_html(' '.join(badges))
     status_badges.short_description = "Status"
@@ -247,7 +340,7 @@ class PartnerAdmin(admin.ModelAdmin):
         'active_status',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('name_link',)
     list_filter = ('is_active', 'created_at')
     search_fields = ('name_az', 'name_en', 'name_ru')
     ordering = ('-created_at',)
@@ -322,7 +415,7 @@ class PartnerAdmin(admin.ModelAdmin):
 @admin.register(About)
 class AboutAdmin(admin.ModelAdmin):
     list_display = ('id', 'title_link', 'second_title_az', 'media_count', 'updated_info')
-    list_display_links = None
+    list_display_links = ('id',)
     search_fields = ('main_title_az', 'main_title_en', 'main_title_ru', 'second_title_az', 'second_title_en', 'second_title_ru', 'description_az', 'description_en', 'description_ru')
     inlines = [MediaInlineAbout]
     list_per_page = 25
@@ -375,7 +468,7 @@ class ContactAdmin(admin.ModelAdmin):
         'contact_email',
         'social_links',
     )
-    list_display_links = None
+    list_display_links = ('address_link',)
     search_fields = (
         'address_az', 'address_en', 'address_ru',
         'phone', 'whatsapp_number',
@@ -446,7 +539,7 @@ class VacancyAdmin(admin.ModelAdmin):
         'appeals_count',
         'created_at',
     )
-    list_display_links = None
+    list_display_links = ('id',)
     list_filter = ('is_active', 'created_at')
     search_fields = ('title_az', 'title_en', 'title_ru', 'description_az', 'description_en', 'description_ru')
     exclude = ('slug',)
@@ -510,7 +603,7 @@ class MottoAdmin(admin.ModelAdmin):
         'text_preview_en',
         'text_preview_ru',
     )
-    list_display_links = None
+    list_display_links = ('text_preview_az',)
     search_fields = ('text_az', 'text_en', 'text_ru')
     list_per_page = 25
     
@@ -610,7 +703,6 @@ class AppealAdmin(admin.ModelAdmin):
     candidate_info.admin_order_field = 'full_name'
 
     def vacancy_info(self, obj):
-        """Vakansiya məlumatlarını səliqəli şəkildə göstərir"""
         if obj.vacancy:
             vacancy_url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
             detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
@@ -669,7 +761,6 @@ class AppealAdmin(admin.ModelAdmin):
     contact_info.short_description = "Əlaqə"
 
     def cv_download(self, obj):
-        """CV faylını səliqəli şəkildə göstərir"""
         detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
         
         if obj.cv:
@@ -704,7 +795,6 @@ class AppealAdmin(admin.ModelAdmin):
     cv_download.short_description = "CV Faylı"
 
     def read_status_badge(self, obj):
-        """Oxunma statusunu badge şəklində göstərir"""
         if obj.is_read:
             return format_html(
                 '<div style="padding: 8px 0;">'
@@ -726,7 +816,6 @@ class AppealAdmin(admin.ModelAdmin):
     read_status_badge.admin_order_field = 'is_read'
 
     def created_at_formatted(self, obj):
-        """Tarixi səliqəli formatda göstərir"""
         if obj.created_at:
             date_str = obj.created_at.strftime('%d.%m.%Y')
             time_str = obj.created_at.strftime('%H:%M')
