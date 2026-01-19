@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>CONCO, Tikinti | construction</title>
+  <title>{% trans "CONCO, Tikinti" %} | {% trans "construction" %}</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -48,7 +48,7 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
-        <img src="{% static 'assets/img/my_logo.png' %}" alt="Logo" class="logo-img">
+        <img src="{% static 'assets/img/my_logo.png' %}" alt="{% trans 'Logo' %}" class="logo-img">
       </a>
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
@@ -103,7 +103,22 @@
           {% if about.medias %}
             {% with about.medias|first as first_media %}
               {% if first_media.image %}
-              <div class="col-lg-7 about-img" style="background-image: url({{ first_media.image }});"></div>
+              <div class="col-lg-7 about-img">
+                <div class="slides-1 about-details-slider swiper">
+                  <div class="swiper-wrapper align-items-center">
+                    {% for media in about.medias %}
+                      {% if media.image %}
+                      <div class="swiper-slide">
+                        <div class="about-img-slide" style="background-image: url({{ media.image }});"></div>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <div class="swiper-pagination"></div>
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+              </div>
               {% else %}
               <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
               {% endif %}
@@ -273,7 +288,7 @@
                 {% if contact.whatsapp_number %}
                 <li>
                   <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
-                    💬 Whatsapp: {{ contact.whatsapp_number }}
+                    💬 {% trans "Whatsapp" %}: {{ contact.whatsapp_number }}
                   </a>
                 </li>
                 {% endif %}

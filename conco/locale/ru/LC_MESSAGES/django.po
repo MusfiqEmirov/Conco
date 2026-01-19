@@ -280,6 +280,7 @@ msgid "Anə Səhifə"
 msgstr "Главная"
 
 #: templates/index.html
+#: templates/about.html
 msgid "Tərəfdaşlar"
 msgstr "Партнеры"
 
@@ -370,4 +371,20 @@ msgstr "Перейти"
 #: projects/views/views_v1.py
 msgid "Project not found"
 msgstr "Проект не найден"
+
+#: templates/about.html
+msgid "CONCO, Tikinti"
+msgstr "CONCO, Строительство"
+
+#: templates/about.html
+msgid "construction"
+msgstr "строительство"
+
+#: templates/about.html
+msgid "Whatsapp"
+msgstr "WhatsApp"
+
+#: templates/about.html
+msgid "Logo"
+msgstr "Логотип"
 

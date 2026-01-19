@@ -149,11 +149,28 @@
               </div>
               <div class="col-lg-6 order-1 order-lg-2 text-center" data-aos="fade-up" data-aos-delay="200">
                 {% if about.medias %}
-                  {% for media in about.medias %}
-                    {% if media.image %}
-                    <img src="{{ media.image }}" alt="" class="img-fluid">
+                  {% with about.medias|first as first_media %}
+                    {% if first_media.image %}
+                    <div class="about-img-carousel-index">
+                      <div class="slides-1 about-details-slider swiper">
+                        <div class="swiper-wrapper align-items-center">
+                          {% for media in about.medias %}
+                            {% if media.image %}
+                            <div class="swiper-slide">
+                              <img src="{{ media.image }}" alt="" class="img-fluid">
+                            </div>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                      </div>
+                      <div class="swiper-button-prev"></div>
+                      <div class="swiper-button-next"></div>
+                    </div>
+                    {% else %}
+                    <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
                     {% endif %}
-                  {% endfor %}
+                  {% endwith %}
                 {% else %}
                 <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
                 {% endif %}
