@@ -588,37 +588,6 @@ section {
     display: block;
   }
 
-  /* Minimize spacing between language code and flag in mobile navigation */
-  .navbar .dropdown:has(.lang-option) > a {
-    justify-content: flex-start !important;
-    gap: 2px !important;
-  }
-  
-  .navbar .dropdown:has(.lang-option) > a span {
-    margin-right: 0 !important;
-  }
-  
-  .navbar .dropdown:has(.lang-option) > a img {
-    margin-left: 2px !important;
-    flex-shrink: 0 !important;
-  }
-  
-  .navbar .dropdown ul a.lang-option {
-    justify-content: flex-start !important;
-    gap: 2px !important;
-  }
-  
-  .navbar .dropdown ul a.lang-option img {
-    margin-left: 2px !important;
-    flex-shrink: 0 !important;
-  }
-  
-  /* Override inline styles for language images in mobile */
-  .navbar .dropdown:has(.lang-option) > a img[style*="margin-left"],
-  .navbar .dropdown ul a.lang-option img[style*="margin-left"] {
-    margin-left: 2px !important;
-  }
-
   .mobile-nav-show {
     position: relative;
     color: #fff;

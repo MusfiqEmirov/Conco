@@ -35,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('body').classList.toggle('mobile-nav-active');
     mobileNavShow.classList.toggle('d-none');
     mobileNavHide.classList.toggle('d-none');
-    // Navbar açıldıqda/yandıqda spacing-i yenidən tətbiq et
-    setTimeout(adjustMobileLanguageSpacing, 100);
   }
 
   /**
@@ -78,93 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
-  });
-
-  /**
-   * Minimize spacing between language code and flag in mobile navigation
-   */
-  function adjustMobileLanguageSpacing() {
-    const isMobile = window.innerWidth <= 1279;
-    
-    // Find language dropdown by checking if it contains .lang-option
-    const allDropdowns = document.querySelectorAll('.navbar .dropdown');
-    const langDropdowns = Array.from(allDropdowns).filter(dropdown => {
-      return dropdown.querySelector('.lang-option') !== null;
-    });
-    
-    langDropdowns.forEach(dropdown => {
-      // Main dropdown toggle link
-      const dropdownLink = dropdown.querySelector('> a');
-      if (dropdownLink) {
-        if (isMobile) {
-          dropdownLink.style.justifyContent = 'flex-start';
-          dropdownLink.style.gap = '2px';
-          const span = dropdownLink.querySelector('span');
-          if (span) span.style.marginRight = '0';
-          const img = dropdownLink.querySelector('img');
-          if (img) {
-            img.style.marginLeft = '2px';
-            img.style.flexShrink = '0';
-          }
-        } else {
-          dropdownLink.style.justifyContent = '';
-          dropdownLink.style.gap = '';
-          const span = dropdownLink.querySelector('span');
-          if (span) span.style.marginRight = '';
-          const img = dropdownLink.querySelector('img');
-          if (img) {
-            img.style.marginLeft = '5px';
-          }
-        }
-      }
-      
-      // Dropdown menu items
-      const langOptions = dropdown.querySelectorAll('a.lang-option');
-      langOptions.forEach(option => {
-        if (isMobile) {
-          option.style.justifyContent = 'flex-start';
-          option.style.gap = '2px';
-          const img = option.querySelector('img');
-          if (img) {
-            img.style.marginLeft = '2px';
-            img.style.flexShrink = '0';
-          }
-        } else {
-          option.style.justifyContent = '';
-          option.style.gap = '';
-          const img = option.querySelector('img');
-          if (img) {
-            img.style.marginLeft = '5px';
-          }
-        }
-      });
-    });
-  }
-
-  // Apply on load, resize, and when navbar opens
-  adjustMobileLanguageSpacing();
-  window.addEventListener('load', () => {
-    setTimeout(adjustMobileLanguageSpacing, 100);
-  });
-  window.addEventListener('resize', adjustMobileLanguageSpacing);
-  
-  // Navbar dropdown açıldıqda da tətbiq et
-  navDropdowns.forEach(el => {
-    el.addEventListener('click', function() {
-      setTimeout(adjustMobileLanguageSpacing, 100);
-    });
-  });
-  
-  // MutationObserver ilə navbar açıldıqda izlə
-  const bodyObserver = new MutationObserver(() => {
-    if (document.body.classList.contains('mobile-nav-active')) {
-      setTimeout(adjustMobileLanguageSpacing, 50);
-    }
-  });
-  
-  bodyObserver.observe(document.body, {
-    attributes: true,
-    attributeFilter: ['class']
   });
 
   /**
