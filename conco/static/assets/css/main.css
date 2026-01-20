@@ -588,6 +588,23 @@ section {
     display: block;
   }
 
+  /* Minimize spacing between language code and flag in mobile navigation - ONLY spacing, no color changes */
+  /* Using more specific selectors to avoid conflicts */
+  .navbar .dropdown ul a.lang-option {
+    justify-content: flex-start !important;
+    gap: 2px !important;
+  }
+  
+  .navbar .dropdown ul a.lang-option img {
+    margin-left: 2px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Override inline styles for language images in mobile dropdown items */
+  .navbar .dropdown ul a.lang-option img[style*="margin-left"] {
+    margin-left: 2px !important;
+  }
+
   .mobile-nav-show {
     position: relative;
     color: #fff;
