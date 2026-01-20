@@ -214,7 +214,7 @@
 
           <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
             {% for project in projects %}
-            <div class="col-lg-4 col-md-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
+            <div class="col-lg-4 col-md-6 col-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
               <div class="portfolio-content h-100">
                 {% if project.medias %}
                   {% with project.medias|first as first_media %}
@@ -308,7 +308,7 @@
 
         <div class="row gy-5">
           {% for vacancy in vacancies %}
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xl-4 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">

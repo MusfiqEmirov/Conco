@@ -117,7 +117,7 @@
 
           <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
             {% for project in projects %}
-            <div class="col-lg-4 col-md-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-construction{% else %}filter-remodeling{% endif %}">
+            <div class="col-lg-4 col-md-6 col-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-construction{% else %}filter-remodeling{% endif %}">
               <div class="portfolio-content h-100">
                 {% if project.medias %}
                   {% with project.medias|first as first_media %}

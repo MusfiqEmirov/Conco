@@ -178,6 +178,17 @@
                   {% endfor %}
                 {% endif %}
                 
+                {% if vacancy %}
+                <div class="mb-4">
+                  <div class="row">
+                    <div class="col-md-12 form-group">
+                      <label>{% trans "Vakansiya adı" %}</label>
+                      <input type="text" class="form-control" value="{{ vacancy.title }}" readonly>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                
                 {% if form %}
                 <form method="post" action="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" enctype="multipart/form-data">
                   {% csrf_token %}

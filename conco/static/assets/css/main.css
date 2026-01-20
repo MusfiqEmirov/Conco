@@ -991,6 +991,11 @@ section {
   margin: 0 auto 20px auto;
   list-style: none;
   text-align: center;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .projects .portfolio-flters li {
@@ -1003,6 +1008,8 @@ section {
   line-height: 1;
   margin-bottom: 5px;
   transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .projects .portfolio-flters li:hover,
@@ -1019,9 +1026,35 @@ section {
 }
 
 @media (max-width: 575px) {
+  .projects .portfolio-flters {
+    justify-content: center;
+    padding: 0 5px;
+  }
+  
   .projects .portfolio-flters li {
-    font-size: 14px;
-    margin: 0 5px;
+    font-size: 11px;
+    margin: 0 3px;
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  .projects .portfolio-flters {
+    padding: 0 3px;
+  }
+  
+  .projects .portfolio-flters li {
+    font-size: 10px;
+    margin: 0 2px;
+    padding: 3px 4px;
+  }
+}
+
+@media (max-width: 320px) {
+  .projects .portfolio-flters li {
+    font-size: 9px;
+    margin: 0 1px;
+    padding: 2px 3px;
   }
 }
 
@@ -1958,6 +1991,82 @@ section {
   padding: 0;
 }
 
+/* Mobile: Reduce text sizes in project details */
+@media (max-width: 767px) {
+  .project-details .portfolio-info {
+    padding: 15px;
+  }
+  
+  .project-details .portfolio-info h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+  }
+  
+  .project-details .portfolio-info h3:after {
+    width: 40px;
+    height: 2px;
+  }
+  
+  .project-details .portfolio-info ul {
+    font-size: 13px;
+  }
+  
+  .project-details .portfolio-info ul li {
+    padding-bottom: 12px;
+  }
+  
+  .project-details .portfolio-info ul strong {
+    font-size: 12px;
+  }
+  
+  .project-details .portfolio-info .btn-visit {
+    padding: 6px 30px;
+    font-size: 14px;
+  }
+  
+  .project-details .portfolio-description h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .project-details .portfolio-description p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .project-details .portfolio-description .testimonial-item {
+    padding: 20px 20px 0 20px;
+    margin-bottom: 30px;
+  }
+  
+  .project-details .portfolio-description .testimonial-item .testimonial-img {
+    width: 70px;
+    border: 4px solid #fff;
+    margin: 0 8px 0 0;
+  }
+  
+  .project-details .portfolio-description .testimonial-item h3 {
+    font-size: 16px;
+    margin: 10px 0 5px 0;
+    padding-top: 15px;
+  }
+  
+  .project-details .portfolio-description .testimonial-item h4 {
+    font-size: 12px;
+  }
+  
+  .project-details .portfolio-description .testimonial-item .quote-icon-left,
+  .project-details .portfolio-description .testimonial-item .quote-icon-right {
+    font-size: 20px;
+  }
+  
+  .project-details .portfolio-description .testimonial-item p {
+    font-size: 13px;
+    margin: 0 0 10px 0;
+  }
+}
+
 /*--------------------------------------------------------------
 # Service Details Section
 --------------------------------------------------------------*/
@@ -2234,6 +2343,141 @@ section {
 
 .recent-blog-posts .post-item:hover .post-img img {
   transform: scale(1.1);
+}
+
+/* Tablet and Mobile: Keep hover effect always visible */
+@media (max-width: 991px) {
+  .projects .portfolio-content .portfolio-info {
+    opacity: 1 !important;
+  }
+  
+  .projects .portfolio-content:hover .portfolio-info {
+    opacity: 1 !important;
+  }
+}
+
+/* Mobile: Make project and vacancy cards smaller for 2 columns */
+@media (max-width: 767px) {
+  /* Reduce gap between cards */
+  .projects .portfolio-container {
+    --bs-gutter-y: 0.75rem;
+  }
+  
+  .recent-blog-posts .row.gy-5 {
+    --bs-gutter-y: 0.75rem;
+  }
+  
+  /* Make project cards smaller */
+  .projects .portfolio-content {
+    aspect-ratio: 3 / 2;
+  }
+  
+  .projects .portfolio-content .portfolio-info {
+    padding: 6px;
+  }
+  
+  .projects .portfolio-content .portfolio-info h4 {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+  
+  .projects .portfolio-content .portfolio-info p {
+    font-size: 11px;
+    bottom: 4px;
+    line-height: 1.2;
+  }
+  
+  .projects .portfolio-content .portfolio-info p .btn {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  /* Hover effect works on mobile - same as desktop */
+  .projects .portfolio-content:hover .portfolio-info {
+    opacity: 1;
+  }
+  
+  .projects .portfolio-content:hover img {
+    transform: scale(1.1);
+  }
+  
+  /* Extra small screens - 320px */
+  @media (max-width: 400px) {
+    .projects .portfolio-content .portfolio-info {
+      padding: 4px;
+    }
+    
+    .projects .portfolio-content .portfolio-info h4 {
+      font-size: 9px;
+      padding: 2px 3px;
+    }
+    
+    .projects .portfolio-content .portfolio-info p {
+      font-size: 10px;
+      bottom: 3px;
+      line-height: 1.1;
+    }
+    
+    .projects .portfolio-content .portfolio-info p .btn {
+      font-size: 9px;
+      padding: 2px 4px;
+    }
+  }
+  
+  @media (max-width: 320px) {
+    .projects .portfolio-content .portfolio-info {
+      padding: 3px;
+    }
+    
+    .projects .portfolio-content .portfolio-info h4 {
+      font-size: 8px;
+      padding: 1px 2px;
+    }
+    
+    .projects .portfolio-content .portfolio-info p {
+      font-size: 9px;
+      bottom: 2px;
+      line-height: 1.1;
+    }
+    
+    .projects .portfolio-content .portfolio-info p .btn {
+      font-size: 8px;
+      padding: 1px 3px;
+    }
+  }
+  
+  /* Make vacancy cards smaller */
+  .recent-blog-posts .post-item .post-content {
+    padding: 12px;
+  }
+  
+  .recent-blog-posts .post-item .post-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  
+  .recent-blog-posts .post-item .post-date {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  
+  .recent-blog-posts .post-item hr {
+    margin: 8px 0;
+  }
+  
+  .recent-blog-posts .post-item .readmore {
+    font-size: 12px;
+  }
+  
+  .recent-blog-posts .post-item .readmore i {
+    font-size: 12px;
+    margin-left: 4px;
+  }
+  
+  .recent-blog-posts .post-item .post-img {
+    aspect-ratio: 3 / 2;
+  }
 }
 
 /*--------------------------------------------------------------
@@ -2982,6 +3226,23 @@ section {
 .blog .comments .reply-form .btn-primary:hover {
   color: var(--color-secondary);
   background-color: var(--color-primary);
+}
+
+/* Read-only form controls styling */
+.blog .comments .reply-form input[readonly],
+.blog .comments .reply-form textarea[readonly] {
+  background-color: #f8f9fa;
+  cursor: default;
+  opacity: 0.8;
+  border-color: #dee2e6;
+}
+
+.blog .comments .reply-form input[readonly]:focus,
+.blog .comments .reply-form textarea[readonly]:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+  outline: none;
+  cursor: default;
 }
 
 /*--------------------------------------------------------------
