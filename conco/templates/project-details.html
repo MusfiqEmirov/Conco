@@ -187,9 +187,9 @@
                 {% if project.category %}
                 <li><strong>{% trans "Kateqoriya" %}</strong> <span>{{ project.category.name }}</span></li>
                 {% endif %}
-                {% if project.created_at %}
+                {% if project.project_date %}
                 <li><strong>{% trans "Layihə tarixi" %}</strong>
-                  <span>{{ project.created_at|date:"d M Y" }}</span>
+                  <span>{{ project.project_date|date:"d M Y" }}</span>
                 </li>
                 {% endif %}
                 {% if project.is_completed %}

@@ -225,6 +225,7 @@ def serialize_project(project, lang='az'):
         'url': project.url,
         'is_completed': project.is_completed,
         'is_active': project.is_active,
+        'project_date': project.project_date,
         'created_at': project.created_at,
         'category': {
             'id': project.category.id,

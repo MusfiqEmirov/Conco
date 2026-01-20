@@ -239,7 +239,7 @@ class ProjectAdmin(admin.ModelAdmin):
         'name_link',
         'category_display',
         'status_badges',
-        'created_at',
+        'project_date',
     )
     list_display_links = ('id',)
     list_filter = (
@@ -247,13 +247,13 @@ class ProjectAdmin(admin.ModelAdmin):
         'is_completed',
         'is_active',
         'on_main_page',
-        'created_at',
+        'project_date',
     )
     search_fields = ('name_az', 'name_en', 'name_ru', 'description_az', 'description_en', 'description_ru')
     exclude = ('slug',)
     inlines = [MediaInlineProject]
     readonly_fields = ('created_at',)
-    ordering = ('-created_at',)
+    ordering = ('-project_date', '-created_at')
     list_per_page = 25
     
     fieldsets = (
@@ -273,7 +273,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('is_completed', 'is_active', 'on_main_page')
         }),
         ('Tarix', {
-            'fields': ('created_at',)
+            'fields': ('project_date', 'created_at')
         }),
     )
     

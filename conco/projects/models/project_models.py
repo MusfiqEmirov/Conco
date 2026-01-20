@@ -60,19 +60,19 @@ class Project(SluggedModel):
     )
     description_az = models.TextField(
         validators=[MaxLengthValidator(5000)],
-        verbose_name='Lahiyə haqqında (AZ)'
+        verbose_name='Layihə haqqında (AZ)'
     )
     description_en = models.TextField(
         validators=[MaxLengthValidator(5000)],
         null=True,
         blank=True,
-        verbose_name='Lahiyə haqqında (EN)'
+        verbose_name='Layihə haqqında (EN)'
     )
     description_ru = models.TextField(
         validators=[MaxLengthValidator(5000)],
         null=True,
         blank=True,
-        verbose_name='Lahiyə haqqında (RU)'
+        verbose_name='Layihə haqqında (RU)'
     )
     url = models.URLField(
         null=True,
@@ -83,13 +83,13 @@ class Project(SluggedModel):
         default=True,
         null=True,
         blank=True,
-        verbose_name='Lahiyən tamamlanıb'
+        verbose_name='Layihə tamamlanıb'
     )
     is_active = models.BooleanField(
         default=True,
         null=True,
         blank=True,
-        verbose_name='Lahiyə aktivliyi'
+        verbose_name='Layihə aktivliyi'
     )
     on_main_page = models.BooleanField(
         default=True,
@@ -97,17 +97,21 @@ class Project(SluggedModel):
         blank=True,
         verbose_name='Ana səhifədə olsun'
     )
+    project_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name='Layihə yaradılma tarixi'
+    )
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Lahiyə yaradılma tarixi'
+        auto_now_add=True
     )
     
     def get_slug_source(self) -> str:
         return self.name_az
 
     class Meta:
-        verbose_name = 'Lahiyə'
-        verbose_name_plural = 'Lahiyələr'
+        verbose_name = 'Layihə'
+        verbose_name_plural = 'Layihələr'
         ordering  = ['-created_at']
 
     def __str__(self):
