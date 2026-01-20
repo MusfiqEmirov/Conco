@@ -69,12 +69,19 @@
           <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqimizda" %}</a></li>
           <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
           <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
-          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> <i
-                class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> 
+                {% if language == 'az' or not language %}
+                <img src="{% static 'assets/img/azerbaijan.png' %}" alt="AZ" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% elif language == 'en' %}
+                <img src="{% static 'assets/img/united-kingdom.png' %}" alt="EN" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% elif language == 'ru' %}
+                <img src="{% static 'assets/img/russia.png' %}" alt="RU" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% endif %}
+                <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
-              <li><a href="#" class="lang-option" data-lang="en">EN</a></li>
-              <li><a href="#" class="lang-option" data-lang="ru">RU</a></li>
+              <li><a href="#" class="lang-option" data-lang="az">AZ <img src="{% static 'assets/img/azerbaijan.png' %}" alt="AZ" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
+              <li><a href="#" class="lang-option" data-lang="en">EN <img src="{% static 'assets/img/united-kingdom.png' %}" alt="EN" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
+              <li><a href="#" class="lang-option" data-lang="ru">RU <img src="{% static 'assets/img/russia.png' %}" alt="RU" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
             </ul>
           </li>
         </ul>
@@ -111,7 +118,7 @@
 
         <div class="row gy-5">
           {% for vacancy in vacancies %}
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xl-4 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">

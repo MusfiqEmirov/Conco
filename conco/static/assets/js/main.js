@@ -24,6 +24,84 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileNavShow = document.querySelector('.mobile-nav-show');
   const mobileNavHide = document.querySelector('.mobile-nav-hide');
 
+  /**
+   * Minimize spacing between language code and flag in mobile navigation
+   * ONLY spacing changes, no color or other property changes
+   */
+  function adjustMobileLanguageSpacing() {
+    try {
+      const isMobile = window.innerWidth <= 1279;
+      
+      // Find language dropdown by checking if it contains .lang-option
+      const allDropdowns = document.querySelectorAll('.navbar .dropdown');
+      if (!allDropdowns || allDropdowns.length === 0) return;
+      
+      const langDropdowns = Array.from(allDropdowns).filter(dropdown => {
+        return dropdown && dropdown.querySelector('.lang-option') !== null;
+      });
+      
+      if (langDropdowns.length === 0) return;
+      
+      langDropdowns.forEach(dropdown => {
+        if (!dropdown) return;
+        
+        // Main dropdown toggle link - first direct child <a> element
+        // Use children[0] since dropdown structure is <li class="dropdown"><a>...</a>
+        const dropdownLink = dropdown.children[0] && dropdown.children[0].tagName === 'A' 
+          ? dropdown.children[0] 
+          : null;
+        if (dropdownLink) {
+          if (isMobile) {
+            dropdownLink.style.justifyContent = 'flex-start';
+            dropdownLink.style.gap = '2px';
+            const span = dropdownLink.querySelector('span');
+            if (span) span.style.marginRight = '0';
+            const img = dropdownLink.querySelector('img');
+            if (img) {
+              img.style.marginLeft = '2px';
+              img.style.flexShrink = '0';
+            }
+          } else {
+            dropdownLink.style.justifyContent = '';
+            dropdownLink.style.gap = '';
+            const span = dropdownLink.querySelector('span');
+            if (span) span.style.marginRight = '';
+            const img = dropdownLink.querySelector('img');
+            if (img) {
+              img.style.marginLeft = '5px';
+            }
+          }
+        }
+        
+        // Dropdown menu items
+        const langOptions = dropdown.querySelectorAll('a.lang-option');
+        if (langOptions) {
+          langOptions.forEach(option => {
+            if (!option) return;
+            if (isMobile) {
+              option.style.justifyContent = 'flex-start';
+              option.style.gap = '2px';
+              const img = option.querySelector('img');
+              if (img) {
+                img.style.marginLeft = '2px';
+                img.style.flexShrink = '0';
+              }
+            } else {
+              option.style.justifyContent = '';
+              option.style.gap = '';
+              const img = option.querySelector('img');
+              if (img) {
+                img.style.marginLeft = '5px';
+              }
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error in adjustMobileLanguageSpacing:', error);
+    }
+  }
+
   document.querySelectorAll('.mobile-nav-toggle').forEach(el => {
     el.addEventListener('click', function(event) {
       event.preventDefault();
@@ -35,6 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('body').classList.toggle('mobile-nav-active');
     mobileNavShow.classList.toggle('d-none');
     mobileNavHide.classList.toggle('d-none');
+    // Navbar açıldıqda/yandıqda spacing-i yenidən tətbiq et
+    setTimeout(() => {
+      try {
+        adjustMobileLanguageSpacing();
+      } catch (error) {
+        console.error('Error in mobileNavToogle adjustMobileLanguageSpacing:', error);
+      }
+    }, 100);
   }
 
   /**
@@ -75,8 +161,68 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       }
+      // Navbar dropdown açıldıqda da spacing-i tətbiq et
+      setTimeout(() => {
+        try {
+          adjustMobileLanguageSpacing();
+        } catch (error) {
+          console.error('Error in dropdown click adjustMobileLanguageSpacing:', error);
+        }
+      }, 100);
     });
   });
+
+  // Apply on load, resize, and when navbar opens
+  // Delay initial call to ensure DOM is ready
+  setTimeout(() => {
+    try {
+      adjustMobileLanguageSpacing();
+    } catch (error) {
+      console.error('Error in initial adjustMobileLanguageSpacing:', error);
+    }
+  }, 100);
+  
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      try {
+        adjustMobileLanguageSpacing();
+      } catch (error) {
+        console.error('Error in load adjustMobileLanguageSpacing:', error);
+      }
+    }, 100);
+  });
+  
+  window.addEventListener('resize', () => {
+    try {
+      adjustMobileLanguageSpacing();
+    } catch (error) {
+      console.error('Error in resize adjustMobileLanguageSpacing:', error);
+    }
+  });
+  
+  // MutationObserver ilə navbar açıldıqda izlə
+  try {
+    const bodyObserver = new MutationObserver(() => {
+      if (document.body && document.body.classList.contains('mobile-nav-active')) {
+        setTimeout(() => {
+          try {
+            adjustMobileLanguageSpacing();
+          } catch (error) {
+            console.error('Error in MutationObserver adjustMobileLanguageSpacing:', error);
+          }
+        }, 50);
+      }
+    });
+    
+    if (document.body) {
+      bodyObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
+  } catch (error) {
+    console.error('Error setting up MutationObserver:', error);
+  }
 
   /**
    * Scroll top button
@@ -299,6 +445,14 @@ document.querySelectorAll('.lang-option').forEach(langOption => {
     const dropdownMenu = dropdown.querySelector('ul');
     const dropdownIndicator = dropdownToggle.querySelector('.dropdown-indicator');
     
+    // Bayrağı ƏVVƏLCƏ dəyiş - seçilmiş dilin bayrağını dropdown menu-dən götür
+    const flagImg = dropdownToggle.querySelector('img');
+    const selectedFlagImg = this.querySelector('img');
+    if (flagImg && selectedFlagImg) {
+      flagImg.src = selectedFlagImg.src;
+      flagImg.alt = selectedLang.toUpperCase();
+    }
+    
     // UI-ni dəyiş
     dropdownToggle.querySelector('span').textContent = selectedLang.toUpperCase();
     
@@ -315,10 +469,13 @@ document.querySelectorAll('.lang-option').forEach(langOption => {
       dropdownIndicator.classList.add('bi-chevron-down');
     }
     
-    // Django-ya dil dəyişmə sorğusu göndər (GET metodu ilə)
-    const currentUrl = window.location.pathname + window.location.search;
-    const setLangUrl = `/i18n/setlang/?language=${selectedLang}&next=${encodeURIComponent(currentUrl)}`;
-    window.location.href = setLangUrl;
+    // Kiçik gecikmə ver ki, bayraq dəyişikliyi görünsün
+    setTimeout(() => {
+      // Django-ya dil dəyişmə sorğusu göndər (GET metodu ilə)
+      const currentUrl = window.location.pathname + window.location.search;
+      const setLangUrl = `/i18n/setlang/?language=${selectedLang}&next=${encodeURIComponent(currentUrl)}`;
+      window.location.href = setLangUrl;
+    }, 50);
   });
 });
 

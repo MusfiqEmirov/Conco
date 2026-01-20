@@ -336,6 +336,10 @@ msgstr "Отправить"
 msgid "Form tapılmadı."
 msgstr "Форма не найдена."
 
+#: templates/vacancy-details.html
+msgid "Vakansiya adı"
+msgstr "Название вакансии"
+
 #: templates/project-details.html
 msgid "Layihə"
 msgstr "Проект"
