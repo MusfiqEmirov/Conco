@@ -288,7 +288,9 @@ def serialize_partner(partner, lang='az'):
     return {
         'id': partner.id,
         'name': getattr(partner, name_field, partner.name_az),
-        'url': partner.url,
+        'instagram': partner.instagram,
+        'facebook': partner.facebook,
+        'linkedn': partner.linkedn,
         'is_active': partner.is_active,
         'created_at': partner.created_at,
         'logo': media.image.url if media and media.image else None,

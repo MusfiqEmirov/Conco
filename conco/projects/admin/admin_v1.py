@@ -336,7 +336,6 @@ class PartnerAdmin(admin.ModelAdmin):
         'id',
         'partner_logo',
         'name_link',
-        'url_link',
         'active_status',
         'created_at',
     )
@@ -359,7 +358,7 @@ class PartnerAdmin(admin.ModelAdmin):
             'fields': ('name_ru',)
         }),
         ('Əlaqə', {
-            'fields': ('url',)
+            'fields': ('instagram', 'facebook', 'linkedn')
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -398,12 +397,6 @@ class PartnerAdmin(admin.ModelAdmin):
             )
         return "Logo yoxdur"
     logo_preview.short_description = "Logo Önizləmə"
-    
-    def url_link(self, obj):
-        if obj.url:
-            return format_html('<a href="{}" target="_blank" style="color: #417690; text-decoration: none;">🔗 Link</a>', obj.url)
-        return "-"
-    url_link.short_description = "URL"
     
     def active_status(self, obj):
         if obj.is_active:
@@ -639,7 +632,7 @@ class MottoAdmin(admin.ModelAdmin):
     text_preview_ru.admin_order_field = 'text_ru'
 
 # Appeal (CV) 
-@admin.register(Appeal)
+@admin.register(AppealVacancy)
 class AppealAdmin(admin.ModelAdmin):
     list_display = (
         'candidate_info',
@@ -672,7 +665,7 @@ class AppealAdmin(admin.ModelAdmin):
             'fields': ('vacancy',)
         }),
         ('Namizəd Məlumatları', {
-            'fields': ('full_name', 'email', 'phone_number')
+            'fields': ('full_name', 'email', 'phone_number', 'info')
         }),
         ('CV Faylı', {
             'fields': ('cv', 'cv_preview')
@@ -853,6 +846,113 @@ class AppealAdmin(admin.ModelAdmin):
 
     cv_preview.short_description = "CV Önizləmə"
 
+
+# AppealContact (Contact Messages)
+@admin.register(AppealContact)
+class AppealContactAdmin(admin.ModelAdmin):
+    list_display = (
+        'sender_info',
+        'subject_preview',
+        'message_preview',
+        'is_read',
+        'read_status_badge',
+        'created_at_formatted',
+    )
+
+    list_display_links = None
+    list_editable = ('is_read',)
+    list_filter = ('is_read', 'created_at', 'created_date')
+    readonly_fields = ('created_at', 'created_date')
+    search_fields = (
+        'full_name',
+        'email',
+        'subject',
+        'info',
+    )
+    ordering = ('-created_at',)
+    list_per_page = 25
+    date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('Göndərən Məlumatları', {
+            'fields': ('full_name', 'email')
+        }),
+        ('Mesaj Məlumatları', {
+            'fields': ('subject', 'info')
+        }),
+        ('Status', {
+            'fields': ('is_read',)
+        }),
+        ('Tarix', {
+            'fields': ('created_at', 'created_date')
+        }),
+    )
+
+    def sender_info(self, obj):
+        """Göndərən məlumatlarını göstərir"""
+        detail_url = reverse('admin:projects_appealcontact_change', args=[obj.pk])
+        name = obj.full_name or "Ad Soyad yoxdur"
+        email = obj.email or "Email yoxdur"
+        
+        return format_html(
+            '<div style="padding: 8px 0;">'
+            '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; '
+            'font-size: 15px; display: block; line-height: 1.4; margin-bottom: 4px;">'
+            '👤 {}</a>'
+            '<a href="mailto:{}" style="color: #666; text-decoration: none; font-size: 13px;">'
+            '✉️ {}</a>'
+            '</div>',
+            detail_url,
+            name,
+            email,
+            email[:30] + ('...' if len(email) > 30 else '')
+        )
+    sender_info.short_description = "Göndərən"
+    sender_info.admin_order_field = 'full_name'
+
+    def subject_preview(self, obj):
+        """Subyekt önizləməsi"""
+        detail_url = reverse('admin:projects_appealcontact_change', args=[obj.pk])
+        subject = obj.subject or "Subyekt yoxdur"
+        
+        return format_html(
+            '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 500; '
+            'font-size: 14px;">{}</a>',
+            detail_url,
+            subject[:50] + ('...' if len(subject) > 50 else '')
+        )
+    subject_preview.short_description = "Subyekt"
+    subject_preview.admin_order_field = 'subject'
+
+    def message_preview(self, obj):
+        """Mesaj önizləməsi"""
+        message = obj.info or "Mesaj yoxdur"
+        return format_html(
+            '<span style="color: #666; font-size: 13px;">{}</span>',
+            message[:80] + ('...' if len(message) > 80 else '')
+        )
+    message_preview.short_description = "Mesaj"
+    message_preview.admin_order_field = 'info'
+
+    def read_status_badge(self, obj):
+        """Oxunma statusu badge"""
+        if obj.is_read:
+            return format_html(
+                '<span style="background: #28a745; color: white; padding: 4px 10px; '
+                'border-radius: 12px; font-size: 11px; font-weight: bold;">✓ Oxunub</span>'
+            )
+        return format_html(
+            '<span style="background: #dc3545; color: white; padding: 4px 10px; '
+            'border-radius: 12px; font-size: 11px; font-weight: bold;">✗ Oxunmayıb</span>'
+        )
+    read_status_badge.short_description = "Status"
+    read_status_badge.admin_order_field = 'is_read'
+
+    def created_at_formatted(self, obj):
+        """Formatlanmış yaradılma tarixi"""
+        return obj.created_at.strftime('%d.%m.%Y %H:%M')
+    created_at_formatted.short_description = "Tarix"
+    created_at_formatted.admin_order_field = 'created_at'
 
 # Statistic
 @admin.register(Statistic)

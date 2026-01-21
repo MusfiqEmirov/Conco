@@ -194,8 +194,14 @@
                   <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
                   {% endif %}
                   <div class="social">
-                    {% if partner.url %}
-                    <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
+                    {% if partner.facebook %}
+                    <a href="{{ partner.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if partner.instagram %}
+                    <a href="{{ partner.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if partner.linkedn %}
+                    <a href="{{ partner.linkedn }}" target="_blank"><i class="bi bi-linkedin"></i></a>
                     {% endif %}
                   </div>
                 </div>
@@ -340,7 +346,11 @@
             <div class="footer-info footer-links">
               <h3>{% trans "Layihələr" %}</h3>
               <ul>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
+                {% empty %}
                 <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
+                {% endfor %}
               </ul>
             </div>
           </div>

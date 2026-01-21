@@ -166,9 +166,9 @@
           
           <div class="col-lg-6">
             <div class="comments">
-              <div class="reply-form">
+              <div class="reply-form" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 30px;">
 
-                <h4>{% trans "Müraciət et" %}</h4>
+                <h4 style="font-weight: 600; color: #333; margin-bottom: 25px;">{% trans "Müraciət et" %}</h4>
                 {% if messages %}
                   {% for message in messages %}
                   <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -178,57 +178,65 @@
                   {% endfor %}
                 {% endif %}
                 
-                {% if vacancy %}
-                <div class="mb-4">
-                  <div class="row">
-                    <div class="col-md-12 form-group">
-                      <label>{% trans "Vakansiya adı" %}</label>
-                      <input type="text" class="form-control" value="{{ vacancy.title }}" readonly>
-                    </div>
-                  </div>
-                </div>
-                {% endif %}
-                
                 {% if form %}
+                <style>
+                  .reply-form label {
+                    display: none !important;
+                  }
+                </style>
                 <form method="post" action="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" enctype="multipart/form-data">
                   {% csrf_token %}
                   <div class="row">
 
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-6 form-group mb-3">
                       {{ form.full_name.label_tag }}
                       {{ form.full_name }}
                       {% if form.full_name.errors %}
-                        <div class="text-danger">{{ form.full_name.errors }}</div>
+                        <div class="text-danger small mt-1">{{ form.full_name.errors }}</div>
                       {% endif %}
                     </div>
 
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-6 form-group mb-3">
                       {{ form.email.label_tag }}
                       {{ form.email }}
                       {% if form.email.errors %}
-                        <div class="text-danger">{{ form.email.errors }}</div>
+                        <div class="text-danger small mt-1">{{ form.email.errors }}</div>
                       {% endif %}
                     </div>
 
-                    <div class="col-md-12 form-group">
-                      {{ form.phone_number.label_tag }}
-                      {{ form.phone_number }}
-                      {% if form.phone_number.errors %}
-                        <div class="text-danger">{{ form.phone_number.errors }}</div>
-                      {% endif %}
+                    {% if vacancy %}
+                    <div class="col-md-6 form-group mb-3">
+                      <input type="text" class="form-control" value="{{ vacancy.title }}" readonly placeholder="{% trans 'Seçilmiş vakansiya adı' %}" style="background-color: #f5f5f5; cursor: text;">
                     </div>
+                    {% endif %}
                     
-                    <div class="col-md-12 form-group">
+                    <div class="col-md-6 form-group mb-3">
                       {{ form.cv.label_tag }}
                       {{ form.cv }}
                       {% if form.cv.errors %}
-                        <div class="text-danger">{{ form.cv.errors }}</div>
+                        <div class="text-danger small mt-1">{{ form.cv.errors }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="col-md-12 form-group mb-3">
+                      {{ form.phone_number.label_tag }}
+                      {{ form.phone_number }}
+                      {% if form.phone_number.errors %}
+                        <div class="text-danger small mt-1">{{ form.phone_number.errors }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="col-md-12 form-group mb-3">
+                      {{ form.info.label_tag }}
+                      {{ form.info }}
+                      {% if form.info.errors %}
+                        <div class="text-danger small mt-1">{{ form.info.errors }}</div>
                       {% endif %}
                     </div>
 
                   </div>
 
-                  <button type="submit" class="btn btn-primary">{% trans "Göndər" %}</button>
+                  <button type="submit" class="btn btn-primary" style="background-color: #333; border: none; padding: 10px 30px; border-radius: 6px; font-weight: 500; margin-top: 10px;">{% trans "Göndər" %}</button>
 
                 </form>
                 {% else %}
@@ -316,7 +324,11 @@
             <div class="footer-info footer-links">
               <h3>{% trans "Layihələr" %}</h3>
               <ul>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
+                {% empty %}
                 <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
+                {% endfor %}
               </ul>
             </div>
           </div>

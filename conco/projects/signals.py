@@ -2,12 +2,24 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.conf import settings
 
-from projects.models import Appeal, Project, ProjectCategory, Vacancy, Partner, About, Contact, Media, Motto, Statistic
 from projects.utils import send_mail_func
 from projects.utils.cache_utils import invalidate_model_cache
+from projects.models import (
+    AppealVacancy, 
+    AppealContact, 
+    Project, 
+    ProjectCategory, 
+    Vacancy, 
+    Partner, 
+    About, 
+    Contact, 
+    Media,
+    Motto, 
+    Statistic
+)
 
 
-@receiver(post_save, sender=Appeal)
+@receiver(post_save, sender=AppealVacancy)
 def send_mail_per_cv_appeal(sender, instance, created, **kwargs):
     if not created:
         return
@@ -21,6 +33,7 @@ Vakansiya: {instance.vacancy}
 Ad Soyad: {instance.full_name}
 Email: {instance.email}
 Telefon: {instance.phone_number}
+Əlavə məlumat: {instance.info if instance.info else 'Yoxdur'}
 
 Tarix: {instance.created_at}
     """
@@ -121,3 +134,10 @@ def invalidate_statistic_cache(sender, instance, **kwargs):
     # Invalidate statistics cache
     invalidate_query_cache(['get_statistics'])
     invalidate_model_cache('Statistic')
+
+
+@receiver(post_save, sender=AppealContact)
+@receiver(post_delete, sender=AppealContact)
+def invalidate_appeal_contact_cache(sender, instance, **kwargs):
+    """Invalidate cache when AppealContact is saved or deleted."""
+    invalidate_model_cache('AppealContact')
