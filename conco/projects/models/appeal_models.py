@@ -2,12 +2,14 @@ import os
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
-
+from django.core.validators import MaxLengthValidator
+from django.utils import timezone
 
 from .vacancy_models import Vacancy
 from projects.utils import normalize_az_phone
 
-class Appeal(models.Model):
+
+class AppealVacancy(models.Model):
     vacancy = models.ForeignKey(
         Vacancy,
         on_delete=models.SET_NULL,
@@ -31,6 +33,13 @@ class Appeal(models.Model):
         blank=True,
         verbose_name='Mobil Nömrə'
     )
+    info = models.CharField(
+        null=True,
+        blank=True,
+        max_length=250,
+        verbose_name='Əlavə məlumat'
+    )
+
     cv = models.FileField(
         upload_to='cvs/',  
         validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])],
@@ -77,4 +86,53 @@ class Appeal(models.Model):
     def __str__(self):
         return self.vacancy.title_az
     
+
+class AppealContact(models.Model):
+    full_name = models.CharField(
+        null=True,
+        blank=True,
+        verbose_name='Ad Soyad'
+    )
+    email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name='Mail'
+    )
+    subject = models.CharField(
+        null=True,
+        blank=True,
+        max_length=250,
+        verbose_name='Subyekt'
+    )
+    info = models.TextField(
+        null=True,
+        blank=True,
+        validators=[MaxLengthValidator(500)],
+        max_length=500,
+        verbose_name='Əlavə məlumat'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Yaradılma tarixi'
+    )
+    created_date = models.DateField(
+        default=timezone.now
+    )
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name='Oxunulub'
+    )
+
+    class Meta:
+        verbose_name = 'Mesaj'
+        verbose_name_plural = 'Mesajlar'
+        ordering = ['-created_at']
     
+    def save(self, *args, **kwargs):
+        if not self.created_date:
+            from django.utils import timezone
+            self.created_date = timezone.now().date()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return 'Mesajlar'

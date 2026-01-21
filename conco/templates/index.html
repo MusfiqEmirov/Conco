@@ -202,11 +202,11 @@
           <h2>{% trans "Seçilmiş layihələr" %}</h2>
         </div>
 
-        <div class="portfolio-isotope" data-portfolio-filter="*" data-portfolio-layout="masonry"
+        <div class="portfolio-isotope" data-portfolio-filter=".filter-special" data-portfolio-layout="masonry"
           data-portfolio-sort="original-order">
 
           <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter="*" class="filter-active">{% trans "Hamısı" %}</li>
+            <li data-filter=".filter-special" class="filter-active">{% trans "Seçilmiş" %}</li>
             {% for category in categories %}
             <li data-filter=".filter-category-{{ category.id }}">{{ category.name }}</li>
             {% endfor %}
@@ -214,7 +214,7 @@
 
           <div class="row gy-4 portfolio-container" data-aos="fade-up" data-aos-delay="200">
             {% for project in projects %}
-            <div class="col-lg-4 col-md-6 col-6 portfolio-item filter-category-{{ project.category.id }} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
+            <div class="col-lg-4 col-md-6 col-6 portfolio-item filter-category-{{ project.category.id }} {% if project.speacial_project %}filter-special{% endif %} {% if project.is_completed %}filter-completed{% else %}filter-ongoing{% endif %}">
               <div class="portfolio-content h-100">
                 {% if project.medias %}
                   {% with project.medias|first as first_media %}
@@ -267,8 +267,14 @@
                   <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="{{ partner.name }}">
                   {% endif %}
                   <div class="social">
-                    {% if partner.url %}
-                    <a href="{{ partner.url }}" target="_blank"><i class="bi bi-globe"></i></a>
+                    {% if partner.facebook %}
+                    <a href="{{ partner.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if partner.instagram %}
+                    <a href="{{ partner.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if partner.linkedn %}
+                    <a href="{{ partner.linkedn }}" target="_blank"><i class="bi bi-linkedin"></i></a>
                     {% endif %}
                   </div>
                 </div>

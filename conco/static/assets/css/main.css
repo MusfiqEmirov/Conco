@@ -2136,7 +2136,14 @@ section {
 --------------------------------------------------------------*/
 .contact .info-item {
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
-  padding: 20px 0 30px 0;
+  padding: 30px 20px;
+  height: 100%;
+  min-height: 200px;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .contact .info-item i {
@@ -2150,13 +2157,20 @@ section {
   color: var(--color-primary);
   border-radius: 50%;
   border: 2px dotted #ffd565;
+  margin-bottom: 15px;
+  margin-top: 0;
+  flex-shrink: 0;
+  order: 1;
 }
 
 .contact .info-item h3 {
   font-size: 20px;
   color: #6c757d;
   font-weight: 700;
-  margin: 10px 0;
+  margin: 0 0 15px 0;
+  text-align: center;
+  flex-shrink: 0;
+  order: 2;
 }
 
 .contact .info-item p {
@@ -2164,6 +2178,74 @@ section {
   line-height: 24px;
   font-size: 14px;
   margin-bottom: 0;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: var(--color-default);
+  order: 3;
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.contact .info-item a {
+  padding: 0;
+  line-height: 24px;
+  font-size: 14px;
+  margin-bottom: 0;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: var(--color-primary);
+  text-decoration: none;
+  order: 3;
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.contact .info-item a:hover {
+  color: var(--color-primary);
+}
+
+/* Responsive heights for different screen sizes */
+@media (min-width: 992px) {
+  .contact .info-item {
+    min-height: 220px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .contact .info-item {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 767px) {
+  .contact .info-item {
+    min-height: 180px;
+    padding: 25px 15px;
+  }
+  
+  .contact .info-item i {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .contact .info-item h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .contact .info-item p,
+  .contact .info-item a {
+    font-size: 13px;
+    line-height: 22px;
+  }
 }
 
 .contact .php-email-form {

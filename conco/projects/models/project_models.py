@@ -91,8 +91,14 @@ class Project(SluggedModel):
         blank=True,
         verbose_name='Layihə aktivliyi'
     )
+    speacial_project = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True,
+        verbose_name='Seçilmiş Lahiyə'
+    )
     on_main_page = models.BooleanField(
-        default=True,
+        default=False,
         null=True,
         blank=True,
         verbose_name='Ana səhifədə olsun'

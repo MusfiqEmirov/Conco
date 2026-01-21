@@ -158,28 +158,47 @@
       <div class="container">
         <div class="row">
           <!-- Əsas -->
+          {% if contact %}
           <div class="col-lg-4 col-md-4">
             <div class="footer-info footer-links">
               <h3>{% trans "Əlaqə" %}</h3>
               <ul>
-                <li>Bakı şəhəri, Nərimanov rayonu</li>
-                <li>Əhməd Rəcəbli 2/1</li>
+                {% if contact.address %}
+                <li>{{ contact.address }}</li>
+                {% endif %}
+                {% if contact.phone %}
                 <li>
-                  <a href="tel:+994557169791">📞 {% trans "Zəng et" %}: 055 716 97 91</a>
+                  <a href="tel:{{ contact.phone }}">📞 {% trans "Zəng et" %}: {{ contact.phone }}</a>
                 </li>
+                {% endif %}
+                {% if contact.whatsapp_number %}
                 <li>
-                  <a href="https://wa.me/994557169791" target="_blank">
-                    💬 Whatsapp: 055 716 97 91
+                  <a href="https://wa.me/{{ contact.whatsapp_number }}" target="_blank">
+                    💬 Whatsapp: {{ contact.whatsapp_number }}
                   </a>
                 </li>
+                {% endif %}
+                {% if contact.email %}
                 <li>
-                  <a href="mailto:info@conco.az">✉️ info@conco.az</a>
+                  <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
                 </li>
+                {% endif %}
               </ul>
 
-              <div class="social-links d-flex mt-3"> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a> <a href="#" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a> </div>
+              <div class="social-links d-flex mt-3">
+                {% if contact.facebook %}
+                <a href="{{ contact.facebook }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-facebook"></i></a>
+                {% endif %}
+                {% if contact.instagram %}
+                <a href="{{ contact.instagram }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-instagram"></i></a>
+                {% endif %}
+                {% if contact.linkedn %}
+                <a href="{{ contact.linkedn }}" target="_blank" class="d-flex align-items-center justify-content-center"><i class="bi bi-linkedin"></i></a>
+                {% endif %}
+              </div>
             </div>
           </div>
+          {% endif %}
 
 
 

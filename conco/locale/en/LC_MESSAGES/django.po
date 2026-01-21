@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"POT-Creation-Date: 2026-01-21 14:57+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,391 +18,272 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: projects/forms/forms_v1.py
 msgid "Ad Soyad"
 msgstr "Full Name"
 
-#: projects/forms/forms_v1.py
-msgid "E-poçt"
-msgstr "Email"
-
-#: projects/forms/forms_v1.py
 msgid "Nümunə: example@email.com"
 msgstr "Example: example@email.com"
 
-#: projects/forms/forms_v1.py
-msgid "Mobil Nömrə"
-msgstr "Phone Number"
+msgid "E-poçt"
+msgstr "Email"
 
-#: projects/forms/forms_v1.py
 msgid "Nümunə: 0501234567"
 msgstr "Example: 0501234567"
 
-#: projects/forms/forms_v1.py
+msgid "Mobil Nömrə"
+msgstr "Phone Number"
+
+msgid "Əlavə məlumat"
+msgstr "Additional information"
+
 msgid "CV faylı"
 msgstr "CV File"
 
-#: projects/templates/vacancy_detail.html
-msgid "Vakansiya"
-msgstr "Vacancy"
-
-#: projects/templates/vacancy_detail.html
-msgid "Vakansiya Haqqında"
-msgstr "About Vacancy"
-
-#: projects/templates/vacancy_detail.html
-msgid "Məlumat yoxdur"
-msgstr "No information available"
-
-#: projects/templates/vacancy_detail.html
-msgid "Müraciət Formu"
-msgstr "Application Form"
-
-#: projects/templates/vacancy_detail.html
-msgid "Yalnız PDF, DOC və ya DOCX formatında fayllar qəbul olunur."
-msgstr "Only PDF, DOC or DOCX format files are accepted."
-
-#: projects/templates/vacancy_detail.html
-msgid "Müraciət Göndər"
-msgstr "Submit Application"
-
-#: projects/views/views_v1.py
-msgid "Vacancy not found"
-msgstr "Vacancy not found"
-
-#: projects/views/views_v1.py
-msgid "Bu vakansiyaya müraciət artıq göndərilmişdir."
-msgstr "Application for this vacancy has already been submitted."
-
-#: projects/views/views_v1.py
-msgid "Müraciətiniz uğurla göndərildi."
-msgstr "Your application has been submitted successfully."
-
-#: projects/views/views_v1.py
-msgid "Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir."
-msgstr "Application for this vacancy with this email address has already been submitted."
-
-#: projects/views/views_v1.py
-msgid "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
-msgstr "An error occurred. Please try again."
-
-#: projects/templates/vacancy_detail.html
-msgid "Dil"
-msgstr "Language"
-
-#: projects/templates/vacancy_detail.html
-msgid "Dəyiş"
-msgstr "Change"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Ana səhifə"
-msgstr "Home"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Layihələr"
-msgstr "Projects"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Bütün layihələr"
-msgstr "Selected Projects"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Haqqimizda"
-msgstr "About Us"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Haqqımızda"
-msgstr "About Us"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Vakansiyalar"
-msgstr "Vacancies"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Əlaqə"
-msgstr "Contact"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "Etrafli"
-msgstr "Details"
-
-#: templates/index.html
-msgid "deviz"
-msgstr "motto"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "Hamısı"
-msgstr "All"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "DAVAM EDƏN LAYİHƏLƏR"
-msgstr "ONGOING PROJECTS"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "TAMAMLANMIŞ LAYİHƏLƏR"
-msgstr "COMPLETED PROJECTS"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "Tamamlanmış"
-msgstr "Completed"
-
-#: templates/index.html
-#: templates/projects.html
-msgid "Davam edən"
-msgstr "Ongoing"
-
-#: templates/index.html
-#: templates/vacancy.html
-msgid "Sonuncu Vakansiyalar"
-msgstr "Latest Vacancies"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Əsas"
-msgstr "Main"
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
-msgid "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur."
-msgstr "Developed by Digiboom.az. All rights reserved."
-
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-msgid "Zəng et"
-msgstr "Call"
-
-#: templates/projects.html
-msgid "Layihə tapılmadı."
-msgstr "No projects found."
-
-#: templates/projects.html
-msgid "More Details"
-msgstr "More Details"
-
-#: templates/about.html
-#: templates/contact.html
-msgid "Ünvanımız"
-msgstr "Our Address"
-
-#: templates/contact.html
-msgid "e-poçt ünvanımız"
-msgstr "our email address"
-
-#: templates/contact.html
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
-#: templates/contact.html
 msgid "Ad soyad"
 msgstr "Full Name"
 
-#: templates/contact.html
-msgid "e-poçt unvani"
-msgstr "email address"
+msgid "E-poçt ünvanı"
+msgstr "Email Address"
 
-#: templates/contact.html
-msgid "Təmsil olunan subyekt"
+msgid "Subyekt"
 msgstr "Subject"
 
-#: templates/contact.html
-msgid "Mesajiniz"
+msgid "Mesajınız"
 msgstr "Your Message"
 
-#: templates/contact.html
-msgid "Mesajiniz gondərildi"
-msgstr "Your message has been sent"
-
-#: templates/contact.html
-msgid "Mesaj gondər"
-msgstr "Send Message"
-
-#: templates/vacancy.html
-msgid "Anə Səhifə"
-msgstr "Home"
-
-#: templates/index.html
-#: templates/about.html
-msgid "Tərəfdaşlar"
-msgstr "Partners"
-
-#: templates/index.html
-#: templates/about.html
-msgid "Tərəfdaş tapılmadı"
-msgstr "No partners found"
-
-#: templates/index.html
-#: templates/vacancy.html
-msgid "Vakansiya tapılmadı."
-msgstr "No vacancies found."
-
-#: templates/about.html
-msgid "Video izlə"
-msgstr "Watch video"
-
-#: templates/about.html
-#: templates/vacancy-details.html
-#: templates/project-details.html
-msgid "Məlumat tapılmadı."
-msgstr "No information found."
-
-#: templates/about.html
-msgid "Statistikalarımız"
-msgstr "Our Statistics"
-
-#: templates/about.html
-msgid "Müştərilər"
-msgstr "Clients"
-
-#: templates/about.html
-msgid "Layihə sayı"
-msgstr "Number of Projects"
-
-#: templates/about.html
-msgid "Tərəfdaş sayı"
-msgstr "Number of Partners"
-
-#: templates/contact.html
-msgid "Yüklənir"
-msgstr "Loading"
-
-#: templates/vacancy-details.html
-msgid "Müraciət et"
-msgstr "Apply"
-
-#: templates/vacancy-details.html
-msgid "Göndər"
-msgstr "Send"
-
-#: templates/vacancy-details.html
-msgid "Form tapılmadı."
-msgstr "Form not found."
-
-#: templates/vacancy-details.html
-msgid "Vakansiya adı"
-msgstr "Vacancy Title"
-
-#: templates/project-details.html
-msgid "Layihə"
-msgstr "Project"
-
-#: templates/project-details.html
-msgid "Layihə tapılmadı"
-msgstr "Project not found"
-
-#: templates/project-details.html
-msgid "Layihə məlumatı"
-msgstr "Project Information"
-
-#: templates/project-details.html
-msgid "Kateqoriya"
-msgstr "Category"
-
-#: templates/project-details.html
-msgid "Layihə tarixi"
-msgstr "Project Date"
-
-#: templates/project-details.html
-msgid "Status"
-msgstr "Status"
-
-#: templates/project-details.html
-msgid "Davam edir"
-msgstr "In Progress"
-
-#: templates/project-details.html
-msgid "Keçid"
-msgstr "Visit"
-
-#: projects/views/views_v1.py
 msgid "Project not found"
 msgstr "Project not found"
 
-#: templates/about.html
+msgid "Mesajınız uğurla göndərildi."
+msgstr "Your message has been sent successfully."
+
+msgid "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
+msgstr "An error occurred. Please try again."
+
+msgid "Formda xəta var. Zəhmət olmasa düzəldin."
+msgstr "There is an error in the form. Please correct it."
+
+msgid "Vacancy not found"
+msgstr "Vacancy not found"
+
+msgid "Bu vakansiyaya müraciət artıq göndərilmişdir."
+msgstr "Application for this vacancy has already been submitted."
+
+msgid "Müraciətiniz uğurla göndərildi."
+msgstr "Your application has been submitted successfully."
+
+msgid "Bu e-poçt ünvanı ilə bu vakansiyaya müraciət artıq göndərilmişdir."
+msgstr ""
+"Application for this vacancy with this email address has already been "
+"submitted."
+
 msgid "CONCO, Tikinti"
 msgstr "CONCO, Construction"
 
-#: templates/about.html
 msgid "construction"
 msgstr "construction"
 
-#: templates/about.html
 msgid "Logo"
 msgstr "Logo"
 
-#: templates/index.html
-msgid "Bütün vakansiyaları gör"
-msgstr "View All Vacancies"
+msgid "Ana səhifə"
+msgstr "Home"
 
-#: templates/vacancy.html
-msgid "Bütün vakansiyalar"
-msgstr "All Vacancies"
+msgid "Layihələr"
+msgstr "Projects"
 
-#: templates/index.html
-#: templates/projects.html
-#: templates/about.html
-#: templates/contact.html
-#: templates/vacancy.html
-#: templates/project-details.html
-#: templates/vacancy-details.html
 msgid "Seçilmiş layihələr"
 msgstr "Selected Projects"
 
+msgid "Seçilmiş"
+msgstr "Selected"
+
+msgid "Haqqımızda"
+msgstr "About Us"
+
+msgid "Vakansiyalar"
+msgstr "Vacancies"
+
+msgid "Əlaqə"
+msgstr "Contact"
+
+msgid "Video izlə"
+msgstr "Watch video"
+
+msgid "Məlumat tapılmadı."
+msgstr "No information found."
+
+msgid "Tərəfdaşlar"
+msgstr "Partners"
+
+msgid "Tərəfdaş tapılmadı"
+msgstr "No partners found"
+
+msgid "Statistikalarımız"
+msgstr "Our Statistics"
+
+msgid "Müştərilər"
+msgstr "Clients"
+
+msgid "Layihə sayı"
+msgstr "Number of Projects"
+
+msgid "Tərəfdaş sayı"
+msgstr "Number of Partners"
+
+msgid "Zəng et"
+msgstr "Call"
+
+msgid "Whatsapp"
+msgstr "WhatsApp"
+
+msgid "Əsas"
+msgstr "Main"
+
+msgid "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur."
+msgstr "Developed by Digiboom.az. All rights reserved."
+
+msgid "Haqqimizda"
+msgstr "About Us"
+
+msgid "Ünvanımız"
+msgstr "Our Address"
+
+msgid "E-poçt ünvanımız"
+msgstr "our email address"
+
+msgid "Mesaj gondər"
+msgstr "Send Message"
+
+msgid "Form tapılmadı."
+msgstr "Form not found."
+
+msgid "deviz"
+msgstr "motto"
+
+msgid "Hamısı"
+msgstr "All"
+
+msgid "Tamamlanmış"
+msgstr "Completed"
+
+msgid "Davam edən"
+msgstr "Ongoing"
+
+msgid "More Details"
+msgstr "More Details"
+
+msgid "Etrafli"
+msgstr "Details"
+
+msgid "Layihə tapılmadı."
+msgstr "No projects found."
+
+msgid "Sonuncu Vakansiyalar"
+msgstr "Latest Vacancies"
+
+msgid "Vakansiya tapılmadı."
+msgstr "No vacancies found."
+
+msgid "Bütün vakansiyaları gör"
+msgstr "View All Vacancies"
+
+msgid "Layihə"
+msgstr "Project"
+
+msgid "Layihə tapılmadı"
+msgstr "Project not found"
+
+msgid "Layihə məlumatı"
+msgstr "Project Information"
+
+msgid "Kateqoriya"
+msgstr "Category"
+
+msgid "Layihə tarixi"
+msgstr "Project Date"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Davam edir"
+msgstr "In Progress"
+
+msgid "Keçid"
+msgstr "Visit"
+
+msgid "DAVAM EDƏN LAYİHƏLƏR"
+msgstr "ONGOING PROJECTS"
+
+msgid "TAMAMLANMIŞ LAYİHƏLƏR"
+msgstr "COMPLETED PROJECTS"
+
+msgid "Vakansiya"
+msgstr "Vacancy"
+
+msgid "Müraciət et"
+msgstr "Apply"
+
+msgid "Seçilmiş vakansiya adı"
+msgstr "Selected vacancy name"
+
+msgid "Göndər"
+msgstr "Send"
+
+msgid "Bütün vakansiyalar"
+msgstr "All Vacancies"
+
+#~ msgid "Vakansiya Haqqında"
+#~ msgstr "About Vacancy"
+
+#~ msgid "Məlumat yoxdur"
+#~ msgstr "No information available"
+
+#~ msgid "Müraciət Formu"
+#~ msgstr "Application Form"
+
+#~ msgid "Yalnız PDF, DOC və ya DOCX formatında fayllar qəbul olunur."
+#~ msgstr "Only PDF, DOC or DOCX format files are accepted."
+
+#~ msgid "Müraciət Göndər"
+#~ msgstr "Submit Application"
+
+#~ msgid "Dil"
+#~ msgstr "Language"
+
+#~ msgid "Dəyiş"
+#~ msgstr "Change"
+
+#~ msgid "Bütün layihələr"
+#~ msgstr "Selected Projects"
+
+#~ msgid "e-poçt unvani"
+#~ msgstr "email address"
+
+#~ msgid "Təmsil olunan subyekt"
+#~ msgstr "Subject"
+
+#~ msgid "Mesajiniz"
+#~ msgstr "Your Message"
+
+#~ msgid "Mesajiniz gondərildi"
+#~ msgstr "Your message has been sent"
+
+#~ msgid "Mesajınız gondərildi"
+#~ msgstr "Your message has been sent"
+
+#~ msgid "Anə Səhifə"
+#~ msgstr "Home"
+
+#~ msgid "Yüklənir"
+#~ msgstr "Loading"
+
+#~ msgid "Vakansiya adı"
+#~ msgstr "Vacancy Title"
+
+#~ msgid ""
+#~ "Bu email ünvanı ilə bu gün artıq mesaj göndərilmişdir. Zəhmət olmasa "
+#~ "sabah yenidən cəhd edin."
+#~ msgstr ""
+#~ "A message has already been sent with this email address today. Please try "
+#~ "again tomorrow."
