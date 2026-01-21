@@ -136,7 +136,8 @@ class MediaInlinePartner(MediaInlineBase):
 
 class MediaInlineAbout(MediaInlineBase):
     fields = ('image', 'video', 'thumbnail_preview', 'created_at')
-    max_num = None  
+    max_num = 12
+    extra = 1
     
     def get_formset(self, request, obj=None, **kwargs):
         from django.forms import BaseInlineFormSet
@@ -146,13 +147,41 @@ class MediaInlineAbout(MediaInlineBase):
             def clean(self):
                 super().clean()
                 video_count = 0
+                image_count = 0
+                deleted_images = 0
+                
+                # Mövcud şəkilləri saymaq
+                if obj:
+                    existing_images = obj.medias.filter(image__isnull=False).exclude(image='').count()
+                else:
+                    existing_images = 0
+                
                 for form in self.forms:
-                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                        if form.cleaned_data.get('video'):
-                            video_count += 1
+                    if form.cleaned_data:
+                        is_deleted = form.cleaned_data.get('DELETE', False)
+                        
+                        if is_deleted:
+                            # Silinən şəkilləri saymaq
+                            if form.instance and form.instance.pk and form.instance.image:
+                                deleted_images += 1
+                        else:
+                            # Yeni və ya redaktə olunan şəkilləri saymaq
+                            if form.cleaned_data.get('video'):
+                                video_count += 1
+                            if form.cleaned_data.get('image'):
+                                # Yeni şəkil və ya mövcud şəkilin dəyişdirilməsi
+                                if not form.instance.pk or (form.instance.pk and form.cleaned_data.get('image') != form.instance.image):
+                                    image_count += 1
                 
                 if video_count > 1:
                     raise ValidationError('Yalnız bir video yükləmək mümkündür. Lütfən, yalnız bir media-da video əlavə edin.')
+                
+                # Ümumi şəkil sayını hesablamaq
+                total_images = existing_images - deleted_images + image_count
+                
+                if total_images > 12:
+                    raise ValidationError('Haqqımızda üçün maksimum 12 şəkil yükləmək mümkündür. Hal-hazırda {} şəkil mövcuddur, {} şəkil silinir, {} yeni şəkil əlavə olunur. Ümumi: {} şəkil.'.format(
+                        existing_images, deleted_images, image_count, total_images))
         
         kwargs['formset'] = MediaAboutFormSet
         return super().get_formset(request, obj, **kwargs)
@@ -199,7 +228,7 @@ class ProjectCategoryAdmin(admin.ModelAdmin):
 
 # Project 
 class ProjectAdminForm(forms.ModelForm):
-    """Layihə admin formu - on_main_page limitini yoxlayır"""
+    """Layihə admin formu"""
     
     class Meta:
         model = Project
@@ -207,27 +236,53 @@ class ProjectAdminForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
+
+        category = cleaned_data.get('category')
         on_main_page = cleaned_data.get('on_main_page')
-        
-        if on_main_page:
-            existing_count = Project.objects.filter(on_main_page=True).count()
+        speacial_project = cleaned_data.get('speacial_project')
+
+        errors = {}
+
+        # 1) "Seçilmiş Layihə" üçün ümumi maksimum 9 və "Ana səhifədə olsun" tələb olunur
+        if speacial_project:
+            # "Seçilmiş" layihələr üçün "Ana səhifədə olsun" field-i tələb olunur
+            if not on_main_page:
+                errors['on_main_page'] = (
+                    '⚠️ Xəbərdarlıq: "Seçilmiş layihə" seçildikdə "Ana səhifədə olsun" field-i də seçilməlidir. '
+                    'Seçilmiş layihələr ana səhifədə görünməlidir.'
+                )
             
+            # Maksimum 9 layihə limiti
+            qs = Project.objects.filter(speacial_project=True, on_main_page=True)
             if self.instance and self.instance.pk:
-                try:
-                    old_obj = Project.objects.get(pk=self.instance.pk)
-                    if old_obj.on_main_page:
-                        existing_count -= 1
-                except Project.DoesNotExist:
-                    pass
-            
-            if existing_count >= 9:
-                raise ValidationError({
-                    'on_main_page': (
-                        '⚠️ Xəbərdarlıq: Ana səhifədə maksimum 9 layihə ola bilər. '
-                        'Yeni layihəni ana səhifəyə əlavə etmək üçün köhnələrdən birinin "Ana səhifədə olsun" seçimini silməlisiniz.'
+                qs = qs.exclude(pk=self.instance.pk)
+
+            if qs.count() >= 9:
+                errors['speacial_project'] = (
+                    '⚠️ Xəbərdarlıq: "Seçilmiş layihə" üçün maksimum 9 layihə seçilə bilər. '
+                    'Yeni layihəni seçilmiş etmək üçün köhnələrdən birinin "Seçilmiş Lahiyə" seçimini silməlisiniz.'
+                )
+
+        # 2) "Ana səhifədə olsun" üçün: hər kateqoriya üzrə maksimum 9
+        if on_main_page:
+            if category is None:
+                # Nəzəri halda category boş qala bilərsə, əvvəl onu tələb et
+                errors['category'] = 'Ana səhifədə göstərmək üçün kateqoriya seçilməlidir.'
+            else:
+                qs = Project.objects.filter(on_main_page=True, category=category)
+                if self.instance and self.instance.pk:
+                    qs = qs.exclude(pk=self.instance.pk)
+
+                if qs.count() >= 9:
+                    errors['on_main_page'] = (
+                        f'⚠️ Xəbərdarlıq: "{category}" kateqoriyası üçün ana səhifədə maksimum 9 layihə ola bilər. '
+                        'Yeni layihəni ana səhifəyə əlavə etmək üçün həmin kateqoriyadan köhnələrdən birinin '
+                        '"Ana səhifədə olsun" seçimini silməlisiniz.'
                     )
-                })
-        
+
+        if errors:
+            raise ValidationError(errors)
+
         return cleaned_data
 
 
@@ -247,6 +302,7 @@ class ProjectAdmin(admin.ModelAdmin):
         'is_completed',
         'is_active',
         'on_main_page',
+        'speacial_project',
         'project_date',
     )
     search_fields = ('name_az', 'name_en', 'name_ru', 'description_az', 'description_en', 'description_ru')
@@ -270,7 +326,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('name_ru', 'description_ru')
         }),
         ('Status', {
-            'fields': ('is_completed', 'is_active', 'on_main_page')
+            'fields': ('is_completed', 'is_active', 'on_main_page', 'speacial_project')
         }),
         ('Tarix', {
             'fields': ('project_date', 'created_at')
@@ -325,6 +381,9 @@ class ProjectAdmin(admin.ModelAdmin):
         
         if obj.on_main_page:
             badges.append('<span style="background: #6f42c1; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🏠 Ana səhifədə</span>')
+        
+        if obj.speacial_project:
+            badges.append('<span style="background: #e83e8c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">⭐ Xüsusi Layihə</span>')
         
         return format_html(' '.join(badges))
     status_badges.short_description = "Status"

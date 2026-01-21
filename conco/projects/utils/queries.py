@@ -61,7 +61,7 @@ def get_project_categories(lang='az'):
     return ProjectCategory.objects.all().order_by('id')
 
 
-def get_projects(lang='az', category_slug=None, is_active=True, is_completed=None, on_main_page=None):
+def get_projects(lang='az', category_slug=None, is_active=True, is_completed=None, on_main_page=None, speacial_project=None):
     queryset = Project.objects.select_related('category').prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
     )
@@ -77,6 +77,9 @@ def get_projects(lang='az', category_slug=None, is_active=True, is_completed=Non
     
     if on_main_page is not None:
         queryset = queryset.filter(on_main_page=on_main_page)
+    
+    if speacial_project is not None:
+        queryset = queryset.filter(speacial_project=speacial_project)
     
     return queryset.order_by('-created_at')
 
@@ -225,6 +228,8 @@ def serialize_project(project, lang='az'):
         'url': project.url,
         'is_completed': project.is_completed,
         'is_active': project.is_active,
+        'speacial_project': project.speacial_project,
+        'on_main_page': project.on_main_page,
         'project_date': project.project_date,
         'created_at': project.created_at,
         'category': {
@@ -367,6 +372,7 @@ def get_home_page_data(request, lang):
     category_slug = request.GET.get('slug')  # category_slug -> slug
     is_completed = request.GET.get('is_completed')
     is_active = request.GET.get('is_active', 'true').lower() == 'true'
+    special_filter = request.GET.get('special')  # "Seçilmiş" filteri üçün
     
     if is_completed is not None:
         is_completed = is_completed.lower() == 'true'
@@ -376,20 +382,41 @@ def get_home_page_data(request, lang):
     projects_page = request.GET.get('page', 1)
     projects_per_page = int(request.GET.get('per_page', 9))
     
-   
-    projects = get_projects(
-        lang=lang,
-        category_slug=category_slug,
-        is_active=is_active,
-        is_completed=is_completed,
-        on_main_page=True
-    )
-    
-    projects_page_obj, projects_paginator = paginate_queryset(projects, projects_page, projects_per_page)
-    serialized_projects = [
-        serialize_project(project, lang)
-        for project in projects_page_obj
-    ]
+    if special_filter == 'true':
+        # "Seçilmiş" filterində: həm speacial_project=True, həm də on_main_page=True olanlar
+        projects = get_projects(
+            lang=lang,
+            category_slug=None,
+            is_active=is_active,
+            is_completed=is_completed,
+            on_main_page=True,         # on_main_page=True olmalıdır
+            speacial_project=True
+        )[:9]  # Ümumi maksimum 9 layihə
+    else:
+        all_main_page_projects = get_projects(
+            lang=lang,
+            category_slug=None,         # bütün kateqoriyalar
+            is_active=is_active,
+            is_completed=is_completed,
+            on_main_page=True,
+            speacial_project=None
+        )
+
+        from collections import defaultdict
+
+        projects_by_category = defaultdict(list)
+        for project in all_main_page_projects:
+            cat_id = project.category_id
+            if len(projects_by_category[cat_id]) < 9:
+                projects_by_category[cat_id].append(project)
+
+        projects = []
+        for cat_id in sorted(projects_by_category.keys()):
+            projects.extend(projects_by_category[cat_id])
+
+    serialized_projects = [serialize_project(project, lang) for project in projects]
+    projects_paginator = None
+    projects_page_obj = None
     
     categories = get_project_categories(lang)
     serialized_categories = [
@@ -436,7 +463,7 @@ def get_home_page_data(request, lang):
         'vacancies': serialized_vacancies,
         'about': serialized_about,
         'contact': serialized_contact,
-        'projects_pagination': get_pagination_data(projects_page_obj, projects_paginator),
+        'projects_pagination': get_pagination_data(projects_page_obj, projects_paginator) if projects_paginator else None,
         'partners_pagination': get_pagination_data(partners_page_obj, partners_paginator),
         'vacancies_pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
         'filters': {

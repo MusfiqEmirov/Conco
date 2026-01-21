@@ -95,6 +95,9 @@ msgstr "Projects"
 msgid "Seçilmiş layihələr"
 msgstr "Selected Projects"
 
+msgid "Seçilmiş"
+msgstr "Selected"
+
 msgid "Haqqımızda"
 msgstr "About Us"
 
