@@ -199,14 +199,14 @@ def get_statistics():
             'partner_count': statistic.value_three,
         }
     
-    from projects.models import Appeal
+    # from projects.models import Appeal
     
-    client_count = Appeal.objects.values('email', 'phone_number').distinct().count()
+    # client_count = Appeal.objects.values('email', 'phone_number').distinct().count()
     project_count = Project.objects.filter(is_active=True).count()
     partner_count = Partner.objects.filter(is_active=True).count()
     
     return {
-        'client_count': client_count,
+        # 'client_count': client_count,
         'project_count': project_count,
         'partner_count': partner_count,
     }
