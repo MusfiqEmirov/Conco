@@ -22,10 +22,11 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://www.conco.az",
-    'https://conco.az',
+    # "https://www.conco.az",
+    # 'https://conco.az',
     'http://localhost:8080',
     'http://127.0.0.1:8080',
+    'http://44.200.28.28',
 ]
 
 # # CSRF Cookie Settings
@@ -46,15 +47,15 @@ if not ADMIN_URL.endswith('/'):
     ADMIN_URL += '/'
     
 
-# E-mail
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-SERVER_EMAIL = os.getenv('SERVER_EMAIL')
+# # E-mail
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+# EMAIL_HOST = os.getenv('EMAIL_HOST')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# SERVER_EMAIL = os.getenv('SERVER_EMAIL')
 
 
 # Application definition
