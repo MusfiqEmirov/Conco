@@ -4,9 +4,9 @@ Cache utilities for page-level caching and cache invalidation.
 from functools import wraps
 from django.core.cache import cache
 from django.conf import settings
-from django.utils.cache import get_cache_key
+# from django.utils.cache import get_cache_key
 import hashlib
-import json
+# import json
 
 
 def generate_cache_key(prefix, *args, **kwargs):

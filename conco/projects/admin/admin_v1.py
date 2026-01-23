@@ -635,7 +635,7 @@ class VacancyAdmin(admin.ModelAdmin):
         unread_count = count - read_count
         
         if count > 0:
-            url = reverse('admin:projects_appeal_changelist') + f'?vacancy__id__exact={obj.id}'
+            url = reverse('admin:projects_appealvacancy_changelist') + f'?vacancy__id__exact={obj.id}'
             badge_html = f'<a href="{url}" style="text-decoration: none;">'
             if unread_count > 0:
                 badge_html += f'<span style="background: #dc3545; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">📄 {count} CV ({unread_count} oxunmayıb)</span>'
@@ -739,7 +739,7 @@ class AppealAdmin(admin.ModelAdmin):
 
     def candidate_info(self, obj):
         """Namizəd məlumatlarını səliqəli şəkildə göstərir"""
-        detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+        detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
         name = obj.full_name or "Ad Soyad yoxdur"
         
         return format_html(
@@ -757,7 +757,7 @@ class AppealAdmin(admin.ModelAdmin):
     def vacancy_info(self, obj):
         if obj.vacancy:
             vacancy_url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
-            detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+            detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
             
             return format_html(
                 '<div style="padding: 8px 0;">'
@@ -813,7 +813,7 @@ class AppealAdmin(admin.ModelAdmin):
     contact_info.short_description = "Əlaqə"
 
     def cv_download(self, obj):
-        detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+        detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
         
         if obj.cv:
             file_name = obj.cv.name.split('/')[-1]
