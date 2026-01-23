@@ -1,7 +1,7 @@
 from django.db.models import Q, Prefetch
 from django.utils import translation
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.conf import settings
+# from django.conf import settings
 
 from projects.models import *
 from projects.utils.cache_utils import cached_query, get_query_cache_key, cached_page_data

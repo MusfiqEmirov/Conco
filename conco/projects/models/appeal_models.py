@@ -15,6 +15,7 @@ class AppealVacancy(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name='appeal_set',
         verbose_name='Vakansiya'
     )
     full_name = models.CharField(
