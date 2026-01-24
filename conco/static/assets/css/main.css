@@ -1466,6 +1466,22 @@ section {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+.about .about-img .swiper-button-prev,
+.about .about-img .swiper-button-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.about .about-img .swiper-button-prev {
+  left: 15px;
+}
+
+.about .about-img .swiper-button-next {
+  right: 15px;
+}
+
 @media (min-width: 992px) {
   .about .about-img {
     position: absolute;
@@ -1474,34 +1490,14 @@ section {
   }
 }
 
-@media (max-width: 991px) and (min-width: 576px) {
+@media (max-width: 991px) {
   .about .about-img {
     position: relative;
     margin-bottom: 20px;
   }
-  
-  .about .about-img .swiper-button-prev,
-  .about .about-img .swiper-button-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-  
-  .about .about-img .swiper-button-prev {
-    left: 15px;
-  }
-  
-  .about .about-img .swiper-button-next {
-    right: 15px;
-  }
 }
 
 @media (max-width: 575px) {
-  .about .about-img .swiper-button-prev,
-  .about .about-img .swiper-button-next {
-    display: none;
-  }
   
   .about .about-img .swiper-slide {
     height: 300px;
@@ -1557,6 +1553,18 @@ section {
 .about-img-carousel-index .swiper-button-next {
   width: 48px;
   height: 48px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.about-img-carousel-index .swiper-button-prev {
+  left: 0;
+}
+
+.about-img-carousel-index .swiper-button-next {
+  right: 0;
 }
 
 .about-img-carousel-index .swiper-button-prev:after,
@@ -1578,30 +1586,8 @@ section {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-@media (max-width: 991px) and (min-width: 576px) {
-  .about-img-carousel-index .swiper-button-prev,
-  .about-img-carousel-index .swiper-button-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-  
-  .about-img-carousel-index .swiper-button-prev {
-    left: 15px;
-  }
-  
-  .about-img-carousel-index .swiper-button-next {
-    right: 15px;
-  }
-}
 
 @media (max-width: 575px) {
-  .about-img-carousel-index .swiper-button-prev,
-  .about-img-carousel-index .swiper-button-next {
-    display: none;
-  }
-  
   .about-img-carousel-index .swiper-slide {
     height: 300px;
   }
