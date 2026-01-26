@@ -1475,11 +1475,11 @@ section {
 }
 
 .about .about-img .swiper-button-prev {
-  left: 15px;
+  left: 20px;
 }
 
 .about .about-img .swiper-button-next {
-  right: 15px;
+  right: 20px;
 }
 
 @media (min-width: 992px) {
@@ -1848,12 +1848,23 @@ section {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-@media (max-width: 575px) {
+.project-details .swiper-button-prev,
+.project-details .swiper-button-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
 
-  .project-details .swiper-button-prev,
-  .project-details .swiper-button-next {
-    display: none;
-  }
+.project-details .swiper-button-prev {
+  left: 20px;
+}
+
+.project-details .swiper-button-next {
+  right: 20px;
+}
+
+@media (max-width: 575px) {
   
   .project-details .portfolio-details-slider .swiper-slide {
     height: 300px;
