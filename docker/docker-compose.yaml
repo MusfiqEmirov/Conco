@@ -58,6 +58,7 @@ services:
       - ../conco/staticfiles:/app/conco/staticfiles:ro
       - ../conco/media:/app/conco/media:ro
       - ../nginx/ssl:/etc/nginx/ssl:ro 
+      
 
     depends_on:
       - web
