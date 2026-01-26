@@ -27,16 +27,18 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
     'http://127.0.0.1:8080',
     'http://44.200.28.28',
+    'https://lekalgroup.az',
+    'http://www.lekalgroup.az',
 ]
 
-# # CSRF Cookie Settings
-# CSRF_COOKIE_SECURE = True  
-# CSRF_COOKIE_HTTPONLY = False
-# CSRF_USE_SESSIONS = False
+# CSRF Cookie Settings
+CSRF_COOKIE_SECURE = True  
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
 
-# # Session Cookie Settings
-# SESSION_COOKIE_SECURE = True  
-# SESSION_COOKIE_HTTPONLY = True
+# Session Cookie Settings
+SESSION_COOKIE_SECURE = True  
+SESSION_COOKIE_HTTPONLY = True
 
 
 # Admin URL - secret path (required)
