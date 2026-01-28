@@ -22,13 +22,11 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    # "https://www.conco.az",
-    # 'https://conco.az',
+    "https://www.conco.az",
+    'https://conco.az',
     'http://localhost:8080',
     'http://127.0.0.1:8080',
-    'http://44.200.28.28',
-    'https://lekalgroup.az',
-    'http://www.lekalgroup.az',
+ 
 ]
 
 # CSRF Cookie Settings
