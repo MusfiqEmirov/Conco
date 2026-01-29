@@ -233,6 +233,27 @@ msgstr "Отправить"
 msgid "Bütün vakansiyalar"
 msgstr "Все вакансии"
 
+msgid "CONCO | Tikinti, Təmir və Layihələndirmə Şirkəti"
+msgstr "CONCO | Строительная, ремонтная и проектная компания"
+
+msgid "CONCO tikinti şirkəti Bakıda yüksək keyfiyyətli tikinti, təmir, interyer dizayn və layihələndirmə xidmətləri təklif edir. Peşəkar mühəndislik və inşaat həlləri."
+msgstr "Строительная компания CONCO предлагает в Баку качественные услуги по строительству, ремонту, дизайну интерьера и проектированию. Профессиональные инженерные и строительные решения."
+
+msgid "tikinti şirkəti, bakida temir, insaat sirketi, layihələndirmə, dizayn, ev tikintisi, ofis təmiri, conco az"
+msgstr "строительная компания, ремонт в Баку, строительная компания, проектирование, дизайн, строительство домов, офисный ремонт, conco az"
+
+msgid "CONCO | Tikinti və Təmir Şirkəti"
+msgstr "CONCO | Строительная и ремонтная компания"
+
+msgid "Peşəkar tikinti, təmir və dizayn xidmətləri. Xəyallarınızdakı məkanı bizimlə reallaşdırın."
+msgstr "Профессиональные услуги по строительству, ремонту и дизайну. Реализуем пространство вашей мечты."
+
+msgid "Bakıda peşəkar tikinti və təmir xidmətləri. Keyfiyyət və zəmanət."
+msgstr "Профессиональные строительные и ремонтные услуги в Баку. Качество и гарантия."
+
+msgid "Bakıda peşəkar tikinti, təmir və layihələndirmə xidmətləri."
+msgstr "Профессиональные услуги по строительству, ремонту и проектированию в Баку."
+
 #~ msgid "Vakansiya Haqqında"
 #~ msgstr "О вакансии"
 
