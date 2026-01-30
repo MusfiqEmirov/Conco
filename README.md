@@ -1,3 +1,4 @@
+
 # CONCO
 
 **CONCO** is the official website for a company offering construction, repair, and design services in Baku. The site presents projects, vacancies, about information, and contact options in three languages: **Azerbaijani**, **English**, and **Russian**.
@@ -175,4 +176,6 @@ Create a `.env` file in the project root (or in `docker/` when using Docker Comp
 - **Vacancies:** List and detail; application form with CV upload; one application per email/phone per vacancy.
 - **i18n:** Azerbaijani (default), English, Russian; language switcher and translated SEO metadata.
 - **Admin:** Content managed via Django admin; custom admin path via `ADMIN_URL`.
+
+=======
 
