@@ -143,6 +143,9 @@ msgstr "Main"
 msgid "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur."
 msgstr "Developed by Digiboom.az. All rights reserved."
 
+msgid "<a href=\"https://digiboom.az/\" target=\"_blank\" rel=\"noopener noreferrer\">Digiboom.az</a> tərəfindən hazırlanıbdır."
+msgstr "Developed by <a href=\"https://digiboom.az/\" target=\"_blank\" rel=\"noopener noreferrer\">Digiboom.az</a>."
+
 msgid "Haqqimizda"
 msgstr "About Us"
 
