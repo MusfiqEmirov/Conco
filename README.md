@@ -102,7 +102,9 @@ Create a `.env` file in the project root (or in `docker/` when using Docker Comp
 4. **Run migrations**
    ```bash
    cd conco
+   python manage.py makemigrations
    python manage.py migrate
+
    ```
 
 5. **Create a superuser (optional)**
