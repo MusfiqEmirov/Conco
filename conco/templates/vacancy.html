@@ -119,11 +119,11 @@
     <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>{% trans "Vakansiyalar" %}</h2>
+        <!-- <h2>{% trans "Vakansiyalar" %}</h2>
         <ol>
           <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
           <li>{% trans "Vakansiyalar" %}</li>
-        </ol>
+        </ol> -->
 
       </div>
     </div><!-- End Breadcrumbs -->
@@ -159,7 +159,7 @@
 
                 <hr>
 
-                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>{% trans "Etrafli" %}</span><i
+                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>{% trans "Ətraflı" %}</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>

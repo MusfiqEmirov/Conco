@@ -176,7 +176,7 @@ msgstr "Ongoing"
 msgid "More Details"
 msgstr "More Details"
 
-msgid "Etrafli"
+msgid "Ətraflı"
 msgstr "Details"
 
 msgid "Layihə tapılmadı."

@@ -120,7 +120,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-6 text-center">
-            <h2 data-aos="fade-down">{% if motto %}{{ motto }}{% else %}{% trans "deviz" %}{% endif %}</h2>
+            <!-- <h2 data-aos="fade-down">{% if motto %}{{ motto }}{% else %}{% trans "deviz" %}{% endif %}</h2> -->
           </div>
         </div>
       </div>
@@ -252,7 +252,10 @@
                 {% endif %}
                 <div class="portfolio-info">
                   <h4>{% if project.is_completed %}{% trans "Tamamlanmış" %}{% else %}{% trans "Davam edən" %}{% endif %}</h4>
-                  <p>{{ project.name }} <a href="{% url 'projects:project-detail' slug=project.slug %}" title="{% trans 'More Details' %}" class="btn btn-sm btn-warning ms-2">{% trans "Etrafli" %}</a></p>
+                  <div class="portfolio-info-bottom">
+                    <span class="portfolio-name">{{ project.name }}</span>
+                    <a href="{% url 'projects:project-detail' slug=project.slug %}" title="{% trans 'More Details' %}" class="btn btn-sm btn-warning portfolio-details-btn">{% trans "Ətraflı" %}</a>
+                  </div>
                 </div>
               </div>
             </div><!-- End Projects Item -->

@@ -1091,16 +1091,29 @@ section {
   background-color: var(--color-primary);
 }
 
-.projects .portfolio-content .portfolio-info p {
+/* Bottom row: project name (flex) + Ətraflı link fixed at bottom right */
+.projects .portfolio-content .portfolio-info .portfolio-info-bottom {
   position: absolute;
   bottom: 10px;
-  text-align: center;
-  display: inline-block;
-  left: 0;
-  right: 0;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.projects .portfolio-content .portfolio-info .portfolio-name {
   font-size: 16px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.8);
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.projects .portfolio-content .portfolio-info .portfolio-details-btn {
+  flex-shrink: 0;
 }
 
 .projects .portfolio-content .portfolio-info .preview-link,
@@ -2460,13 +2473,19 @@ section {
     padding: 2px 4px;
   }
   
-  .projects .portfolio-content .portfolio-info p {
-    font-size: 11px;
+  .projects .portfolio-content .portfolio-info .portfolio-info-bottom {
     bottom: 4px;
+    left: 6px;
+    right: 6px;
+    gap: 4px;
+  }
+  
+  .projects .portfolio-content .portfolio-info .portfolio-name {
+    font-size: 11px;
     line-height: 1.2;
   }
   
-  .projects .portfolio-content .portfolio-info p .btn {
+  .projects .portfolio-content .portfolio-info .portfolio-details-btn {
     font-size: 10px;
     padding: 2px 6px;
   }
@@ -2491,13 +2510,18 @@ section {
       padding: 2px 3px;
     }
     
-    .projects .portfolio-content .portfolio-info p {
-      font-size: 10px;
+    .projects .portfolio-content .portfolio-info .portfolio-info-bottom {
       bottom: 3px;
+      left: 4px;
+      right: 4px;
+    }
+    
+    .projects .portfolio-content .portfolio-info .portfolio-name {
+      font-size: 10px;
       line-height: 1.1;
     }
     
-    .projects .portfolio-content .portfolio-info p .btn {
+    .projects .portfolio-content .portfolio-info .portfolio-details-btn {
       font-size: 9px;
       padding: 2px 4px;
     }
@@ -2513,13 +2537,18 @@ section {
       padding: 1px 2px;
     }
     
-    .projects .portfolio-content .portfolio-info p {
-      font-size: 9px;
+    .projects .portfolio-content .portfolio-info .portfolio-info-bottom {
       bottom: 2px;
+      left: 3px;
+      right: 3px;
+    }
+    
+    .projects .portfolio-content .portfolio-info .portfolio-name {
+      font-size: 9px;
       line-height: 1.1;
     }
     
-    .projects .portfolio-content .portfolio-info p .btn {
+    .projects .portfolio-content .portfolio-info .portfolio-details-btn {
       font-size: 8px;
       padding: 1px 3px;
     }

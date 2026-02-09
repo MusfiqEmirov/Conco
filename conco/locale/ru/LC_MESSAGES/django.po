@@ -176,7 +176,7 @@ msgstr "Текущий"
 msgid "More Details"
 msgstr "Подробнее"
 
-msgid "Etrafli"
+msgid "Ətraflı"
 msgstr "Подробнее"
 
 msgid "Layihə tapılmadı."
