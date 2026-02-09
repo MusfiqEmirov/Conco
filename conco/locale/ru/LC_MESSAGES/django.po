@@ -146,9 +146,6 @@ msgstr "Разработано Digiboom.az. Все права защищены."
 msgid "<a href=\"https://digiboom.az/\" target=\"_blank\" rel=\"noopener noreferrer\">Digiboom.az</a> tərəfindən hazırlanmışdır."
 msgstr "Разработано <a href=\"https://digiboom.az/\" target=\"_blank\" rel=\"noopener noreferrer\">Digiboom.az</a>."
 
-msgid "Haqqimizda"
-msgstr "О нас"
-
 msgid "Ünvanımız"
 msgstr "Наш адрес"
 

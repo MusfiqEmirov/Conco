@@ -324,10 +324,10 @@ section {
     justify-content: space-between;
     padding: 0 3px;
     font-family: var(--font-primary);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
+    text-transform: capitalize;
     white-space: nowrap;
     transition: 0.3s;
     position: relative;
@@ -541,11 +541,11 @@ section {
     justify-content: space-between;
     padding: 0 20px;
     font-family: var(--font-primary);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--color-primary);
     white-space: nowrap;
-    text-transform: uppercase;
+    text-transform: capitalize;
     transition: 0.3s;
   }
 
@@ -2629,8 +2629,25 @@ section {
 }
 
 @media (max-width: 768px) {
+  .hero .carousel {
+    min-height: 68vh;
+    max-height: 85vh;
+    padding: 60px 0 40px;
+  }
+  .hero .carousel-item {
+    background-size: cover;
+    background-position: center center;
+  }
   .hero .info {
     padding: 0 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero .carousel {
+    min-height: 62vh;
+    max-height: 78vh;
+    padding: 50px 0 30px;
   }
 }
 
