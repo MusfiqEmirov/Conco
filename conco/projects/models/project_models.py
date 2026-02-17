@@ -6,19 +6,19 @@ from projects.utils import SluggedModel
 
 class ProjectCategory(SluggedModel):
     name_az = models.CharField(
-        max_length=100,
+        max_length=255,
         null=True,
         blank=True,
         verbose_name='Kateqoriya adı (AZ)'
     )
     name_en = models.CharField(
-        max_length=100,
+        max_length=255,
         null=True,
         blank=True,
         verbose_name='Kateqoriya adı (EN)'
     )
     name_ru = models.CharField(
-        max_length=100,
+        max_length=255,
         null=True,
         blank=True,
         verbose_name='Kateqoriya adı (RU)'
