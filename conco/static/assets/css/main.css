@@ -1641,6 +1641,9 @@ section {
 --------------------------------------------------------------*/
 .team .member {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .team .member .member-img {
@@ -1724,6 +1727,10 @@ section {
 
 .team .member .member-info {
   margin-top: 30px;
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .team .member .member-info h4 {
@@ -1759,6 +1766,18 @@ section {
 
 .team .team-slider .swiper-slide {
   height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.team .team-slider .swiper-slide .member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 280px;
+  box-sizing: border-box;
 }
 
 .team .team-slider .swiper-pagination {
