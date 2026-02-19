@@ -1770,7 +1770,7 @@ section {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: team-ticker 35s linear infinite;
+  animation: team-ticker 22s linear infinite;
 }
 
 .team .team-ticker-track:hover {
