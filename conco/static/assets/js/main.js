@@ -359,13 +359,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
-   * Init team slider with autoplay from right to left
+   * Init team slider – ticker style: continuous flow (no pause)
    */
   new Swiper('.team-slider', {
-    speed: 200,
+    speed: 1200,
     loop: true,
     autoplay: {
-      delay: 600,
+      delay: 0,
       disableOnInteraction: false
     },
     slidesPerView: 1,
