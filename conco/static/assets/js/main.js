@@ -362,10 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Init team slider with autoplay from right to left
    */
   new Swiper('.team-slider', {
-    speed: 100,
+    speed: 180,
     loop: true,
     autoplay: {
-      delay: 300,
+      delay: 450,
       disableOnInteraction: false
     },
     slidesPerView: 1,
