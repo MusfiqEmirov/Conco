@@ -205,10 +205,10 @@
           <h2>{% trans "Tərəfdaşlar" %}</h2>
         </div>
 
-        <div class="team-slider swiper">
-          <div class="swiper-wrapper">
-            {% for partner in partners %}
-            <div class="swiper-slide">
+        <div class="team-ticker">
+          <div class="team-ticker-track">
+            <div class="team-ticker-row">
+              {% for partner in partners %}
               <div class="member">
                 <div class="member-img">
                   {% if partner.logo %}
@@ -232,19 +232,48 @@
                   <h4>{{ partner.name }}</h4>
                 </div>
               </div>
-            </div><!-- End Team Member -->
-            {% empty %}
-            <div class="swiper-slide">
+              {% empty %}
               <div class="member">
                 <div class="member-info text-center">
                   <h4>{% trans "Tərəfdaş tapılmadı" %}</h4>
                 </div>
               </div>
+              {% endfor %}
             </div>
-            {% endfor %}
-
+            <div class="team-ticker-row" aria-hidden="true">
+              {% for partner in partners %}
+              <div class="member">
+                <div class="member-img">
+                  {% if partner.logo %}
+                  <img src="{{ partner.logo }}" class="img-fluid" alt="">
+                  {% else %}
+                  <img src="{% static 'assets/img/team/team-1.jpg' %}" class="img-fluid" alt="">
+                  {% endif %}
+                  <div class="social">
+                    {% if partner.facebook %}
+                    <a href="{{ partner.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if partner.instagram %}
+                    <a href="{{ partner.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if partner.linkedn %}
+                    <a href="{{ partner.linkedn }}" target="_blank"><i class="bi bi-linkedin"></i></a>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="member-info text-center">
+                  <h4>{{ partner.name }}</h4>
+                </div>
+              </div>
+              {% empty %}
+              <div class="member">
+                <div class="member-info text-center">
+                  <h4>{% trans "Tərəfdaş tapılmadı" %}</h4>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
           </div>
-          <div class="swiper-pagination"></div>
         </div>
 
       </div>

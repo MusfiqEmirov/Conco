@@ -358,38 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /**
-   * Init team slider – ticker style: continuous flow (no pause)
-   */
-  new Swiper('.team-slider', {
-    speed: 1200,
-    loop: true,
-    autoplay: {
-      delay: 0,
-      disableOnInteraction: false
-    },
-    slidesPerView: 1,
-    spaceBetween: 8,
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 6
-      },
-      768: {
-        slidesPerView: 2,
-        spaceBetween: 8
-      },
-      1024: {
-        slidesPerView: 4,
-        spaceBetween: 8
-      }
-    }
-  });
+  /* Team section uses CSS ticker (no Swiper) – dayanmadan sola axır */
 
   /**
    * Initiate pURE cOUNTER
