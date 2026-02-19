@@ -362,14 +362,14 @@ document.addEventListener('DOMContentLoaded', () => {
    * Init team slider with autoplay from right to left
    */
   new Swiper('.team-slider', {
-    speed: 500,
+    speed: 250,
     loop: true,
     autoplay: {
-      delay: 1500,
+      delay: 750,
       disableOnInteraction: false
     },
     slidesPerView: 1,
-    spaceBetween: 12,
+    spaceBetween: 8,
     pagination: {
       el: '.swiper-pagination',
       type: 'bullets',
@@ -378,15 +378,15 @@ document.addEventListener('DOMContentLoaded', () => {
     breakpoints: {
       320: {
         slidesPerView: 1,
-        spaceBetween: 10
+        spaceBetween: 6
       },
       768: {
         slidesPerView: 2,
-        spaceBetween: 15
+        spaceBetween: 8
       },
       1024: {
         slidesPerView: 3,
-        spaceBetween: 15
+        spaceBetween: 8
       }
     }
   });
