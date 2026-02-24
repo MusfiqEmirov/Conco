@@ -126,28 +126,30 @@
       </div>
     </div>
 
-    <div id="hero-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false">
-      <div class="carousel-inner">
-      {% if hero_background_images %}
-        {% for image_url in hero_background_images|slice:":6" %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image: url('{{ image_url }}')">
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="carousel-item active" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-      {% endif %}
+    <div class="hero-flow-wrap">
+      <div class="hero-flow-track" aria-hidden="true">
+        {% if hero_background_images %}
+          {% for image_url in hero_background_images|slice:":6" %}
+            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
+          {% endfor %}
+          {% for image_url in hero_background_images|slice:":6" %}
+            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
+          {% endfor %}
+        {% else %}
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+        {% endif %}
       </div>
-      <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-      </a>
-      <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
-        <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-      </a>
     </div>
 
   </section>
@@ -182,21 +184,19 @@
                 {% if about.medias %}
                   {% with about.medias|first as first_media %}
                     {% if first_media.image %}
-                    <div class="about-img-carousel-index">
-                      <div class="slides-1 about-details-slider swiper">
-                        <div class="swiper-wrapper align-items-center">
-                          {% for media in about.medias %}
-                            {% if media.image %}
-                            <div class="swiper-slide">
-                              <img src="{{ media.image }}" alt="" class="img-fluid">
-                            </div>
-                            {% endif %}
-                          {% endfor %}
-                        </div>
-                        <div class="swiper-pagination"></div>
+                    <div class="about-img-carousel-index about-flow-wrap">
+                      <div class="about-flow-track" aria-hidden="true">
+                        {% for media in about.medias %}
+                          {% if media.image %}
+                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                          {% endif %}
+                        {% endfor %}
+                        {% for media in about.medias %}
+                          {% if media.image %}
+                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                          {% endif %}
+                        {% endfor %}
                       </div>
-                      <div class="swiper-button-prev"></div>
-                      <div class="swiper-button-next"></div>
                     </div>
                     {% else %}
                     <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
