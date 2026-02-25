@@ -71,7 +71,7 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
-        <img src="{% static 'assets/img/my_logo.png' %}" alt="Logo" class="logo-img">
+        <img src="{% static 'assets/img/favicon.png' %}" alt="Logo" class="logo-img">
       </a>
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
@@ -85,11 +85,12 @@
               {% for category in categories %}
               <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
               {% empty %}
-              <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
+              <li><a href="{% url 'projects:project-page' %}">{% trans "Layihələr" %}</a></li>
               {% endfor %}
             </ul>
           </li>
           <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+          <li><a href="{% url 'projects:services-page' %}">{% trans "Xidmətlər" %}</a></li>
           <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
           <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
           <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> 
@@ -126,27 +127,30 @@
       </div>
     </div>
 
-    <div id="hero-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-      {% if hero_background_images %}
-        {% for image_url in hero_background_images %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image: url('{{ image_url }}')">
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="carousel-item active" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})">
-        </div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-        <div class="carousel-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-      {% endif %}
-
-      <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-      </a>
-
-      <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
-        <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-      </a>
-
+    <div class="hero-flow-wrap">
+      <div class="hero-flow-track" aria-hidden="true">
+        {% if hero_background_images %}
+          {% for image_url in hero_background_images|slice:":6" %}
+            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
+          {% endfor %}
+          {% for image_url in hero_background_images|slice:":6" %}
+            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
+          {% endfor %}
+        {% else %}
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
+          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
+        {% endif %}
+      </div>
     </div>
 
   </section>
@@ -181,21 +185,19 @@
                 {% if about.medias %}
                   {% with about.medias|first as first_media %}
                     {% if first_media.image %}
-                    <div class="about-img-carousel-index">
-                      <div class="slides-1 about-details-slider swiper">
-                        <div class="swiper-wrapper align-items-center">
-                          {% for media in about.medias %}
-                            {% if media.image %}
-                            <div class="swiper-slide">
-                              <img src="{{ media.image }}" alt="" class="img-fluid">
-                            </div>
-                            {% endif %}
-                          {% endfor %}
-                        </div>
-                        <div class="swiper-pagination"></div>
+                    <div class="about-img-carousel-index about-flow-wrap">
+                      <div class="about-flow-track" aria-hidden="true">
+                        {% for media in about.medias %}
+                          {% if media.image %}
+                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                          {% endif %}
+                        {% endfor %}
+                        {% for media in about.medias %}
+                          {% if media.image %}
+                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                          {% endif %}
+                        {% endfor %}
                       </div>
-                      <div class="swiper-button-prev"></div>
-                      <div class="swiper-button-next"></div>
                     </div>
                     {% else %}
                     <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
@@ -222,7 +224,7 @@
       <div class="container" data-aos="fade-up">
 
         <div class="section-header">
-          <h2>{% trans "Seçilmiş layihələr" %}</h2>
+          <h2>{% trans "Layihələr" %}</h2>
         </div>
 
         <div class="portfolio-isotope" data-portfolio-filter=".filter-special" data-portfolio-layout="masonry"
@@ -304,9 +306,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="member-info text-center">
-                  <h4>{{ partner.name }}</h4>
-                </div>
+                <!-- Ad gizlədildi -->
               </div>
               {% empty %}
               <div class="member">
@@ -337,9 +337,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="member-info text-center">
-                  <h4>{{ partner.name }}</h4>
-                </div>
+                <!-- Ad gizlədildi -->
               </div>
               {% empty %}
               <div class="member">
@@ -387,7 +385,7 @@
 
                 <hr>
 
-                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>{% trans "Etrafli" %}</span><i
+                <a href="{% url 'projects:vacancy-detail' slug=vacancy.slug %}" class="readmore stretched-link"><span>{% trans "Ətraflı" %}</span><i
                     class="bi bi-arrow-right"></i></a>
 
               </div>
@@ -476,6 +474,7 @@
               <ul>
                 <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
                 <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+                <li><a href="{% url 'projects:services-page' %}">{% trans "Xidmətlər" %}</a></li>
                 <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
                 <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
               </ul>
@@ -490,7 +489,7 @@
                 {% for category in categories %}
                 <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
                 {% empty %}
-                <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
+                <li><a href="{% url 'projects:project-page' %}">{% trans "Layihələr" %}</a></li>
                 {% endfor %}
               </ul>
             </div>

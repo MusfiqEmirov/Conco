@@ -121,6 +121,16 @@ def get_contact(lang='az'):
     return Contact.objects.first()
 
 
+@cached_query(timeout='CACHE_TIMEOUT_MEDIUM')
+def get_services(lang='az', is_active=True):
+    queryset = Service.objects.prefetch_related(
+        Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
+    )
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    return list(queryset.order_by('-created_at'))
+
+
 def get_vacancies(lang='az', is_active=True):
     queryset = Vacancy.objects.prefetch_related(
         Prefetch('medias', queryset=Media.objects.filter(image__isnull=False))
@@ -152,6 +162,7 @@ def get_background_image(page_type):
         'partner': 'is_partner_background_image',
         'project': 'is_project_page_background_image',
         'vacancy': 'is_vacany_page_background_image',
+        'service': 'is_service_page_background_image',
         'footer': 'is_footer_background_image',
     }
     
@@ -165,8 +176,8 @@ def get_background_image(page_type):
 
 
 @cached_query(timeout='CACHE_TIMEOUT_LONG')
-def get_home_background_images(limit=3):
-    """Ana səhifə üçün background image-ləri qaytarır (maksimum 3 ədəd)"""
+def get_home_background_images(limit=6):
+    """Ana səhifə hero karuseli üçün background image-ləri qaytarır (maksimum 6 ədəd)"""
     media_list = Media.objects.filter(
         is_home_page_background_image=True,
         image__isnull=False
@@ -279,6 +290,21 @@ def serialize_about(about, lang='az'):
             }
             for media in about.medias.all()
         ]
+    }
+
+
+def serialize_service(service, lang='az'):
+    if service is None:
+        return None
+    title_field = get_localized_field_name('title', lang)
+    desc_field = get_localized_field_name('description', lang)
+    first_media = service.medias.filter(image__isnull=False).first()
+    return {
+        'id': service.id,
+        'title': getattr(service, title_field, service.title_az),
+        'description': getattr(service, desc_field, service.description_az),
+        'image': first_media.image.url if first_media and first_media.image else None,
+        'url': service.url if getattr(service, 'url', None) else None,
     }
 
 
@@ -450,8 +476,8 @@ def get_home_page_data(request, lang):
     contact = get_contact(lang)
     serialized_contact = serialize_contact(contact, lang) if contact else None
     
-    # Hero carousel üçün 3 ədəd background image
-    hero_background_images = get_home_background_images(limit=3)
+    # Hero carousel üçün 6 ədəd background image
+    hero_background_images = get_home_background_images(limit=6)
     
     # Motto modelindən deviz
     motto = get_motto(lang)

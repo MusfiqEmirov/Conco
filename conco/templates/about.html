@@ -71,7 +71,7 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="{% url 'projects:home-page' %}" class="logo d-flex align-items-center justify-content-center">
-        <img src="{% static 'assets/img/my_logo.png' %}" alt="{% trans 'Logo' %}" class="logo-img">
+        <img src="{% static 'assets/img/favicon.png' %}" alt="Logo" class="logo-img">
       </a>
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
@@ -90,6 +90,7 @@
             </ul>
           </li>
           <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+          <li><a href="{% url 'projects:services-page' %}">{% trans "Xidmətlər" %}</a></li>
           <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
           <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
           <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> 
@@ -134,20 +135,20 @@
             {% with about.medias|first as first_media %}
               {% if first_media.image %}
               <div class="col-lg-7 about-img">
-                <div class="slides-1 about-details-slider swiper">
-                  <div class="swiper-wrapper align-items-center">
+                <div class="about-flow-wrap">
+                  <div class="about-flow-track" aria-hidden="true">
                     {% for media in about.medias %}
                       {% if media.image %}
-                      <div class="swiper-slide">
-                        <div class="about-img-slide" style="background-image: url({{ media.image }});"></div>
-                      </div>
+                      <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                      {% endif %}
+                    {% endfor %}
+                    {% for media in about.medias %}
+                      {% if media.image %}
+                      <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
                       {% endif %}
                     {% endfor %}
                   </div>
-                  <div class="swiper-pagination"></div>
                 </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
               </div>
               {% else %}
               <div class="col-lg-7 about-img" style="background-image: url({% static 'assets/img/about.jpg' %});"></div>
@@ -228,9 +229,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="member-info text-center">
-                  <h4>{{ partner.name }}</h4>
-                </div>
+                <!-- Ad gizlədildi -->
               </div>
               {% empty %}
               <div class="member">
@@ -261,9 +260,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="member-info text-center">
-                  <h4>{{ partner.name }}</h4>
-                </div>
+                <!-- Ad gizlədildi -->
               </div>
               {% empty %}
               <div class="member">
@@ -286,19 +283,8 @@
         </div>
       <div class="container">
 
-        <div class="row gy-4">
+        <div class="row gy-4 justify-content-center">
           {% if statistics %}
-          <div class="col-lg-4 col-md-6">
-            <div class="stats-item d-flex align-items-center w-100 h-100">
-              <i class="bi bi-emoji-smile color-blue flex-shrink-0"></i>
-              <div>
-                <span data-purecounter-start="0" data-purecounter-end="{{ statistics.client_count }}" data-purecounter-duration="1"
-                  class="purecounter"></span>
-                <p>{% trans "Müştərilər" %}</p>
-              </div>
-            </div>
-          </div><!-- End Stats Item -->
-
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-journal-richtext color-orange flex-shrink-0"></i>
@@ -387,6 +373,7 @@
               <ul>
                 <li><a href="{% url 'projects:home-page' %}">{% trans "Ana səhifə" %}</a></li>
                 <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
+                <li><a href="{% url 'projects:services-page' %}">{% trans "Xidmətlər" %}</a></li>
                 <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
                 <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
               </ul>
