@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.http import Http404
 from django.utils.translation import gettext as _
 
-from projects.models import Appeal
+from projects.models import AppealVacancy
 from projects.forms.forms_v1 import AppealForm
 from projects.utils.queries import (
     get_language_from_request, get_home_page_data, get_project_list_data,
@@ -127,14 +127,49 @@ class ContactPageView(View):
             serialize_project_category(category, lang)
             for category in categories
         ]
+        from projects.forms.forms_v1 import AppealContactForm
+        form = AppealContactForm()
         context = {
             'contact': serialize_contact(contact, lang) if contact else None,
             'categories': serialized_categories,
             'language': lang,
             'background_image': get_background_image('contact'),
             'footer_image': get_background_image('footer'),
+            'form': form,
         }
 
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        lang = get_language_from_request(request)
+        from projects.forms.forms_v1 import AppealContactForm
+        form = AppealContactForm(request.POST)
+        
+        if form.is_valid():
+            try:
+                appeal_contact = form.save()
+                messages.success(request, _('Mesajınız uğurla göndərildi.'))
+                return redirect('projects:contact-page')
+            except Exception as e:
+                messages.error(request, _('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.'))
+        else:
+            messages.error(request, _('Formda xəta var. Zəhmət olmasa düzəldin.'))
+        
+        contact = get_contact(lang)
+        categories = get_project_categories(lang)
+        serialized_categories = [
+            serialize_project_category(category, lang)
+            for category in categories
+        ]
+        context = {
+            'contact': serialize_contact(contact, lang) if contact else None,
+            'categories': serialized_categories,
+            'language': lang,
+            'background_image': get_background_image('contact'),
+            'footer_image': get_background_image('footer'),
+            'form': form,
+        }
+        
         return render(request, self.template_name, context)
 
 
@@ -193,8 +228,8 @@ class VacancyDetailPageView(View):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             phone_number = form.cleaned_data.get('phone_number')
-            situation_one = Appeal.objects.filter(vacancy=vacancy, email=email).exists()
-            situation_two = Appeal.objects.filter(vacancy=vacancy, phone_number=phone_number).exists()
+            situation_one = AppealVacancy.objects.filter(vacancy=vacancy, email=email).exists()
+            situation_two = AppealVacancy.objects.filter(vacancy=vacancy, phone_number=phone_number).exists()
             
             if situation_one or situation_two :
                 messages.error(request, _('Bu vakansiyaya müraciət artıq göndərilmişdir.'))

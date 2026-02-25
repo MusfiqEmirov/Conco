@@ -10,7 +10,7 @@ class SluggedModel(models.Model):
     """
 
     slug = models.SlugField(
-        max_length=80,
+        max_length=255,
         unique=True, 
         db_index=True, 
         blank=True,

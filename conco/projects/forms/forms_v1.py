@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from projects.models import Appeal
+from projects.models import AppealVacancy, AppealContact
 
 
 class AppealForm(forms.ModelForm):
@@ -28,6 +28,16 @@ class AppealForm(forms.ModelForm):
         required=True,
         label=_('Mobil Nömrə')
     )
+    info = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': _('Əlavə məlumat')
+        }),
+        required=False,
+        label=_('Əlavə məlumat'),
+        max_length=250
+    )
     cv = forms.FileField(
         widget=forms.FileInput(attrs={
             'accept': '.pdf,.doc,.docx',
@@ -38,11 +48,59 @@ class AppealForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Appeal
+        model = AppealVacancy
         fields = [
             'full_name',
             'email',
             'phone_number',
+            'info',
             'cv'
+        ]
+
+
+class AppealContactForm(forms.ModelForm):
+    full_name = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('Ad soyad')
+        }),
+        required=True,
+        label=_('Ad soyad')
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('E-poçt ünvanı')
+        }),
+        required=True,
+        label=_('E-poçt ünvanı')
+    )
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': _('Subyekt')
+        }),
+        required=True,
+        label=_('Subyekt'),
+        max_length=250
+    )
+    info = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 5,
+            'placeholder': _('Mesajınız')
+        }),
+        required=True,
+        label=_('Mesajınız'),
+        max_length=500
+    )
+
+    class Meta:
+        model = AppealContact
+        fields = [
+            'full_name',
+            'email',
+            'subject',
+            'info'
         ]
     

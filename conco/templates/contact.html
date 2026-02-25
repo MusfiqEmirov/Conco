@@ -5,24 +5,54 @@
 
 <head>
   <meta charset="utf-8">
+
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>{% trans "CONCO | Tikinti, Təmir və Layihələndirmə Şirkəti" %}</title>
+  <meta name="description" content="{% trans "CONCO tikinti şirkəti Bakıda yüksək keyfiyyətli tikinti, təmir, interyer dizayn və layihələndirmə xidmətləri təklif edir. Peşəkar mühəndislik və inşaat həlləri." %}">
+  <meta name="keywords" content="{% trans "tikinti şirkəti, bakida temir, insaat sirketi, layihələndirmə, dizayn, ev tikintisi, ofis təmiri, conco az" %}">
+  <meta name="author" content="CONCO Construction">
+  <link rel="canonical" href="https://www.conco.az"/>
 
-  <title>CONCO, Tikinti | construction</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <meta property="og:title" content="{% trans "CONCO | Tikinti və Təmir Şirkəti" %}"/>
+  <meta property="og:description" content="{% trans "Peşəkar tikinti, təmir və dizayn xidmətləri. Xəyallarınızdakı məkanı bizimlə reallaşdırın." %}"/>
+  <meta property="og:image" content="https://www.conco.az{% static 'assets/img/my_logo.png' %}">
+  
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:url" content="https://www.conco.az"/>
+  <meta property="og:site_name" content="CONCO Construction"/>
+  <meta property="og:type" content="website"/>
 
-  <!-- Favicons -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="{% trans "CONCO | Tikinti və Təmir Şirkəti" %}"/>
+  <meta name="twitter:description" content="{% trans "Bakıda peşəkar tikinti və təmir xidmətləri. Keyfiyyət və zəmanət." %}"/>
+  <meta name="twitter:image" content="https://www.conco.az{% static 'assets/img/my_logo.png' %}"/>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ConstructionBusiness", 
+    "name": "CONCO",
+    "url": "https://www.conco.az",
+    "logo": "https://www.conco.az{% static 'assets/img/my_logo.png' %}",
+    "description": "{% trans "Bakıda peşəkar tikinti, təmir və layihələndirmə xidmətləri." %}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Bakı",
+      "addressCountry": "AZ"
+    },
+    "openingHours": "Mo-Sa 09:00-18:00",
+    "priceRange": "$$"
+  }
+  </script>
+
   <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
-  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  <link href="{% static 'assets/img/my_logo.png' %}" rel="apple-touch-icon">
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
@@ -30,15 +60,8 @@
   <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-  <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: UpConstruction - v1.3.0
-  * Template URL: https://bootstrapmade.com/upconstruction-bootstrap-construction-website-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -66,15 +89,22 @@
               {% endfor %}
             </ul>
           </li>
-          <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqimizda" %}</a></li>
+          <li><a href="{% url 'projects:about-page' %}">{% trans "Haqqımızda" %}</a></li>
           <li><a href="{% url 'projects:vacancy-page' %}">{% trans "Vakansiyalar" %}</a></li>
           <li><a href="{% url 'projects:contact-page' %}">{% trans "Əlaqə" %}</a></li>
-          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> <i
-                class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li class="dropdown"><a href="#"><span>{% if language %}{{ language|upper }}{% else %}AZ{% endif %}</span> 
+                {% if language == 'az' or not language %}
+                <img src="{% static 'assets/img/azerbaijan.png' %}" alt="AZ" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% elif language == 'en' %}
+                <img src="{% static 'assets/img/united-kingdom.png' %}" alt="EN" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% elif language == 'ru' %}
+                <img src="{% static 'assets/img/russia.png' %}" alt="RU" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;">
+                {% endif %}
+                <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li><a href="#" class="lang-option" data-lang="az">AZ</a></li>
-              <li><a href="#" class="lang-option" data-lang="en">EN</a></li>
-              <li><a href="#" class="lang-option" data-lang="ru">RU</a></li>
+              <li><a href="#" class="lang-option" data-lang="az">AZ <img src="{% static 'assets/img/azerbaijan.png' %}" alt="AZ" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
+              <li><a href="#" class="lang-option" data-lang="en">EN <img src="{% static 'assets/img/united-kingdom.png' %}" alt="EN" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
+              <li><a href="#" class="lang-option" data-lang="ru">RU <img src="{% static 'assets/img/russia.png' %}" alt="RU" style="width: 18px; height: 17px; margin-left: 5px; vertical-align: middle;"></a></li>
             </ul>
           </li>
         </ul>
@@ -89,7 +119,7 @@
     <div class="breadcrumbs d-flex align-items-center" style="background-image: url('{% if background_image %}{{ background_image }}{% else %}{% static 'assets/img/breadcrumbs-bg.jpg' %}{% endif %}');">
       <div class="container position-relative d-flex flex-column align-items-center" data-aos="fade">
 
-        <h2>{% trans "Əlaqə" %}</h2>
+        <!-- <h2>{% trans "Əlaqə" %}</h2> -->
 
 
       </div>
@@ -102,8 +132,8 @@
         <div class="row gy-4">
           {% if contact %}
           {% if contact.address %}
-          <div class="col-lg-3">
-            <div class="info-item  d-flex flex-column justify-content-center align-items-center">
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="info-item">
               <i class="bi bi-map"></i>
               <h3>{% trans "Ünvanımız" %}</h3>
               <p>{{ contact.address }}</p>
@@ -112,18 +142,18 @@
           {% endif %}
 
           {% if contact.email %}
-          <div class="col-lg-3 col-md-6">
-            <div class="info-item d-flex flex-column justify-content-center align-items-center">
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="info-item">
               <i class="bi bi-envelope"></i>
-              <h3>{% trans "e-poçt ünvanımız" %}</h3>
+              <h3>{% trans "E-poçt ünvanımız" %}</h3>
               <a href="mailto:{{ contact.email }}">✉️ {{ contact.email }}</a>
             </div>
           </div><!-- End Info Item -->
           {% endif %}
 
           {% if contact.phone %}
-          <div class="col-lg-3 col-md-6">
-            <div class="info-item  d-flex flex-column justify-content-center align-items-center">
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="info-item">
               <i class="bi bi-telephone"></i>
               <h3>{% trans "Zəng et" %}</h3>
               <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
@@ -132,8 +162,8 @@
           {% endif %}
 
           {% if contact.whatsapp_number %}
-          <div class="col-lg-3 col-md-6">
-            <div class="info-item  d-flex flex-column justify-content-center align-items-center">
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="info-item">
               <i class="bi bi-whatsapp"></i>
               <h3>{% trans "Whatsapp" %}</h3>
               <a href="https://wa.me/{{ contact.whatsapp_number }}">{{ contact.whatsapp_number }}</a>
@@ -147,32 +177,53 @@
         <div class="row gy-4 mt-1">
 
           <div class="col-lg-6 ">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.7717502932205!2d49.85526727586751!3d40.41390697144008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d899b7e7fd3%3A0x938126a1615982a!2sBadamar%20Plaza!5e0!3m2!1saz!2saz!4v1768518237920!5m2!1saz!2saz" width="100%" height="384" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.988024862092!2d49.85990747586723!3d40.40911607144083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d56bf53d605%3A0x7636d88b35796ad1!2s2%2C%201%20Ahmad%20Rajabli%2C%20Baku!5e0!3m2!1saz!2saz!4v1769633688895!5m2!1saz!2saz" width="100%" height="384" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div><!-- End Google Maps -->
 
           <div class="col-lg-6">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endfor %}
+            {% endif %}
+            
+            {% if form %}
+            <form method="post" action="{% url 'projects:contact-page' %}" role="form" class="php-email-form" data-django-form="true">
+              {% csrf_token %}
               <div class="row gy-4">
                 <div class="col-lg-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="{% trans 'Ad soyad' %}" required>
+                  {{ form.full_name }}
+                  {% if form.full_name.errors %}
+                    <div class="text-danger small mt-1">{{ form.full_name.errors }}</div>
+                  {% endif %}
                 </div>
                 <div class="col-lg-6 form-group">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="{% trans 'e-poçt unvani' %}" required>
+                  {{ form.email }}
+                  {% if form.email.errors %}
+                    <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                  {% endif %}
                 </div>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="{% trans 'Təmsil olunan subyekt' %}" required>
+                {{ form.subject }}
+                {% if form.subject.errors %}
+                  <div class="text-danger small mt-1">{{ form.subject.errors }}</div>
+                {% endif %}
               </div>
               <div class="form-group">
-                <textarea class="form-control" name="message" rows="5" placeholder="{% trans 'Mesajiniz' %}" required></textarea>
-              </div>
-              <div class="my-3">
-                <div class="loading">{% trans "Yüklənir" %}</div>
-                <div class="error-message"></div>
-                <div class="sent-message">{% trans "Mesajiniz gondərildi" %}</div>
+                {{ form.info }}
+                {% if form.info.errors %}
+                  <div class="text-danger small mt-1">{{ form.info.errors }}</div>
+                {% endif %}
               </div>
               <div class="text-center"><button type="submit">{% trans "Mesaj gondər" %}</button></div>
             </form>
+            {% else %}
+            <p>{% trans "Form tapılmadı." %}</p>
+            {% endif %}
           </div><!-- End Contact Form -->
 
         </div>
@@ -250,7 +301,11 @@
             <div class="footer-info footer-links">
               <h3>{% trans "Layihələr" %}</h3>
               <ul>
+                {% for category in categories %}
+                <li><a href="{% url 'projects:project-page' %}?slug={{ category.slug }}">{{ category.name }}</a></li>
+                {% empty %}
                 <li><a href="{% url 'projects:project-page' %}">{% trans "Seçilmiş layihələr" %}</a></li>
+                {% endfor %}
               </ul>
             </div>
           </div>
@@ -263,7 +318,7 @@
     <div class="footer-legal text-center position-relative danger">
       <div class="container">
         <div class="copyright">
-          &copy;<strong><span>{% trans "Digiboom.az tərəfindən hazırlanıb. Bütün hüquqlar qorunur." %}</span></strong>
+          &copy; <strong><span>{% autoescape off %}{% blocktrans trimmed %}<a href="https://digiboom.az/" target="_blank" rel="noopener noreferrer">Digiboom.az</a> tərəfindən hazırlanmışdır.{% endblocktrans %}{% endautoescape %}</span></strong>
         </div>
 
       </div>

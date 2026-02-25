@@ -54,3 +54,7 @@ docker/conco/staticfiles
 
 # Local database volumes (if created)
 postgres_data_local/
+
+# SSL certificates (do NOT commit)
+nginx/ssl/*
+!nginx/ssl/.gitkeep

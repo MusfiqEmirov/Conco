@@ -136,7 +136,8 @@ class MediaInlinePartner(MediaInlineBase):
 
 class MediaInlineAbout(MediaInlineBase):
     fields = ('image', 'video', 'thumbnail_preview', 'created_at')
-    max_num = None  
+    max_num = 12
+    extra = 1
     
     def get_formset(self, request, obj=None, **kwargs):
         from django.forms import BaseInlineFormSet
@@ -146,13 +147,41 @@ class MediaInlineAbout(MediaInlineBase):
             def clean(self):
                 super().clean()
                 video_count = 0
+                image_count = 0
+                deleted_images = 0
+                
+                # Mövcud şəkilləri saymaq
+                if obj:
+                    existing_images = obj.medias.filter(image__isnull=False).exclude(image='').count()
+                else:
+                    existing_images = 0
+                
                 for form in self.forms:
-                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                        if form.cleaned_data.get('video'):
-                            video_count += 1
+                    if form.cleaned_data:
+                        is_deleted = form.cleaned_data.get('DELETE', False)
+                        
+                        if is_deleted:
+                            # Silinən şəkilləri saymaq
+                            if form.instance and form.instance.pk and form.instance.image:
+                                deleted_images += 1
+                        else:
+                            # Yeni və ya redaktə olunan şəkilləri saymaq
+                            if form.cleaned_data.get('video'):
+                                video_count += 1
+                            if form.cleaned_data.get('image'):
+                                # Yeni şəkil və ya mövcud şəkilin dəyişdirilməsi
+                                if not form.instance.pk or (form.instance.pk and form.cleaned_data.get('image') != form.instance.image):
+                                    image_count += 1
                 
                 if video_count > 1:
                     raise ValidationError('Yalnız bir video yükləmək mümkündür. Lütfən, yalnız bir media-da video əlavə edin.')
+                
+                # Ümumi şəkil sayını hesablamaq
+                total_images = existing_images - deleted_images + image_count
+                
+                if total_images > 12:
+                    raise ValidationError('Haqqımızda üçün maksimum 12 şəkil yükləmək mümkündür. Hal-hazırda {} şəkil mövcuddur, {} şəkil silinir, {} yeni şəkil əlavə olunur. Ümumi: {} şəkil.'.format(
+                        existing_images, deleted_images, image_count, total_images))
         
         kwargs['formset'] = MediaAboutFormSet
         return super().get_formset(request, obj, **kwargs)
@@ -199,7 +228,7 @@ class ProjectCategoryAdmin(admin.ModelAdmin):
 
 # Project 
 class ProjectAdminForm(forms.ModelForm):
-    """Layihə admin formu - on_main_page limitini yoxlayır"""
+    """Layihə admin formu"""
     
     class Meta:
         model = Project
@@ -207,27 +236,53 @@ class ProjectAdminForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
+
+        category = cleaned_data.get('category')
         on_main_page = cleaned_data.get('on_main_page')
-        
-        if on_main_page:
-            existing_count = Project.objects.filter(on_main_page=True).count()
+        speacial_project = cleaned_data.get('speacial_project')
+
+        errors = {}
+
+        # 1) "Seçilmiş Layihə" üçün ümumi maksimum 9 və "Ana səhifədə olsun" tələb olunur
+        if speacial_project:
+            # "Seçilmiş" layihələr üçün "Ana səhifədə olsun" field-i tələb olunur
+            if not on_main_page:
+                errors['on_main_page'] = (
+                    '⚠️ Xəbərdarlıq: "Seçilmiş layihə" seçildikdə "Ana səhifədə olsun" field-i də seçilməlidir. '
+                    'Seçilmiş layihələr ana səhifədə görünməlidir.'
+                )
             
+            # Maksimum 9 layihə limiti
+            qs = Project.objects.filter(speacial_project=True, on_main_page=True)
             if self.instance and self.instance.pk:
-                try:
-                    old_obj = Project.objects.get(pk=self.instance.pk)
-                    if old_obj.on_main_page:
-                        existing_count -= 1
-                except Project.DoesNotExist:
-                    pass
-            
-            if existing_count >= 9:
-                raise ValidationError({
-                    'on_main_page': (
-                        '⚠️ Xəbərdarlıq: Ana səhifədə maksimum 9 layihə ola bilər. '
-                        'Yeni layihəni ana səhifəyə əlavə etmək üçün köhnələrdən birinin "Ana səhifədə olsun" seçimini silməlisiniz.'
+                qs = qs.exclude(pk=self.instance.pk)
+
+            if qs.count() >= 9:
+                errors['speacial_project'] = (
+                    '⚠️ Xəbərdarlıq: "Seçilmiş layihə" üçün maksimum 9 layihə seçilə bilər. '
+                    'Yeni layihəni seçilmiş etmək üçün köhnələrdən birinin "Seçilmiş Lahiyə" seçimini silməlisiniz.'
+                )
+
+        # 2) "Ana səhifədə olsun" üçün: hər kateqoriya üzrə maksimum 9
+        if on_main_page:
+            if category is None:
+                # Nəzəri halda category boş qala bilərsə, əvvəl onu tələb et
+                errors['category'] = 'Ana səhifədə göstərmək üçün kateqoriya seçilməlidir.'
+            else:
+                qs = Project.objects.filter(on_main_page=True, category=category)
+                if self.instance and self.instance.pk:
+                    qs = qs.exclude(pk=self.instance.pk)
+
+                if qs.count() >= 9:
+                    errors['on_main_page'] = (
+                        f'⚠️ Xəbərdarlıq: "{category}" kateqoriyası üçün ana səhifədə maksimum 9 layihə ola bilər. '
+                        'Yeni layihəni ana səhifəyə əlavə etmək üçün həmin kateqoriyadan köhnələrdən birinin '
+                        '"Ana səhifədə olsun" seçimini silməlisiniz.'
                     )
-                })
-        
+
+        if errors:
+            raise ValidationError(errors)
+
         return cleaned_data
 
 
@@ -239,7 +294,7 @@ class ProjectAdmin(admin.ModelAdmin):
         'name_link',
         'category_display',
         'status_badges',
-        'created_at',
+        'project_date',
     )
     list_display_links = ('id',)
     list_filter = (
@@ -247,13 +302,14 @@ class ProjectAdmin(admin.ModelAdmin):
         'is_completed',
         'is_active',
         'on_main_page',
-        'created_at',
+        'speacial_project',
+        'project_date',
     )
     search_fields = ('name_az', 'name_en', 'name_ru', 'description_az', 'description_en', 'description_ru')
     exclude = ('slug',)
     inlines = [MediaInlineProject]
     readonly_fields = ('created_at',)
-    ordering = ('-created_at',)
+    ordering = ('-project_date', '-created_at')
     list_per_page = 25
     
     fieldsets = (
@@ -270,10 +326,10 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('name_ru', 'description_ru')
         }),
         ('Status', {
-            'fields': ('is_completed', 'is_active', 'on_main_page')
+            'fields': ('is_completed', 'is_active', 'on_main_page', 'speacial_project')
         }),
         ('Tarix', {
-            'fields': ('created_at',)
+            'fields': ('project_date', 'created_at')
         }),
     )
     
@@ -326,6 +382,9 @@ class ProjectAdmin(admin.ModelAdmin):
         if obj.on_main_page:
             badges.append('<span style="background: #6f42c1; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">🏠 Ana səhifədə</span>')
         
+        if obj.speacial_project:
+            badges.append('<span style="background: #e83e8c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">⭐ Xüsusi Layihə</span>')
+        
         return format_html(' '.join(badges))
     status_badges.short_description = "Status"
 
@@ -336,7 +395,6 @@ class PartnerAdmin(admin.ModelAdmin):
         'id',
         'partner_logo',
         'name_link',
-        'url_link',
         'active_status',
         'created_at',
     )
@@ -359,7 +417,7 @@ class PartnerAdmin(admin.ModelAdmin):
             'fields': ('name_ru',)
         }),
         ('Əlaqə', {
-            'fields': ('url',)
+            'fields': ('instagram', 'facebook', 'linkedn')
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -398,12 +456,6 @@ class PartnerAdmin(admin.ModelAdmin):
             )
         return "Logo yoxdur"
     logo_preview.short_description = "Logo Önizləmə"
-    
-    def url_link(self, obj):
-        if obj.url:
-            return format_html('<a href="{}" target="_blank" style="color: #417690; text-decoration: none;">🔗 Link</a>', obj.url)
-        return "-"
-    url_link.short_description = "URL"
     
     def active_status(self, obj):
         if obj.is_active:
@@ -583,7 +635,7 @@ class VacancyAdmin(admin.ModelAdmin):
         unread_count = count - read_count
         
         if count > 0:
-            url = reverse('admin:projects_appeal_changelist') + f'?vacancy__id__exact={obj.id}'
+            url = reverse('admin:projects_appealvacancy_changelist') + f'?vacancy__id__exact={obj.id}'
             badge_html = f'<a href="{url}" style="text-decoration: none;">'
             if unread_count > 0:
                 badge_html += f'<span style="background: #dc3545; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">📄 {count} CV ({unread_count} oxunmayıb)</span>'
@@ -639,7 +691,7 @@ class MottoAdmin(admin.ModelAdmin):
     text_preview_ru.admin_order_field = 'text_ru'
 
 # Appeal (CV) 
-@admin.register(Appeal)
+@admin.register(AppealVacancy)
 class AppealAdmin(admin.ModelAdmin):
     list_display = (
         'candidate_info',
@@ -672,7 +724,7 @@ class AppealAdmin(admin.ModelAdmin):
             'fields': ('vacancy',)
         }),
         ('Namizəd Məlumatları', {
-            'fields': ('full_name', 'email', 'phone_number')
+            'fields': ('full_name', 'email', 'phone_number', 'info')
         }),
         ('CV Faylı', {
             'fields': ('cv', 'cv_preview')
@@ -687,7 +739,7 @@ class AppealAdmin(admin.ModelAdmin):
 
     def candidate_info(self, obj):
         """Namizəd məlumatlarını səliqəli şəkildə göstərir"""
-        detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+        detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
         name = obj.full_name or "Ad Soyad yoxdur"
         
         return format_html(
@@ -705,7 +757,7 @@ class AppealAdmin(admin.ModelAdmin):
     def vacancy_info(self, obj):
         if obj.vacancy:
             vacancy_url = reverse('admin:projects_vacancy_change', args=[obj.vacancy.pk])
-            detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+            detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
             
             return format_html(
                 '<div style="padding: 8px 0;">'
@@ -761,7 +813,7 @@ class AppealAdmin(admin.ModelAdmin):
     contact_info.short_description = "Əlaqə"
 
     def cv_download(self, obj):
-        detail_url = reverse('admin:projects_appeal_change', args=[obj.pk])
+        detail_url = reverse('admin:projects_appealvacancy_change', args=[obj.pk])
         
         if obj.cv:
             file_name = obj.cv.name.split('/')[-1]
@@ -853,6 +905,113 @@ class AppealAdmin(admin.ModelAdmin):
 
     cv_preview.short_description = "CV Önizləmə"
 
+
+# AppealContact (Contact Messages)
+@admin.register(AppealContact)
+class AppealContactAdmin(admin.ModelAdmin):
+    list_display = (
+        'sender_info',
+        'subject_preview',
+        'message_preview',
+        'is_read',
+        'read_status_badge',
+        'created_at_formatted',
+    )
+
+    list_display_links = None
+    list_editable = ('is_read',)
+    list_filter = ('is_read', 'created_at', 'created_date')
+    readonly_fields = ('created_at', 'created_date')
+    search_fields = (
+        'full_name',
+        'email',
+        'subject',
+        'info',
+    )
+    ordering = ('-created_at',)
+    list_per_page = 25
+    date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('Göndərən Məlumatları', {
+            'fields': ('full_name', 'email')
+        }),
+        ('Mesaj Məlumatları', {
+            'fields': ('subject', 'info')
+        }),
+        ('Status', {
+            'fields': ('is_read',)
+        }),
+        ('Tarix', {
+            'fields': ('created_at', 'created_date')
+        }),
+    )
+
+    def sender_info(self, obj):
+        """Göndərən məlumatlarını göstərir"""
+        detail_url = reverse('admin:projects_appealcontact_change', args=[obj.pk])
+        name = obj.full_name or "Ad Soyad yoxdur"
+        email = obj.email or "Email yoxdur"
+        
+        return format_html(
+            '<div style="padding: 8px 0;">'
+            '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 600; '
+            'font-size: 15px; display: block; line-height: 1.4; margin-bottom: 4px;">'
+            '👤 {}</a>'
+            '<a href="mailto:{}" style="color: #666; text-decoration: none; font-size: 13px;">'
+            '✉️ {}</a>'
+            '</div>',
+            detail_url,
+            name,
+            email,
+            email[:30] + ('...' if len(email) > 30 else '')
+        )
+    sender_info.short_description = "Göndərən"
+    sender_info.admin_order_field = 'full_name'
+
+    def subject_preview(self, obj):
+        """Subyekt önizləməsi"""
+        detail_url = reverse('admin:projects_appealcontact_change', args=[obj.pk])
+        subject = obj.subject or "Subyekt yoxdur"
+        
+        return format_html(
+            '<a href="{}" style="color: #417690; text-decoration: none; font-weight: 500; '
+            'font-size: 14px;">{}</a>',
+            detail_url,
+            subject[:50] + ('...' if len(subject) > 50 else '')
+        )
+    subject_preview.short_description = "Subyekt"
+    subject_preview.admin_order_field = 'subject'
+
+    def message_preview(self, obj):
+        """Mesaj önizləməsi"""
+        message = obj.info or "Mesaj yoxdur"
+        return format_html(
+            '<span style="color: #666; font-size: 13px;">{}</span>',
+            message[:80] + ('...' if len(message) > 80 else '')
+        )
+    message_preview.short_description = "Mesaj"
+    message_preview.admin_order_field = 'info'
+
+    def read_status_badge(self, obj):
+        """Oxunma statusu badge"""
+        if obj.is_read:
+            return format_html(
+                '<span style="background: #28a745; color: white; padding: 4px 10px; '
+                'border-radius: 12px; font-size: 11px; font-weight: bold;">✓ Oxunub</span>'
+            )
+        return format_html(
+            '<span style="background: #dc3545; color: white; padding: 4px 10px; '
+            'border-radius: 12px; font-size: 11px; font-weight: bold;">✗ Oxunmayıb</span>'
+        )
+    read_status_badge.short_description = "Status"
+    read_status_badge.admin_order_field = 'is_read'
+
+    def created_at_formatted(self, obj):
+        """Formatlanmış yaradılma tarixi"""
+        return obj.created_at.strftime('%d.%m.%Y %H:%M')
+    created_at_formatted.short_description = "Tarix"
+    created_at_formatted.admin_order_field = 'created_at'
 
 # Statistic
 @admin.register(Statistic)

@@ -3,33 +3,42 @@ from django.core.validators import MaxLengthValidator
 
 
 class Partner(models.Model):
-    url = models.URLField(
-        null=True,
-        blank=True,
-        verbose_name='Url'
-    )
     name_az = models.CharField(
         max_length=120,
         null=True,
         blank=True,
         validators=[MaxLengthValidator(120)],
-        verbose_name='Əməkdaş adı (AZ)'
+        verbose_name='Tərəfdaş adı (AZ)'
     )
     name_en = models.CharField(
         max_length=120,
         null=True,
         blank=True,
         validators=[MaxLengthValidator(120)],
-        verbose_name='Əməkdaş adı (EN)'
+        verbose_name='Tərəfdaş adı (EN)'
     )
     name_ru = models.CharField(
         max_length=120,
         null=True,
         blank=True,
         validators=[MaxLengthValidator(120)],
-        verbose_name='Əməkdaş adı (RU)'
+        verbose_name='Tərəfdaş adı (RU)'
     )
-
+    instagram = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name='(Instagram)'
+    )
+    facebook = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=('Facebook')
+    )
+    linkedn = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=('Linkedn')
+    )
     is_active = models.BooleanField(
         default=True,
         verbose_name='Əməkdaş aktivliyi'
@@ -40,8 +49,8 @@ class Partner(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Əməkdaş'
-        verbose_name_plural = 'Əməkdaşlar'
+        verbose_name = 'Tərəfdaş'
+        verbose_name_plural = 'Tərəfdaşlar'
         ordering = ('-created_at',)
 
     def __str__(self):

@@ -9,6 +9,11 @@
   let forms = document.querySelectorAll('.php-email-form');
 
   forms.forEach( function(e) {
+    // Django formları üçün event listener əlavə etmə
+    if (e.getAttribute('data-django-form') === 'true') {
+      return; // Bu form üçün event listener əlavə etmə
+    }
+    
     e.addEventListener('submit', function(event) {
       event.preventDefault();
 

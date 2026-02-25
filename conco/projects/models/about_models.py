@@ -40,15 +40,15 @@ class About(models.Model):
         verbose_name='Alt başlıq (RU)'
     )
     description_az = models.TextField(
-        validators=[MaxLengthValidator(8000)],
+        validators=[MaxLengthValidator(4000)],
         verbose_name='Text (AZ)'
     )
     description_en = models.TextField(
-        validators=[MaxLengthValidator(8000)],
+        validators=[MaxLengthValidator(4000)],
         verbose_name='Text (EN)'
     )
     description_ru = models.TextField(
-        validators=[MaxLengthValidator(8000)],
+        validators=[MaxLengthValidator(4000)],
         verbose_name='Text (RU)'
     )
 
