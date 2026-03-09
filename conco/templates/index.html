@@ -117,6 +117,35 @@
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="hero">
 
+    <!-- Hero background slider (Swiper) -->
+    <div class="hero-slider swiper slides-1">
+      <div class="swiper-wrapper">
+        {% if hero_background_images %}
+          {% for image_url in hero_background_images|slice:":6" %}
+          <div class="swiper-slide hero-slide" style="background-image: url('{{ image_url }}')">
+            <span class="hero-slide-overlay"></span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="swiper-slide hero-slide" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})">
+            <span class="hero-slide-overlay"></span>
+          </div>
+          <div class="swiper-slide hero-slide" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})">
+            <span class="hero-slide-overlay"></span>
+          </div>
+          <div class="swiper-slide hero-slide" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})">
+            <span class="hero-slide-overlay"></span>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Slider controls -->
+      <div class="swiper-button-prev hero-slider-prev"></div>
+      <div class="swiper-button-next hero-slider-next"></div>
+      <div class="swiper-pagination hero-slider-pagination"></div>
+    </div>
+
+    <!-- Hero text/content overlay -->
     <div class="info d-flex align-items-center">
       <div class="container">
         <div class="row justify-content-center">
@@ -124,32 +153,6 @@
             <!-- <h2 data-aos="fade-down">{% if motto %}{{ motto }}{% else %}{% trans "deviz" %}{% endif %}</h2> -->
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="hero-flow-wrap">
-      <div class="hero-flow-track" aria-hidden="true">
-        {% if hero_background_images %}
-          {% for image_url in hero_background_images|slice:":6" %}
-            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
-          {% endfor %}
-          {% for image_url in hero_background_images|slice:":6" %}
-            <div class="hero-flow-item" style="background-image: url('{{ image_url }}')"></div>
-          {% endfor %}
-        {% else %}
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-2.jpg' %})"></div>
-          <div class="hero-flow-item" style="background-image: url({% static 'assets/img/hero-carousel/hero-carousel-3.jpg' %})"></div>
-        {% endif %}
       </div>
     </div>
 
@@ -185,19 +188,17 @@
                 {% if about.medias %}
                   {% with about.medias|first as first_media %}
                     {% if first_media.image %}
-                    <div class="about-img-carousel-index about-flow-wrap">
-                      <div class="about-flow-track" aria-hidden="true">
+                    <div class="about-img-carousel-index swiper about-slider-index">
+                      <div class="swiper-wrapper">
                         {% for media in about.medias %}
                           {% if media.image %}
-                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
-                          {% endif %}
-                        {% endfor %}
-                        {% for media in about.medias %}
-                          {% if media.image %}
-                          <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                          <div class="swiper-slide about-slide" style="background-image: url('{{ media.image }}')"></div>
                           {% endif %}
                         {% endfor %}
                       </div>
+                      <div class="swiper-button-prev about-slider-index-prev"></div>
+                      <div class="swiper-button-next about-slider-index-next"></div>
+                      <div class="swiper-pagination about-slider-index-pagination"></div>
                     </div>
                     {% else %}
                     <img src="{% static 'assets/img/features-1.jpg' %}" alt="" class="img-fluid">
@@ -227,13 +228,12 @@
           <h2>{% trans "Layihələr" %}</h2>
         </div>
 
-        <div class="portfolio-isotope" data-portfolio-filter=".filter-special" data-portfolio-layout="masonry"
+        <div class="portfolio-isotope" data-portfolio-filter="{% if categories %}.filter-category-{{ categories.0.id }}{% else %}*{% endif %}" data-portfolio-layout="masonry"
           data-portfolio-sort="original-order">
 
           <ul class="portfolio-flters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter=".filter-special" class="filter-active">{% trans "Seçilmiş" %}</li>
             {% for category in categories %}
-            <li data-filter=".filter-category-{{ category.id }}">{{ category.name }}</li>
+            <li data-filter=".filter-category-{{ category.id }}" {% if forloop.first %}class="filter-active"{% endif %}>{{ category.name }}</li>
             {% endfor %}
           </ul>
 

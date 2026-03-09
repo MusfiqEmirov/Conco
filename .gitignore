@@ -58,3 +58,5 @@ postgres_data_local/
 # SSL certificates (do NOT commit)
 nginx/ssl/*
 !nginx/ssl/.gitkeep
+
+conco/gunicorn.ctl
