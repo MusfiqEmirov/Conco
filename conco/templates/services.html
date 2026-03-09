@@ -88,6 +88,7 @@
           <h2>{% trans "Xidmətlər" %}</h2>
         </div>
 
+        <div class="services-list-column">
         {% for service in services %}
         <div class="service-card {% if forloop.counter0|divisibleby:2 %}service-card--image-left{% else %}service-card--image-right{% endif %}" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 80 %}">
           {% if forloop.counter0|divisibleby:2 %}
@@ -109,6 +110,7 @@
         {% empty %}
         <p class="text-center text-muted">{% trans "Xidmət tapılmadı." %}</p>
         {% endfor %}
+        </div>
 
       </div>
     </section>

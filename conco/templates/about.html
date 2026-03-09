@@ -135,19 +135,17 @@
             {% with about.medias|first as first_media %}
               {% if first_media.image %}
               <div class="col-lg-7 about-img">
-                <div class="about-flow-wrap">
-                  <div class="about-flow-track" aria-hidden="true">
+                <div class="swiper about-slider-page">
+                  <div class="swiper-wrapper">
                     {% for media in about.medias %}
                       {% if media.image %}
-                      <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
-                      {% endif %}
-                    {% endfor %}
-                    {% for media in about.medias %}
-                      {% if media.image %}
-                      <div class="about-flow-item" style="background-image: url('{{ media.image }}')"></div>
+                      <div class="swiper-slide about-slide" style="background-image: url('{{ media.image }}')"></div>
                       {% endif %}
                     {% endfor %}
                   </div>
+                  <div class="swiper-button-prev about-slider-page-prev"></div>
+                  <div class="swiper-button-next about-slider-page-next"></div>
+                  <div class="swiper-pagination about-slider-page-pagination"></div>
                 </div>
               </div>
               {% else %}

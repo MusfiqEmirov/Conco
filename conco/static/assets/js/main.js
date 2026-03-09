@@ -304,26 +304,78 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Init swiper slider with 1 slide at once in desktop view
+   * Hero slider: 2 saniyədə bir avtomatik dəyişir, yumşaq keçid
    */
-  new Swiper('.slides-1', {
-    speed: 600,
+  new Swiper('.hero-slider.slides-1', {
+    effect: 'fade',
+    fadeEffect: {
+      crossFade: true
+    },
+    speed: 1800,
     loop: true,
     autoplay: {
-      delay: 5000,
+      delay: 1000,
       disableOnInteraction: false
     },
-    slidesPerView: 'auto',
+    slidesPerView: 1,
     pagination: {
-      el: '.swiper-pagination',
+      el: '.hero-slider-pagination',
       type: 'bullets',
       clickable: true
     },
     navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
+      nextEl: '.hero-slider-next',
+      prevEl: '.hero-slider-prev'
     }
   });
+
+  /**
+   * Ana səhifə – Haqqımızda bölməsi şəkillər slider (fade, 2s, sağ-sol düymələr)
+   */
+  const aboutSliderIndex = document.querySelector('.about-slider-index');
+  if (aboutSliderIndex) {
+    new Swiper('.about-slider-index', {
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      speed: 1800,
+      loop: true,
+      autoplay: { delay: 1000, disableOnInteraction: false },
+      slidesPerView: 1,
+      pagination: {
+        el: '.about-slider-index-pagination',
+        type: 'bullets',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.about-slider-index-next',
+        prevEl: '.about-slider-index-prev'
+      }
+    });
+  }
+
+  /**
+   * Haqqımızda səhifəsi – şəkillər slider (fade, 2s, sağ-sol düymələr)
+   */
+  const aboutSliderPage = document.querySelector('.about-slider-page');
+  if (aboutSliderPage) {
+    new Swiper('.about-slider-page', {
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      speed: 1800,
+      loop: true,
+      autoplay: { delay: 1000, disableOnInteraction: false },
+      slidesPerView: 1,
+      pagination: {
+        el: '.about-slider-page-pagination',
+        type: 'bullets',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.about-slider-page-next',
+        prevEl: '.about-slider-page-prev'
+      }
+    });
+  }
 
   /**
    * Init swiper slider with 2 slides at once in desktop view

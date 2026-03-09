@@ -60,7 +60,7 @@ h6 {
 # Sections & Section Header
 --------------------------------------------------------------*/
 section {
-  padding: 80px 0;
+  padding: 60px 0;
   overflow: hidden;
 }
 
@@ -70,7 +70,7 @@ section {
 
 .section-header {
   text-align: center;
-  padding-bottom: 70px;
+  padding-bottom: 40px;
 }
 
 .section-header h2 {
@@ -259,7 +259,7 @@ section {
   z-index: 997;
   position: fixed;
   background: rgba(255, 255, 255, 0.92);
-  padding: 12px 0;
+  padding: 6px 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   top: 0;
   left: 0;
@@ -267,8 +267,8 @@ section {
 }
 
 .header .logo img {
-  width: 105px;
-  height: 105px;
+  width: 90px;
+  height: 90px;
   border-radius: 0;
   object-fit: contain;
   padding: 0;
@@ -278,8 +278,8 @@ section {
 /* Desktop: smaller logo in fixed header */
 @media (min-width: 1280px) {
   .header .logo img {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
 }
 
@@ -297,8 +297,8 @@ section {
 
 @media (max-width: 768px) {
   .header .logo img {
-    width: 75px;
-    height: 75px;
+    width: 65px;
+    height: 65px;
   }
 }
 
@@ -982,6 +982,11 @@ section {
 
 .features .tab-pane ul li {
   padding-top: 10px;
+  /* Haqqımızda bölməsində uzun mətnlərin ekrandan kənara çıxmaması üçün */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .features .tab-pane ul i {
@@ -1392,6 +1397,14 @@ section {
   margin-bottom: 0;
 }
 
+/* Haqqımızda səhifəsindəki uzun mətnlərin ekrandan kənara çıxmaması üçün */
+.about .our-story p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
 .about ul {
   list-style: none;
   padding: 0;
@@ -1433,33 +1446,70 @@ section {
   background-position: center;
 }
 
-/* About infinite flow (replaces swiper on about page) – one image fills carousel */
-.about .about-img .about-flow-wrap {
-  container-type: inline-size;
+/* About sliders (Swiper): ana səhifə + Haqqımızda səhifəsi – yumşaq fade, sağ-sol düymələr */
+.about .about-img {
   overflow: hidden;
+}
+
+.about .about-img .about-slider-page,
+.about-img-carousel-index.about-slider-index {
   width: 100%;
   height: 100%;
   min-height: 500px;
+  border-radius: 8px;
 }
 
-.about .about-img .about-flow-track {
-  display: flex;
-  flex-wrap: nowrap;
+.about .about-img .about-slider-page .swiper-wrapper,
+.about-img-carousel-index .swiper-wrapper {
   height: 100%;
   min-height: 500px;
-  width: max-content;
-  animation: about-flow 10s linear infinite;
 }
 
-.about .about-img .about-flow-item {
-  flex: 0 0 100cqw;
-  width: 100cqw;
-  min-width: 100cqw;
+.about-slide {
+  width: 100%;
   height: 100%;
   min-height: 500px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.about .about-img .swiper-button-prev,
+.about .about-img .swiper-button-next,
+.features .about-slider-index-prev,
+.features .about-slider-index-next {
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.about .about-img .swiper-button-prev::after,
+.about .about-img .swiper-button-next::after,
+.features .about-slider-index-prev::after,
+.features .about-slider-index-next::after {
+  font-size: 18px;
+}
+
+.about .about-img .swiper-button-prev:hover,
+.about .about-img .swiper-button-next:hover,
+.features .about-slider-index-prev:hover,
+.features .about-slider-index-next:hover {
+  background: rgba(0, 0, 0, 0.65);
+  transform: scale(1.05);
+}
+
+.about .about-img .swiper-pagination-bullet,
+.features .about-slider-index-pagination .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+.about .about-img .swiper-pagination-bullet-active,
+.features .about-slider-index-pagination .swiper-pagination-bullet-active {
+  background: var(--color-primary);
 }
 
 @media (min-width: 992px) {
@@ -1479,55 +1529,30 @@ section {
 
 @media (max-width: 575px) {
   .about .about-img,
-  .about .about-img .about-flow-wrap,
-  .about .about-img .about-flow-track,
-  .about .about-img .about-flow-item {
+  .about .about-img .about-slider-page,
+  .about-img-carousel-index.about-slider-index,
+  .about-slide {
     min-height: 300px;
   }
-}
 
-/*--------------------------------------------------------------
-# About Section in Index Page (infinite flow, same as about page)
---------------------------------------------------------------*/
-.about-img-carousel-index.about-flow-wrap {
-  container-type: inline-size;
-  overflow: hidden;
-  width: 100%;
-  min-height: 500px;
-}
-
-.about-img-carousel-index .about-flow-track {
-  display: flex;
-  flex-wrap: nowrap;
-  min-height: 500px;
-  width: max-content;
-  animation: about-flow 10s linear infinite;
-}
-
-.about-img-carousel-index .about-flow-item {
-  flex: 0 0 100cqw;
-  width: 100cqw;
-  min-width: 100cqw;
-  min-height: 500px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-@keyframes about-flow {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@media (max-width: 575px) {
-  .about-img-carousel-index.about-flow-wrap,
-  .about-img-carousel-index .about-flow-track,
-  .about-img-carousel-index .about-flow-item {
+  .about .about-img .about-slider-page .swiper-wrapper,
+  .about-img-carousel-index .swiper-wrapper {
     min-height: 300px;
+  }
+
+  .about .about-img .swiper-button-prev,
+  .about .about-img .swiper-button-next,
+  .features .about-slider-index-prev,
+  .features .about-slider-index-next {
+    width: 36px;
+    height: 36px;
+  }
+
+  .about .about-img .swiper-button-prev::after,
+  .about .about-img .swiper-button-next::after,
+  .features .about-slider-index-prev::after,
+  .features .about-slider-index-next::after {
+    font-size: 14px;
   }
 }
 
@@ -1695,7 +1720,8 @@ section {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: team-ticker 8s linear infinite;
+  /* Tərəfdaş animasiyasını bir az da yavaşıdaq */
+  animation: team-ticker 24s linear infinite;
 }
 
 .team .team-ticker-track:hover {
@@ -1714,8 +1740,8 @@ section {
 .team .team-ticker-row {
   display: flex;
   flex-shrink: 0;
-  gap: 24px;
-  padding: 0 12px;
+  gap: 48px;
+  padding: 0 24px;
   align-items: flex-start;
 }
 
@@ -1724,8 +1750,9 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 280px;
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
   box-sizing: border-box;
 }
 
@@ -2545,53 +2572,39 @@ section {
 --------------------------------------------------------------*/
 .hero {
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   padding: 0;
   margin-top: 0;
 }
 
-/* Hero infinite flow background (replaces carousel) */
-.hero-flow-wrap {
+/* Hero Swiper slider (smooth slide with arrows) */
+.hero .hero-slider {
+  width: 100%;
+  height: 100vh;
+}
+
+.hero .hero-slider .swiper-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.hero .hero-slide {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.hero-flow-wrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-flow-track {
-  display: flex;
-  flex-wrap: nowrap;
-  min-height: 100vh;
-  width: max-content;
-  animation: hero-flow 26s linear infinite;
-}
-
-.hero-flow-item {
-  flex: 0 0 100vw;
-  width: 100vw;
-  min-width: 100vw;
-  min-height: 100vh;
+  height: 100%;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-@keyframes hero-flow {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.hero .hero-slide-overlay,
+.hero .hero-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Şəkil üzərindəki kölgəni bir az zəiflət */
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
 }
 
 .hero .info {
@@ -2599,18 +2612,13 @@ section {
   inset: 0;
   z-index: 2;
   padding-top: 100px;
+  /* Hero yazı bloku klikləri bloklamasın (oxlar işləsin) */
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
-  .hero-flow-wrap {
-    min-height: 68vh;
-    max-height: 68vh;
-  }
-  .hero-flow-track {
-    min-height: 68vh;
-  }
-  .hero-flow-item {
-    min-height: 68vh;
+  .hero .hero-slider {
+    height: 68vh;
   }
   .hero .info {
     padding: 80px 50px 0;
@@ -2618,13 +2626,8 @@ section {
 }
 
 @media (max-width: 480px) {
-  .hero-flow-wrap {
-    min-height: 62vh;
-    max-height: 62vh;
-  }
-  .hero-flow-track,
-  .hero-flow-item {
-    min-height: 62vh;
+  .hero .hero-slider {
+    height: 62vh;
   }
   .hero .info {
     padding-top: 70px;
@@ -2656,6 +2659,53 @@ section {
 @media (max-width: 768px) {
   .hero .info h2 {
     font-size: 36px;
+  }
+}
+
+.hero .swiper-button-next,
+.hero .swiper-button-prev {
+  color: #ffffff;
+  width: 48px;
+  height: 48px;
+  z-index: 3;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.hero .swiper-button-next::after,
+.hero .swiper-button-prev::after {
+  font-size: 20px;
+}
+
+.hero .swiper-button-next:hover,
+.hero .swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.hero .swiper-pagination-bullets .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+.hero .swiper-pagination-bullets .swiper-pagination-bullet-active {
+  background: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .hero .swiper-button-next,
+  .hero .swiper-button-prev {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hero .swiper-button-next::after,
+  .hero .swiper-button-prev::after {
+    font-size: 16px;
   }
 }
 
@@ -3347,7 +3397,7 @@ section {
 
 /* Alt-alta aralıq */
 .footer .footer-content .footer-links ul li {
-  padding: 10px 0;
+  padding: 6px 0;
 }
 
 /* 🔹 Linklər – iri, ağ */
@@ -3405,10 +3455,29 @@ section {
 #services.services {
   padding: 72px 0 88px;
   background: linear-gradient(180deg, #f8f9fa 0%, #f0f2f4 100%);
+  overflow-x: hidden;
+}
+
+#services.services .container {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 #services.services .section-header {
   padding-bottom: 50px;
+}
+
+/* Xidmət kartları həmişə alt-alta (bir sütun) */
+#services.services .services-list-column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+#services.services .services-list-column .service-card {
+  width: 100%;
+  flex: 0 0 auto;
 }
 
 #services.services .section-header h2 {
@@ -3428,7 +3497,7 @@ section {
   align-items: stretch;
   background: #fff;
   box-shadow: 0 4px 24px rgba(46, 49, 53, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   overflow: hidden;
   border-radius: 12px;
   height: 300px;
@@ -3436,6 +3505,8 @@ section {
   max-height: 300px;
   transition: transform 0.35s ease, box-shadow 0.35s ease;
   border: 1px solid rgba(46, 49, 53, 0.06);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .service-card:hover {
@@ -3483,6 +3554,7 @@ section {
 .service-card__body {
   flex: 0 0 75%;
   width: 75%;
+  min-width: 0;
   height: 300px;
   min-height: 300px;
   max-height: 300px;
@@ -3491,6 +3563,7 @@ section {
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .service-card__title {
@@ -3530,6 +3603,8 @@ section {
   line-height: 1.65;
   margin-bottom: 14px;
   font-size: 16px;
+  /* Admin paneldə alt-alta yazılan sətirləri frontda da alt-alta göstər */
+  white-space: pre-line;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -3537,6 +3612,28 @@ section {
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   line-clamp: 5;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  /* Uzun siyahılarda sətirlər balanslı və minimal boşluqla paylansın */
+  column-gap: 4px;
+  column-fill: balance;
+}
+
+@media (min-width: 992px) {
+  /* Masaüstü üçün: çox sətir olduqda avtomatik olaraq 2 sütuna parçala */
+  .service-card__description {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 991px) {
+  /* Planşet və mobil üçün: 1 sütun (normal alt-alta) */
+  .service-card__description {
+    column-count: 1;
+  }
 }
 
 .service-card__link {
@@ -3693,6 +3790,10 @@ section {
     -webkit-box-orient: vertical;
     line-clamp: 3;
     line-height: 1.45;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
   .service-card__link {
     padding: 8px 18px;
@@ -3771,6 +3872,11 @@ section {
     overflow: visible;
     display: block;
     width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
   }
   /* Mobil/tablet: Ətraflı yalnız sağ altda */
   .service-card--image-left .service-card__link,
@@ -3861,9 +3967,12 @@ section {
     margin-bottom: 12px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
     -webkit-line-clamp: unset;
     line-clamp: unset;
     display: block;
+    box-sizing: border-box;
   }
   .service-card__link {
     padding: 10px 18px;
