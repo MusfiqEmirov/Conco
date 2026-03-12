@@ -450,14 +450,11 @@ def get_home_page_data(request, lang):
         for category in categories
     ]
     
-    partners_page = request.GET.get('partners_page', 1)
-    partners_per_page = int(request.GET.get('partners_per_page', 10))
-    
+    # Bütün tərəfdaşları limitsiz göstərmək üçün pagination silindi
     all_partners = get_partners(lang=lang, is_active=True)
-    partners_page_obj, partners_paginator = paginate_queryset(all_partners, partners_page, partners_per_page)
     serialized_partners = [
         serialize_partner(partner, lang)
-        for partner in partners_page_obj
+        for partner in all_partners
     ]
     
     vacancies_page = request.GET.get('vacancies_page', 1)
@@ -490,7 +487,7 @@ def get_home_page_data(request, lang):
         'about': serialized_about,
         'contact': serialized_contact,
         'projects_pagination': get_pagination_data(projects_page_obj, projects_paginator) if projects_paginator else None,
-        'partners_pagination': get_pagination_data(partners_page_obj, partners_paginator),
+        'partners_pagination': None,
         'vacancies_pagination': get_pagination_data(vacancies_page_obj, vacancies_paginator),
         'filters': {
             'slug': category_slug,  # category_slug -> slug
