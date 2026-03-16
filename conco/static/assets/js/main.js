@@ -330,6 +330,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
+   * Layihə detal səhifəsi – şəkil karuseli (1 saniyədən bir, sağ-sol düymələr)
+   */
+  const projectDetailsSlider = document.querySelector('.portfolio-details-slider');
+  if (projectDetailsSlider) {
+    new Swiper('.portfolio-details-slider', {
+      effect: 'slide',
+      speed: 600,
+      loop: true,
+      autoplay: {
+        delay: 2000,
+        disableOnInteraction: false
+      },
+      slidesPerView: 1,
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'bullets',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      }
+    });
+  }
+
+  /**
    * Ana səhifə – Haqqımızda bölməsi şəkillər slider (fade, 2s, sağ-sol düymələr)
    */
   const aboutSliderIndex = document.querySelector('.about-slider-index');

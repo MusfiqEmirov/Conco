@@ -514,7 +514,7 @@ def get_project_list_data(request, lang):
         is_completed = None
     
     page = request.GET.get('page', 1)
-    per_page = int(request.GET.get('per_page', 10))
+    per_page_param = request.GET.get('per_page')
     
     projects = get_projects(
         lang=lang,
@@ -522,6 +522,13 @@ def get_project_list_data(request, lang):
         is_active=is_active,
         is_completed=is_completed
     )
+    
+    # Frontend-də pagination controls olmadığı üçün per_page default olaraq hamısını göstərsin.
+    # Əgər per_page query parametrlə göndərilərsə, əvvəlki kimi pagination işləyəcək.
+    if per_page_param is None:
+        per_page = projects.count()
+    else:
+        per_page = int(per_page_param)
     
     projects_page_obj, projects_paginator = paginate_queryset(projects, page, per_page)
     serialized_projects = [
