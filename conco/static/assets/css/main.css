@@ -2566,10 +2566,10 @@ section {
   margin-top: 0;
 }
 
-/* Hero Swiper slider (smooth slide with arrows) */
+/* Hero: eni tam ekran (əvvəlki kimi), yalnız hündürlük 100vh-dən az */
 .hero .hero-slider {
   width: 100%;
-  height: 100vh;
+  height: min(90vh, 900px);
 }
 
 .hero .hero-slider .swiper-wrapper {
@@ -2581,9 +2581,11 @@ section {
   position: relative;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
+  /* En tam ekran; yanlardan kəsmə — lazım olsa yuxarı/aşağı */
+  background-size: 100% auto;
+  background-position: center center;
   background-repeat: no-repeat;
+  background-color: #2a3036;
 }
 
 .hero .hero-slide-overlay,
@@ -2607,7 +2609,7 @@ section {
 
 @media (max-width: 768px) {
   .hero .hero-slider {
-    height: 68vh;
+    height: min(78vh, 720px);
   }
   .hero .info {
     padding: 80px 50px 0;
@@ -2616,7 +2618,7 @@ section {
 
 @media (max-width: 480px) {
   .hero .hero-slider {
-    height: 62vh;
+    height: min(70vh, 620px);
   }
   .hero .info {
     padding-top: 70px;
