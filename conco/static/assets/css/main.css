@@ -1475,9 +1475,7 @@ section {
 }
 
 .about .about-img .swiper-button-prev,
-.about .about-img .swiper-button-next,
-.features .about-slider-index-prev,
-.features .about-slider-index-next {
+.about .about-img .swiper-button-next {
   color: #fff;
   width: 44px;
   height: 44px;
@@ -1487,16 +1485,12 @@ section {
 }
 
 .about .about-img .swiper-button-prev::after,
-.about .about-img .swiper-button-next::after,
-.features .about-slider-index-prev::after,
-.features .about-slider-index-next::after {
+.about .about-img .swiper-button-next::after {
   font-size: 18px;
 }
 
 .about .about-img .swiper-button-prev:hover,
-.about .about-img .swiper-button-next:hover,
-.features .about-slider-index-prev:hover,
-.features .about-slider-index-next:hover {
+.about .about-img .swiper-button-next:hover {
   background: rgba(0, 0, 0, 0.65);
   transform: scale(1.05);
 }
@@ -1541,17 +1535,13 @@ section {
   }
 
   .about .about-img .swiper-button-prev,
-  .about .about-img .swiper-button-next,
-  .features .about-slider-index-prev,
-  .features .about-slider-index-next {
+  .about .about-img .swiper-button-next {
     width: 36px;
     height: 36px;
   }
 
   .about .about-img .swiper-button-prev::after,
-  .about .about-img .swiper-button-next::after,
-  .features .about-slider-index-prev::after,
-  .features .about-slider-index-next::after {
+  .about .about-img .swiper-button-next::after {
     font-size: 14px;
   }
 }
@@ -2598,6 +2588,20 @@ section {
   z-index: 1;
 }
 
+/* Mobil, planşet və noutbuk: yalnız şəkil (çərçivə rəngi və overlay yox); geniş ekran (desktop) əvvəlki kimi */
+@media (max-width: 1399.98px) {
+  .hero .hero-slide {
+    background-size: cover;
+    background-color: transparent;
+  }
+
+  .hero .hero-slide-overlay,
+  .hero .hero-slide::after {
+    display: none;
+    content: none;
+  }
+}
+
 .hero .info {
   position: absolute;
   inset: 0;
@@ -2608,8 +2612,30 @@ section {
 }
 
 @media (max-width: 768px) {
+  /* Mobil: responsiv hündürlük; heç bir konteynerdə hero ətrafında dolğu rəngi yoxdur */
+  .hero,
+  .hero .hero-slider,
+  .hero .hero-slider.swiper,
+  .hero .hero-slider .swiper-wrapper {
+    background-color: transparent;
+  }
+
+  .hero .hero-slide {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+  }
+
+  .hero .hero-slide-overlay,
+  .hero .hero-slide::after {
+    display: none;
+    content: none;
+  }
+
   .hero .hero-slider {
-    height: min(78vh, 720px);
+    /* Əvvəlki mobil hündürlük / 1.7 — vh və px limiti eyni nisbətdə */
+    height: min(calc(78vh / 1.7), calc(720px / 1.7));
   }
   .hero .info {
     padding: 80px 50px 0;
@@ -2618,7 +2644,7 @@ section {
 
 @media (max-width: 480px) {
   .hero .hero-slider {
-    height: min(70vh, 620px);
+    height: min(calc(70vh / 1.7), calc(620px / 1.7));
   }
   .hero .info {
     padding-top: 70px;
@@ -2653,31 +2679,6 @@ section {
   }
 }
 
-.hero .swiper-button-next,
-.hero .swiper-button-prev {
-  color: #ffffff;
-  width: 48px;
-  height: 48px;
-  z-index: 3;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.hero .swiper-button-next::after,
-.hero .swiper-button-prev::after {
-  font-size: 20px;
-}
-
-.hero .swiper-button-next:hover,
-.hero .swiper-button-prev:hover {
-  background: rgba(0, 0, 0, 0.6);
-  transform: scale(1.05);
-}
-
 .hero .swiper-pagination-bullets .swiper-pagination-bullet {
   background: rgba(255, 255, 255, 0.7);
   opacity: 1;
@@ -2685,19 +2686,6 @@ section {
 
 .hero .swiper-pagination-bullets .swiper-pagination-bullet-active {
   background: var(--color-primary);
-}
-
-@media (max-width: 768px) {
-  .hero .swiper-button-next,
-  .hero .swiper-button-prev {
-    width: 36px;
-    height: 36px;
-  }
-
-  .hero .swiper-button-next::after,
-  .hero .swiper-button-prev::after {
-    font-size: 16px;
-  }
 }
 
 .hero .info p {
