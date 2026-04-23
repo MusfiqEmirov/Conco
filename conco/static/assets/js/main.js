@@ -322,10 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el: '.hero-slider-pagination',
       type: 'bullets',
       clickable: true
-    },
-    navigation: {
-      nextEl: '.hero-slider-next',
-      prevEl: '.hero-slider-prev'
     }
   });
 
@@ -366,10 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el: '.about-slider-index-pagination',
         type: 'bullets',
         clickable: true
-      },
-      navigation: {
-        nextEl: '.about-slider-index-next',
-        prevEl: '.about-slider-index-prev'
       }
     });
   }
